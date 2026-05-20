@@ -409,6 +409,7 @@ class PersonalWebsite {
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
+                if (window.terminalDisabled) return;
                 this.toggleCommandPalette();
             }
             
@@ -593,7 +594,7 @@ class PersonalWebsite {
     }
     
     openLinkedIn() {
-        window.open('https://www.linkedin.com/in/himanshu4186/', '_blank');
+        window.open('https://www.linkedin.com/in/hichauhan-in/', '_blank');
         this.addTerminalOutput('Opening LinkedIn profile...');
     }
     
@@ -1037,7 +1038,7 @@ const commands = {
         return [];
     },
     linkedin: () => {
-        window.open('https://www.linkedin.com/in/himanshu4186/', '_blank');
+        window.open('https://www.linkedin.com/in/hichauhan-in/', '_blank');
         return ['Opening LinkedIn profile...'];
     },
     matrix: async () => {
@@ -1201,9 +1202,66 @@ async function processCommand(input) {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
+// Command history
+const commandHistory = [];
+let historyIndex = -1;
+
 if (terminalInput) {
     terminalInput.addEventListener('keydown', (e) => {
+        // Ctrl+C to cancel
+        if (e.ctrlKey && e.key === 'c') {
+            e.preventDefault();
+            if (typeof cancelAnimation === 'function' && cancelAnimation()) {
+                terminalInput.value = '';
+            } else if (terminalInput.value) {
+                addLine(`> ${terminalInput.value}^C`, 'command-line');
+                terminalInput.value = '';
+            } else {
+                addLine('^C', 'error-line');
+            }
+            historyIndex = -1;
+            return;
+        }
+
+        // Up arrow - previous command
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (commandHistory.length > 0) {
+                if (historyIndex === -1) {
+                    historyIndex = commandHistory.length - 1;
+                } else if (historyIndex > 0) {
+                    historyIndex--;
+                }
+                terminalInput.value = commandHistory[historyIndex];
+                // Move cursor to end
+                setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0);
+            }
+            return;
+        }
+
+        // Down arrow - next command
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (historyIndex !== -1) {
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    terminalInput.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = -1;
+                    terminalInput.value = '';
+                }
+            }
+            return;
+        }
+
         if (e.key === 'Enter') {
+            const val = terminalInput.value.trim();
+            if (val) {
+                commandHistory.push(val);
+            }
+            historyIndex = -1;
             processCommand(terminalInput.value);
             terminalInput.value = '';
         }
