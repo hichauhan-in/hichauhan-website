@@ -47,6 +47,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .page-title {
@@ -107,6 +108,7 @@
         .terminal.minimized {
             transform: scale(0.02);
             opacity: 0;
+            pointer-events: none;
         }
 
         .terminal.glitch {
@@ -135,11 +137,14 @@
             cursor: pointer;
             animation: pulse 1.5s infinite;
             display: none;
-            position: relative;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .minimized-dot::after {
-            content: 'click to respawn, genius';
+            content: attr(data-msg);
             position: absolute;
             top: -30px;
             left: 50%;
@@ -292,7 +297,7 @@
         }
 
         @media (max-width: 768px) {
-            body { padding: 16px; }
+            body { padding: 24px 16px; }
             .terminal { max-width: 100%; }
             .terminal-body { padding: 20px 16px; font-size: 12px; height: 320px; }
             .contact-buttons { flex-wrap: wrap; }
@@ -306,7 +311,7 @@
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
-    <div class="minimized-dot" id="minDot"></div>
+    <div class="minimized-dot" id="minDot" data-msg="click to respawn, genius"></div>
     <div class="terminal" id="terminal">
         <div class="terminal-bar">
             <div class="dot r"></div>
@@ -539,6 +544,25 @@
             setTimeout(panicType, 300);
         });
 
+        // Sarcastic minimize messages
+        const minimizeMessages = [
+            'click to respawn, genius',
+            'wow you actually minimized it',
+            'the terminal has feelings too',
+            'it\'s not gone, it\'s just hiding',
+            'congratulations, you broke nothing',
+            'poke me to bring it back',
+            'was the terminal too scary?',
+            'it\'ll come back. unlike your ex.',
+            'minimizing problems doesn\'t solve them',
+            'the dot is the terminal now. deal with it.',
+            'you\'ll want it back in 3... 2...',
+            'this is what commitment issues look like',
+            'out of sight, still in DOM',
+            'the terminal is judging you from here',
+            'ctrl+z won\'t help you here',
+        ];
+
         // YELLOW: Minimize to dot
         document.querySelector('.dot.y').addEventListener('click', () => {
             if (dotBusy) return;
@@ -547,10 +571,10 @@
             dotBusy = true;
             terminal.classList.add('minimized');
             contactBtns.style.opacity = '0';
+            contactBtns.style.pointerEvents = 'none';
             contactBtns.style.transition = 'opacity 0.3s';
+            minDot.setAttribute('data-msg', minimizeMessages[Math.floor(Math.random() * minimizeMessages.length)]);
             setTimeout(() => {
-                terminal.style.display = 'none';
-                contactBtns.style.display = 'none';
                 minDot.style.display = 'block';
                 dotBusy = false;
             }, 500);
@@ -558,10 +582,10 @@
 
         minDot.addEventListener('click', () => {
             minDot.style.display = 'none';
-            terminal.style.display = '';
-            contactBtns.style.display = '';
             contactBtns.style.opacity = '1';
+            contactBtns.style.pointerEvents = '';
             setTimeout(() => terminal.classList.remove('minimized'), 20);
+            clickCounts.y = 0;
         });
 
         // GREEN: Absurd zoom
