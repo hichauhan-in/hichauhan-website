@@ -1545,7 +1545,13 @@
                     color: white;
                     opacity: 0;
                     animation: bsodFadeIn 0.3s ease forwards;
+                    overflow-y: auto;
                 `;
+                // Responsive padding for mobile
+                if (window.innerWidth <= 768) {
+                    bsod.style.padding = '40px 24px';
+                    bsod.style.alignItems = 'flex-start';
+                }
                 bsod.innerHTML = `
                     <style>
                         @keyframes bsodFadeIn {
@@ -1575,6 +1581,15 @@
                         .bsod-reload:hover {
                             background: white;
                             color: #0078D7;
+                        }
+                        @media (max-width: 768px) {
+                            .bsod-sad { font-size: 60px; margin-bottom: 16px; }
+                            .bsod-title { font-size: 18px; margin-bottom: 10px; }
+                            .bsod-text { font-size: 12px; margin-bottom: 14px; }
+                            .bsod-percent { font-size: 13px; margin-bottom: 20px; }
+                            .bsod-qr-section { flex-direction: column; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+                            .bsod-code { font-size: 9px; margin-bottom: 20px; }
+                            .bsod-reload { padding: 10px 22px; font-size: 13px; }
                         }
                     </style>
                     <div class="bsod-sad">:(</div>
