@@ -5,761 +5,1092 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skills - Himanshu Chauhan</title>
     <link rel="icon" type="image/png" href="resources/logo.png">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Core Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --deep-void: #0A0A0A;
-            --charcoal-core: #141414;
+            --void: #0A0A0A;
+            --charcoal: #141414;
             --graphite: #1E1E1E;
-            --steel-grey: #2A2A2A;
-            --neon-teal: #00A896;
-            --steel-blue: #4A6FA5;
-            --warning-amber: #D4A574;
-            --pure-white: #FFFFFF;
-            --light-grey: #B0B0B0;
-            --muted-grey: #808080;
+            --steel: #2A2A2A;
+            --teal: #00A896;
+            --blue: #4A6FA5;
+            --amber: #D4A574;
+            --white: #FFFFFF;
+            --grey: #B0B0B0;
+            --muted: #808080;
+            --red: #FF5F56;
         }
-        
+
         body {
             font-family: 'JetBrains Mono', monospace;
-            background: var(--deep-void);
-            color: var(--pure-white);
-            overflow-x: hidden;
+            background: var(--void);
+            background-image: radial-gradient(rgba(0, 168, 150, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--white);
             line-height: 1.6;
+            overflow-x: hidden;
         }
-        
-        /* Navigation */
-        .nav-dock {
-            position: fixed;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 64px;
-            height: 400px;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid var(--steel-grey);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-        
-        .nav-item {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            font-size: 12px;
-            color: var(--light-grey);
-            text-decoration: none;
-        }
-        
-        .nav-item:hover {
-            background: rgba(0, 168, 150, 0.2);
-            color: var(--neon-teal);
-            transform: scale(1.1);
-        }
-        
-        .nav-item.active {
-            background: rgba(0, 168, 150, 0.3);
-            color: var(--neon-teal);
-            box-shadow: 0 0 20px rgba(0, 168, 150, 0.3);
-        }
-        
-        /* Main Content */
-        .main-content {
-            margin-left: 64px;
-            min-height: 100vh;
-            position: relative;
-            padding: 48px;
-        }
-        
-        /* Page Header */
+
+        /* Header */
         .page-header {
-            text-align: center;
-            margin-bottom: 64px;
-            padding-top: 0px;
-        }
-        
-        .page-title {
-            display: inline-block;
-            width: fit-content;
-            font-family: 'Inter', sans-serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: var(--pure-white);
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typewriter 3s steps(40, end);
-        }
-        
-        @keyframes typewriter {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        
-        .page-subtitle {
-            font-size: 1rem;
-            color: var(--light-grey);
             max-width: 900px;
             margin: 0 auto;
+            padding: 48px 32px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--teal);
+            font-weight: 500;
             cursor: pointer;
             user-select: none;
+            position: relative;
+            transition: text-shadow 0.15s;
         }
-        
-        /* Morse Code Popup */
-        .morse-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 8px;
-            padding: 0;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            min-width: 400px;
-            max-width: 600px;
+
+        .page-title:hover {
+            text-shadow: 0 0 12px rgba(0, 168, 150, 0.5);
         }
-        
-        .morse-popup.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
+
+        .page-title.glitching {
+            animation: titleGlitch 0.06s steps(1) infinite;
         }
-        
-        .morse-popup-header {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--steel-grey);
-            background: var(--charcoal-core);
-            border-radius: 8px 8px 0 0;
+
+        .page-title.nuked {
+            animation: nuke 0.3s ease-out;
+            color: var(--red);
         }
-        
-        .morse-popup-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
+
+        .page-title .char {
+            display: inline-block;
+            transition: none;
         }
-        
-        .morse-popup-dot.red { background: #FF5F56; cursor: pointer; }
-        .morse-popup-dot.yellow { background: #FFBD2E; }
-        .morse-popup-dot.green { background: #27CA3F; }
-        
-        .morse-popup-title {
-            margin-left: 12px;
-            color: var(--muted-grey);
-            font-size: 12px;
+
+        .page-title.exploded .char {
+            animation: charExplode 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: var(--d);
         }
-        
-        .morse-popup-content {
-            padding: 24px;
-            font-family: 'JetBrains Mono', monospace;
+
+        .page-title.meltdown .char {
+            animation: charMelt 1.5s ease-in forwards;
+            animation-delay: var(--d);
         }
-        
-        .morse-popup-content .command {
-            color: var(--muted-grey);
-            margin-bottom: 8px;
+
+        .page-title.blackhole .char {
+            animation: charBlackhole 1.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+            animation-delay: var(--d);
         }
-        
-        .morse-popup-content .output {
-            color: var(--neon-teal);
-            font-size: 1.1rem;
+
+        .page-title.vortex .char {
+            animation: charVortex 1.6s ease-in forwards;
+            animation-delay: var(--d);
         }
-        
-        .morse-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9998;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
+
+        .page-title.haunted {
+            animation: hauntedFlicker 0.15s steps(1) infinite;
         }
-        
-        .morse-overlay.active {
-            opacity: 1;
-            visibility: visible;
+
+        .page-title.earthquake {
+            animation: quake 0.08s infinite;
         }
-        
-        /* Terminal Wrapper */
-        .terminal-wrapper {
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 8px;
-            max-width: 1300px;
+
+        @keyframes titleGlitch {
+            0% { transform: translate(0); text-shadow: 3px 0 #ff0040, -3px 0 #0ff; clip-path: inset(20% 0 40% 0); }
+            20% { transform: translate(-3px, 2px); text-shadow: -2px 0 #ff0040, 2px 0 #0ff; clip-path: inset(60% 0 0% 0); }
+            40% { transform: translate(2px, -1px); text-shadow: 2px 2px #ff0040, -2px -2px #0ff; clip-path: inset(0% 0 80% 0); }
+            60% { transform: translate(-1px, 1px); text-shadow: -3px -1px #ff0040, 3px 1px #0ff; clip-path: inset(40% 0 20% 0); }
+            80% { transform: translate(3px, 0); text-shadow: 1px -2px #ff0040, -1px 2px #0ff; clip-path: inset(10% 0 50% 0); }
+            100% { transform: translate(0); text-shadow: none; clip-path: none; }
+        }
+
+        @keyframes charExplode {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+            30% { opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(0); opacity: 0; }
+        }
+
+        @keyframes charMelt {
+            0% { transform: translateY(0) scaleY(1); opacity: 1; filter: blur(0); }
+            50% { transform: translateY(20px) scaleY(2.5); opacity: 0.6; filter: blur(1px); }
+            100% { transform: translateY(80px) scaleY(4); opacity: 0; filter: blur(3px); }
+        }
+
+        @keyframes charBlackhole {
+            0% { transform: translate(0, 0) scale(1) rotate(0); opacity: 1; }
+            70% { transform: translate(var(--bx), var(--by)) scale(0.3) rotate(360deg); opacity: 0.7; }
+            100% { transform: translate(var(--bx), var(--by)) scale(0) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes charVortex {
+            0% { transform: translate(0, 0) rotate(0) scale(1); opacity: 1; }
+            100% { transform: translate(0, 0) rotate(var(--spin)) scale(0); opacity: 0; filter: blur(3px); }
+        }
+
+        @keyframes hauntedFlicker {
+            0% { opacity: 1; color: var(--teal); }
+            10% { opacity: 0.1; color: var(--red); }
+            20% { opacity: 1; color: var(--teal); }
+            30% { opacity: 0.3; }
+            40% { opacity: 1; color: var(--red); letter-spacing: 6px; }
+            50% { opacity: 0; }
+            60% { opacity: 1; color: var(--teal); letter-spacing: 3px; }
+            70% { opacity: 0.5; color: var(--amber); }
+            80% { opacity: 1; }
+            90% { opacity: 0.2; transform: skewX(5deg); }
+            100% { opacity: 1; transform: skewX(0); }
+        }
+
+        @keyframes quake {
+            0% { transform: translate(0, 0) rotate(0); }
+            25% { transform: translate(-4px, 2px) rotate(-0.5deg); }
+            50% { transform: translate(3px, -3px) rotate(0.5deg); }
+            75% { transform: translate(-2px, 4px) rotate(-0.3deg); }
+            100% { transform: translate(4px, -1px) rotate(0.2deg); }
+        }
+
+        @keyframes nuke {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+
+        .page-nav {
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid var(--steel);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .page-nav:hover {
+            color: var(--teal);
+            border-color: var(--teal);
+        }
+
+        /* Radar Chart */
+        .chart-section {
+            max-width: 900px;
             margin: 0 auto;
-            overflow: hidden;
+            padding: 0 32px 60px;
         }
-        
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--steel-grey);
-            background: var(--charcoal-core);
+
+        .chart-container {
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-radius: 10px;
+            padding: 32px;
+            transition: all 0.3s ease;
         }
-        
-        .terminal-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
+
+        .chart-container:hover {
+            border-color: rgba(0, 168, 150, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
-        
-        .terminal-dot.red { background: #FF5F56; }
-        .terminal-dot.yellow { background: #FFBD2E; }
-        .terminal-dot.green { background: #27CA3F; }
-        
-        .terminal-title {
-            margin-left: 16px;
-            color: var(--muted-grey);
-            font-size: 12px;
+
+        .skills-chart {
+            width: 100%;
+            height: 420px;
         }
-        
-        .terminal-content {
-            padding: 48px 32px;
-        }
-        
-        /* Section Title */
-        .section-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 48px;
-            text-align: center;
-            color: var(--pure-white);
-        }
-        
+
         /* Expertise Grid */
+        .expertise-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+
+        .expertise-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
         .expertise-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 32px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
-        
+
         .expertise-card {
-            background: var(--deep-void);
-            border: 1px solid var(--steel-grey);
-            border-radius: 8px;
-            padding: 32px;
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-radius: 10px;
+            padding: 24px 28px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            font-family: 'JetBrains Mono', monospace;
+            opacity: 0;
+            transform: translateY(16px);
         }
-        
+
+        .expertise-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .expertise-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
+            width: 3px;
             height: 100%;
-            background: var(--neon-teal);
+            background: var(--teal);
             transform: scaleY(0);
             transition: transform 0.3s ease;
         }
-        
+
         .expertise-card:hover::before {
             transform: scaleY(1);
         }
-        
+
         .expertise-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 168, 150, 0.2);
+            border-color: rgba(0, 168, 150, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         }
-        
+
         .expertise-title {
             font-family: 'Inter', sans-serif;
-            font-size: 1.25rem;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--neon-teal);
+            color: var(--white);
+            margin-bottom: 12px;
         }
-        
-        .expertise-description {
-            color: var(--light-grey);
-            font-size: 0.875rem;
+
+        .expertise-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .expertise-list li {
+            font-size: 12px;
+            color: var(--grey);
+            padding-left: 16px;
+            position: relative;
             line-height: 1.6;
+            white-space: nowrap;
         }
-        
-        /* Skills Chart Section */
-        .skills-section {
-            padding: 0 48px 48px;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-        
-        .skills-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .skills-chart {
-            width: 100%;
-            height: 400px;
-        }
-        
-        .section-title {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 32px;
-            color: var(--pure-white);
-            text-align: center;
-        }
-        
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        
-        .fade-in.animated {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Mobile Navigation */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 48px;
-            height: 48px;
-            background: rgba(20, 20, 20, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--steel-grey);
-            border-radius: 12px;
-            cursor: pointer;
-            z-index: 1001;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            padding: 12px;
-        }
-        
-        .mobile-menu-toggle span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--neon-teal);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-        
-        .mobile-menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-        
-        .mobile-nav-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
+
+        .expertise-list li::before {
+            content: '▸';
+            position: absolute;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            color: var(--teal);
         }
-        
-        .mobile-nav-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-        
-        .mobile-nav-menu {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-nav-menu.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            visibility: visible;
-            pointer-events: auto;
-        }
-        
-        .mobile-nav-item {
-            padding: 16px 48px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 12px;
-            color: var(--light-grey);
-            text-decoration: none;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-nav-item:hover,
-        .mobile-nav-item.active {
-            background: rgba(0, 168, 150, 0.2);
-            border-color: var(--neon-teal);
-            color: var(--neon-teal);
-        }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
-            .nav-dock {
-                display: none;
-            }
-            
-            .mobile-menu-toggle {
-                display: flex;
-            }
-            
-            .mobile-nav-overlay.active,
-            .mobile-nav-menu.active {
-                display: flex;
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 24px;
-                padding-top: 80px;
-            }
-            
-            .page-header {
-                overflow: hidden;
-            }
-            
-            .page-title {
-                white-space: normal;
-                word-wrap: break-word;
-                animation: none;
-                width: auto;
-                font-size: 1.75rem;
-            }
-            
-            .expertise-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .terminal-content {
-                padding: 24px 16px;
-            }
+            .page-header { padding: 36px 20px 32px; }
+            .chart-section { padding: 0 20px 48px; }
+            .chart-container { padding: 16px; }
+            .skills-chart { height: 300px; }
+            .expertise-section { padding: 0 20px 60px; }
+            .expertise-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Save Button */
+        .chart-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 16px;
+            gap: 16px;
+            min-height: 36px;
+        }
+
+        .chart-hint {
+            font-size: 11px;
+            color: var(--muted);
+            opacity: 0.6;
+        }
+
+        .save-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            border: 1px solid var(--steel);
+            background: var(--charcoal);
+            color: var(--muted);
+            cursor: not-allowed;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn.active {
+            border-color: var(--teal);
+            color: var(--teal);
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .save-btn.active:hover {
+            background: rgba(0, 168, 150, 0.15);
+            box-shadow: 0 0 12px rgba(0, 168, 150, 0.2);
+        }
+
+        .sarcasm-toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--graphite);
+            border: 1px solid var(--red);
+            border-radius: 8px;
+            padding: 16px 24px;
+            font-size: 12px;
+            color: var(--grey);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .sarcasm-toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .sarcasm-toast .toast-title {
+            color: var(--red);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        /* Drag failure popup */
+        .drag-fail-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .drag-fail-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drag-fail-box {
+            background: var(--graphite);
+            border: 1px solid var(--red);
+            border-radius: 12px;
+            padding: 40px 48px;
+            max-width: 480px;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .drag-fail-overlay.show .drag-fail-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .drag-fail-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .drag-fail-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .drag-fail-msg {
+            font-size: 13px;
+            color: var(--grey);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .drag-fail-dismiss {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 20px;
+            border-radius: 4px;
+            border: 1px solid var(--steel);
+            background: var(--charcoal);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .drag-fail-dismiss:hover {
+            border-color: var(--teal);
+            color: var(--teal);
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Navigation -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
-    <nav class="mobile-nav-menu" id="mobileNavMenu">
-        <a href="index.html" class="mobile-nav-item">Home</a>
-        <a href="experience.html" class="mobile-nav-item">Experience</a>
-        <a href="skills.html" class="mobile-nav-item active">Skills</a>
-        <a href="projects.html" class="mobile-nav-item">Projects</a>
-        <a href="education.html" class="mobile-nav-item">Education</a>
-        <a href="contact.html" class="mobile-nav-item">Contact</a>
-    </nav>
+    <header class="page-header">
+        <h1 class="page-title">Skills</h1>
+        <a href="index.html" class="page-nav">cd ~/</a>
+    </header>
 
-    <!-- Navigation Dock -->
-    <nav class="nav-dock" id="navDock">
-        <a href="index.html" class="nav-item" title="Home">HC</a>
-        <a href="experience.html" class="nav-item" title="Experience">EXP</a>
-        <a href="skills.html" class="nav-item active" title="Skills">SKL</a>
-        <a href="projects.html" class="nav-item" title="Projects">PRJ</a>
-        <a href="education.html" class="nav-item" title="Education">EDU</a>
-        <a href="contact.html" class="nav-item" title="Contact">CON</a>
-    </nav>
-    
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Areas of Expertise</h1>
-            <p class="page-subtitle">... -.- .. .-.. .-.. ... / .- -.-. --.- ..- .. .-. . -.. / -... -.-- / ... ..- .-. ...- .. ...- .. -. --. / .--. .-. --- -.. ..- -.-. - .. --- -.
-</p>
-        </div>
-        
-        <!-- Skills Chart Section -->
-        <section class="skills-section">
-            <div class="skills-container">
-                <div class="skills-chart" id="skillsChart"></div>
-            </div>
-        </section>
-        
-        <!-- Skills Terminal -->
-        <div class="terminal-wrapper fade-in">
-            <div class="terminal-header">
-                <div class="terminal-dot red"></div>
-                <div class="terminal-dot yellow"></div>
-                <div class="terminal-dot green"></div>
-                <span class="terminal-title">Technical Skills.exe</span>
-            </div>
-            <div class="terminal-content">
-                <div class="expertise-grid">
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">DNS & Network Protocols</h3>
-                        <p class="expertise-description">
-                            Deep expertise in DNS resolution, caching, zone management, and security. 
-                            Advanced troubleshooting of TCP/IP, DHCP, and enterprise networking protocols.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Incident Management</h3>
-                        <p class="expertise-description">
-                            Leading investigations for Sev A/Sev 1 production incidents with structured 
-                            root-cause analysis and long-term reliability improvements.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Cloud & Virtualization</h3>
-                        <p class="expertise-description">
-                            Azure fundamentals, Software Defined Networking, Hyper-V virtualization, 
-                            and hybrid cloud infrastructure management.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Security & Authentication</h3>
-                        <p class="expertise-description">
-                            Active Directory, PKI infrastructure, VPN/IPsec, SSL/TLS, and modern 
-                            authentication protocols including OAuth and Azure MFA.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Automation & Scripting</h3>
-                        <p class="expertise-description">
-                            PowerShell and Python scripting for infrastructure automation, 
-                            log analysis, and diagnostic tool development.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Data Science & Analytics</h3>
-                        <p class="expertise-description">
-                            Pursuing MSc in Data Science with focus on distributed systems, 
-                            machine learning, and statistical analysis.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">DNS & Network Protocols</h3>
-                        <p class="expertise-description">
-                            Deep expertise in DNS resolution, caching, zone management, and security. 
-                            Advanced troubleshooting of TCP/IP, DHCP, and enterprise networking protocols.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Incident Management</h3>
-                        <p class="expertise-description">
-                            Leading investigations for Sev A/Sev 1 production incidents with structured 
-                            root-cause analysis and long-term reliability improvements.
-                        </p>
-                    </div>
-                    <div class="expertise-card fade-in">
-                        <h3 class="expertise-title">Cloud & Virtualization</h3>
-                        <p class="expertise-description">
-                            Azure fundamentals, Software Defined Networking, Hyper-V virtualization, 
-                            and hybrid cloud infrastructure management.
-                        </p>
-                    </div>
-                </div>
+    <section class="chart-section">
+        <div class="chart-container">
+            <div class="skills-chart" id="skillsChart"></div>
+            <div class="chart-footer">
+                <span class="chart-hint">drag the nodes to adjust</span>
+                <button class="save-btn" id="saveBtn">save changes</button>
             </div>
         </div>
-    </main>
-    
-    <!-- Morse Code Popup -->
-    <div class="morse-overlay" id="morseOverlay"></div>
-    <div class="morse-popup" id="morsePopup">
-        <div class="morse-popup-header">
-            <div class="morse-popup-dot red" onclick="closeMorsePopup()"></div>
-            <div class="morse-popup-dot yellow"></div>
-            <div class="morse-popup-dot green"></div>
-            <span class="morse-popup-title">decoder.exe</span>
-        </div>
-        <div class="morse-popup-content">
-            <div class="command">&gt; decode --morse</div>
-            <div class="output">"SKILLS ACQUIRED BY SURVIVING PRODUCTION"</div>
+    </section>
+
+    <div class="sarcasm-toast" id="sarcasmToast">
+        <div class="toast-title">ACCESS DENIED</div>
+        <div class="toast-msg"></div>
+    </div>
+
+    <div class="drag-fail-overlay" id="dragFailOverlay">
+        <div class="drag-fail-box">
+            <div class="drag-fail-icon">&#x1F6A7;</div>
+            <div class="drag-fail-title">// TODO: fix this</div>
+            <div class="drag-fail-msg">
+                I genuinely tried to make the drag interaction work.<br>
+                It didn't. ECharts won. I lost.<br>
+                <span style="color: var(--muted); font-size: 11px;">— the developer, after 4 failed attempts</span>
+            </div>
+            <button class="drag-fail-dismiss" id="dragFailDismiss">acknowledged</button>
         </div>
     </div>
-    
+
+    <section class="expertise-section">
+        <div class="expertise-label">Areas of Expertise</div>
+        <div class="expertise-grid">
+            <div class="expertise-card">
+                <h3 class="expertise-title">Windows Debugging</h3>
+                <ul class="expertise-list">
+                    <li>Kernel debugging with WinDbg</li>
+                    <li>Crash dump analysis & memory dump triage</li>
+                    <li>IRQL investigations</li>
+                    <li>Platform-level failure root cause analysis</li>
+                </ul>
+            </div>
+            <div class="expertise-card">
+                <h3 class="expertise-title">Enterprise Networking</h3>
+                <ul class="expertise-list">
+                    <li>TCP/IP and Networking Protocols</li>
+                    <li>DNS, DHCP configuration & administration</li>
+                    <li>HTTP/HTTPS, Proxies, WFP/Firewalls</li>
+                    <li>Windows Filesystems (SMB, DFS-N, CSC, Branch Cache)</li>
+                    <li>VLANs, Trunking, Routing (OSPF, EIGRP, RIP, Static)</li>
+                </ul>
+            </div>
+            <div class="expertise-card">
+                <h3 class="expertise-title">Active Directory & Security</h3>
+                <ul class="expertise-list">
+                    <li>Active Directory – ADDS, LDAP, GPO, Replication</li>
+                    <li>Kerberos and NTLM</li>
+                    <li>802.1X/Wireless Network Authentication</li>
+                    <li>Certificates & PKI, TLS/SSL, Encryption</li>
+                    <li>MFA, RADIUS/NPS, EAP</li>
+                </ul>
+            </div>
+            <div class="expertise-card">
+                <h3 class="expertise-title">Infrastructure & Virtualization</h3>
+                <ul class="expertise-list">
+                    <li>Windows APIs & Networking stack (AFD.sys, TCPIP.sys, NDIS.sys)</li>
+                    <li>Assembly Language Fundamentals</li>
+                    <li>Windows Internals & advanced diagnostics</li>
+                    <li>Hyper-V & Host Networking (HNV, SET, LBFO, LACP)</li>
+                    <li>Software Defined Networks with Network Controller</li>
+                </ul>
+            </div>
+            <div class="expertise-card">
+                <h3 class="expertise-title">Diagnostics & Engineering Tools</h3>
+                <ul class="expertise-list">
+                    <li>Packet capture & protocol analysis (Wireshark, Netmon)</li>
+                    <li>Procmon, SysInternals and WPR</li>
+                    <li>Netsh, ETL tracing and TCPIP Analysis</li>
+                    <li>Code reading/writing in C</li>
+                    <li>Python and R Programming</li>
+                </ul>
+            </div>
+            <div class="expertise-card">
+                <h3 class="expertise-title">Professional Strengths</h3>
+                <ul class="expertise-list">
+                    <li>Cross-functional collaboration</li>
+                    <li>Critical/SEV1 Incident Management, RCA & Documentation</li>
+                    <li>Clear technical communication</li>
+                    <li>Self-starter, initiative-driven execution</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
     <script>
-        // Morse code popup
-        const subtitle = document.querySelector('.page-subtitle');
-        subtitle.addEventListener('dblclick', () => {
-            document.getElementById('morsePopup').classList.add('active');
-            document.getElementById('morseOverlay').classList.add('active');
-        });
-        
-        function closeMorsePopup() {
-            document.getElementById('morsePopup').classList.remove('active');
-            document.getElementById('morseOverlay').classList.remove('active');
-        }
-        
-        document.getElementById('morseOverlay').addEventListener('click', closeMorsePopup);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeMorsePopup();
-        });
-        
-        // Fade-in animation on scroll
+        // Radar Chart - Interactive
         document.addEventListener('DOMContentLoaded', () => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animated');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-            
-            // Initialize skills radar chart
-            const skillsChart = echarts.init(document.getElementById('skillsChart'));
-            
-            const skillsOption = {
-                backgroundColor: 'transparent',
-                radar: {
-                    indicator: [
-                        { name: 'DNS', max: 100 },
-                        { name: 'TCP/IP', max: 100 },
-                        { name: 'Azure', max: 100 },
-                        { name: 'Active Directory', max: 100 },
-                        { name: 'VPN/IPsec', max: 100 },
-                        { name: 'Automation', max: 100 },
-                        { name: 'Incident Management', max: 100 },
-                        { name: 'Security', max: 100 }
-                    ],
-                    axisName: {
-                        color: '#B0B0B0',
-                        fontSize: 12
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            color: '#2A2A2A'
-                        }
-                    },
-                    splitArea: {
-                        show: false
-                    },
-                    axisLine: {
-                        lineStyle: {
-                            color: '#2A2A2A'
-                        }
-                    }
-                },
-                series: [{
-                    type: 'radar',
-                    data: [{
-                        value: [95, 90, 75, 85, 80, 70, 88, 78],
-                        name: 'Current Skills',
-                        areaStyle: {
-                            color: 'rgba(0, 168, 150, 0.2)'
+            const chart = echarts.init(document.getElementById('skillsChart'));
+            const saveBtn = document.getElementById('saveBtn');
+            const toast = document.getElementById('sarcasmToast');
+            const toastMsg = toast.querySelector('.toast-msg');
+
+            const defaultValues = [88, 75, 95, 92, 85, 78, 80, 90];
+            let currentValues = [...defaultValues];
+            let isDirty = false;
+
+            const indicators = [
+                { name: 'Windows Debugging', max: 100 },
+                { name: 'Automation & Scripting', max: 100 },
+                { name: 'Enterprise Networking', max: 100 },
+                { name: 'Incident Management', max: 100 },
+                { name: 'AD & Security', max: 100 },
+                { name: 'Cloud & SDN', max: 100 },
+                { name: 'Infra & Virtualization', max: 100 },
+                { name: 'Diagnostics & Tools', max: 100 }
+            ];
+
+            const sarcasticMessages = [
+                "You really thought you could save these messed up changes and call them your skillset?",
+                "Saving this chaos? Bold. Delusional, but bold.",
+                "You dragged random nodes into oblivion and hit save. Inspiring.",
+                "Ah yes, saving the wreckage. That'll look great on a resume.",
+                "You couldn't even drag the right node and now you want to SAVE it?",
+                "Congratulations, you broke my chart and tried to commit the crime.",
+                "Save denied. I'm not letting you gaslight my radar chart into production.",
+                "These 'skills' look like they were assigned by a randomizer. Oh wait—they were.",
+                "You really thought mashing nodes around and clicking save would rewrite reality?",
+                "Error 403: You don't get to save skills you didn't earn.",
+            ];
+
+            function getOption() {
+                return {
+                    backgroundColor: 'transparent',
+                    radar: {
+                        indicator: indicators,
+                        axisName: {
+                            color: '#B0B0B0',
+                            fontSize: 12,
+                            fontFamily: 'JetBrains Mono'
                         },
-                        lineStyle: {
-                            color: '#00A896',
-                            width: 2
+                        splitLine: {
+                            lineStyle: { color: '#2A2A2A' }
                         },
-                        itemStyle: {
-                            color: '#00A896'
-                        }
-                    }]
-                }]
-            };
-            
-            skillsChart.setOption(skillsOption);
-            
-            // Responsive chart
-            window.addEventListener('resize', () => {
-                skillsChart.resize();
-            });
-        });
-        
-        // Mobile Navigation
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
-        const mobileNavMenu = document.getElementById('mobileNavMenu');
-        
-        if (mobileMenuToggle && mobileNavOverlay && mobileNavMenu) {
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenuToggle.classList.toggle('active');
-                mobileNavOverlay.classList.toggle('active');
-                mobileNavMenu.classList.toggle('active');
-                document.body.style.overflow = mobileNavMenu.classList.contains('active') ? 'hidden' : '';
-            });
-            
-            mobileNavOverlay.addEventListener('click', () => {
-                mobileMenuToggle.classList.remove('active');
-                mobileNavOverlay.classList.remove('active');
-                mobileNavMenu.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-            
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && mobileNavMenu.classList.contains('active')) {
-                    mobileMenuToggle.classList.remove('active');
-                    mobileNavOverlay.classList.remove('active');
-                    mobileNavMenu.classList.remove('active');
-                    document.body.style.overflow = '';
+                        splitArea: { show: false },
+                        axisLine: {
+                            lineStyle: { color: '#2A2A2A' }
+                        },
+                        shape: 'circle'
+                    },
+                    series: [{
+                        type: 'radar',
+                        data: [{
+                            value: currentValues,
+                            name: 'Skills',
+                            areaStyle: {
+                                color: isDirty ? 'rgba(0, 168, 150, 0.25)' : 'rgba(0, 168, 150, 0.15)'
+                            },
+                            lineStyle: {
+                                color: '#00A896',
+                                width: 2
+                            },
+                            itemStyle: {
+                                color: '#00A896'
+                            },
+                            symbol: 'circle',
+                            symbolSize: isDirty ? 10 : 6
+                        }]
+                    }],
+                    animation: true,
+                    animationDuration: 800,
+                    animationEasing: 'cubicOut'
+                };
+            }
+
+            chart.setOption(getOption());
+
+            // Interactive drag - intentionally messy, gives up after a few tries
+            let dragging = false;
+            let dragIdx = -1;
+            let dragAttempts = 0;
+            let dragGaveUp = false;
+            const dragFailOverlay = document.getElementById('dragFailOverlay');
+            const dragFailDismiss = document.getElementById('dragFailDismiss');
+
+            function polarToCartesian(cx, cy, r, value, index, total) {
+                const angle = (Math.PI * 2 * index / total) - Math.PI / 2;
+                const actualR = r * (value / 100);
+                return {
+                    x: cx + actualR * Math.cos(angle),
+                    y: cy + actualR * Math.sin(angle)
+                };
+            }
+
+            function getChartGeometry() {
+                const dom = chart.getDom();
+                const rect = dom.getBoundingClientRect();
+                const w = rect.width;
+                const h = rect.height;
+                const cx = w / 2;
+                const cy = h / 2;
+                const r = Math.min(w, h) * 0.35;
+                return { cx, cy, r };
+            }
+
+            function findClosestNode(x, y) {
+                const { cx, cy, r } = getChartGeometry();
+                const n = indicators.length;
+                let closest = -1;
+                let minDist = 40;
+                for (let i = 0; i < n; i++) {
+                    const pos = polarToCartesian(cx, cy, r, currentValues[i], i, n);
+                    const dist = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = i;
+                    }
+                }
+                return closest;
+            }
+
+            function updateValueFromDrag(x, y, idx) {
+                const { cx, cy, r } = getChartGeometry();
+                const dx = x - cx;
+                const dy = y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const newVal = Math.min(100, Math.max(5, Math.round((dist / r) * 100)));
+                currentValues[idx] = newVal;
+
+                // Intentionally chaotic: randomly mess with other nodes too
+                const chaos = Math.floor(Math.random() * 3) + 1;
+                for (let c = 0; c < chaos; c++) {
+                    const victim = Math.floor(Math.random() * indicators.length);
+                    if (victim !== idx) {
+                        const drift = Math.floor(Math.random() * 30) - 15;
+                        currentValues[victim] = Math.min(100, Math.max(10, currentValues[victim] + drift));
+                    }
+                }
+
+                isDirty = true;
+                saveBtn.classList.add('active');
+                chart.setOption(getOption(), true);
+            }
+
+            chart.getZr().on('mousedown', function(e) {
+                const idx = findClosestNode(e.offsetX, e.offsetY);
+                if (idx >= 0) {
+                    dragging = true;
+                    dragIdx = idx;
+                    if (!dragGaveUp) dragAttempts++;
+                    updateValueFromDrag(e.offsetX, e.offsetY, idx);
                 }
             });
+
+            chart.getZr().on('mousemove', function(e) {
+                if (!dragging || dragIdx < 0) return;
+                updateValueFromDrag(e.offsetX, e.offsetY, dragIdx);
+            });
+
+            chart.getZr().on('mouseup', function() {
+                if (dragging) {
+                    dragging = false;
+                    dragIdx = -1;
+
+                    // After 2 attempts, show the popup (only once)
+                    if (!dragGaveUp && dragAttempts >= 2) {
+                        dragGaveUp = true;
+                        setTimeout(() => {
+                            dragFailOverlay.classList.add('show');
+                        }, 400);
+                    }
+                }
+            });
+
+            chart.getZr().on('globalout', function() {
+                dragging = false;
+                dragIdx = -1;
+            });
+
+            function dismissDragFail() {
+                dragFailOverlay.classList.remove('show');
+            }
+
+            dragFailDismiss.addEventListener('click', dismissDragFail);
+
+            dragFailOverlay.addEventListener('click', (e) => {
+                if (e.target === dragFailOverlay) {
+                    dismissDragFail();
+                }
+            });
+
+            // Save button
+            saveBtn.addEventListener('click', () => {
+                if (!isDirty) return;
+
+                const msg = sarcasticMessages[Math.floor(Math.random() * sarcasticMessages.length)];
+                toastMsg.textContent = msg;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    // Reset chart after toast fades
+                    setTimeout(() => {
+                        currentValues = [...defaultValues];
+                        isDirty = false;
+                        saveBtn.classList.remove('active');
+                        chart.setOption(getOption(), true);
+                    }, 400);
+                }, 3500);
+            });
+
+            window.addEventListener('resize', () => chart.resize());
+        });
+
+        // Scroll reveal for cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.expertise-card').forEach(el => observer.observe(el));
+
+        // ====== TITLE CHAOS ENGINE ======
+        const title = document.querySelector('.page-title');
+        const originalText = title.textContent;
+        let busy = false;
+        let clickCount = 0;
+
+        const madTitles = [
+            'SKILL ISSUE',
+            'POWERED BY CAFFEINE',
+            'CERTIFIED OVERTHINKER',
+            'TRUST ME I GOOGLED IT',
+            'WORKS ON MY MACHINE',
+            'HAVE YOU TRIED REBOOTING',
+            'PCAP OR IT DIDN\'T HAPPEN',
+            'NSLOOKUP IS MY THERAPIST',
+            'TTL EXPIRED',
+            'PACKET WHISPERER',
+            'RESOLVED: WONTFIX',
+            'ADMIN RIGHTS REQUIRED',
+            'GPUPDATE /FORCE PERSONALITY',
+            'CSAT 5.0 ENERGY',
+            'WIRESHARK ADDICTION',
+            'LOGS OR IT DIDN\'T HAPPEN',
+            'TRACERT TO HAPPINESS',
+            'SKILL TREE: MAXED OUT',
+            'NETSH INT IP RESET LIFE',
+            'FLUSH DNS FLUSH WORRIES',
+        ];
+
+        const scrambleChars = '\u2588\u2593\u2592\u2591\u2580\u2584\u258c\u2590!@#$%&*<>{}[]|/\\^~\u00ac\u00a7';
+
+        function scramble(text, clarity) {
+            return text.split('').map(c => {
+                if (c === ' ') return ' ';
+                return Math.random() < clarity ? c : scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+            }).join('');
         }
+
+        function glitchTo(newText) {
+            return new Promise(resolve => {
+                title.classList.add('glitching');
+                let frame = 0;
+                const total = 14;
+                const padded = newText.padEnd(Math.max(newText.length, title.textContent.length));
+                const interval = setInterval(() => {
+                    frame++;
+                    title.textContent = scramble(padded, frame / total);
+                    if (frame >= total) {
+                        clearInterval(interval);
+                        title.textContent = newText;
+                        title.classList.remove('glitching');
+                        resolve();
+                    }
+                }, 35);
+            });
+        }
+
+        function explode() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                title.innerHTML = text.split('').map((c, i) => {
+                    const x = (Math.random() - 0.5) * 800 + 'px';
+                    const y = (Math.random() - 0.5) * 500 + 'px';
+                    const r = (Math.random() - 0.5) * 1080 + 'deg';
+                    const d = (i * 0.02) + 's';
+                    return `<span class="char" style="--x:${x};--y:${y};--r:${r};--d:${d}">${c === ' ' ? '&nbsp;' : c}</span>`;
+                }).join('');
+                title.classList.add('exploded');
+                setTimeout(() => {
+                    title.classList.remove('exploded');
+                    title.textContent = '';
+                    resolve();
+                }, 2000);
+            });
+        }
+
+        function meltdown() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                title.innerHTML = text.split('').map((c, i) => {
+                    const d = (i * 0.04) + 's';
+                    return `<span class="char" style="--d:${d}">${c === ' ' ? '&nbsp;' : c}</span>`;
+                }).join('');
+                title.classList.add('meltdown');
+                setTimeout(() => {
+                    title.classList.remove('meltdown');
+                    title.textContent = '';
+                    resolve();
+                }, 2000);
+            });
+        }
+
+        function blackhole() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                const centerX = title.offsetWidth / 2;
+                title.innerHTML = text.split('').map((c, i) => {
+                    const charX = (i / text.length) * title.offsetWidth;
+                    const bx = (centerX - charX) + 'px';
+                    const by = '0px';
+                    const d = (Math.abs(i - text.length/2) * 0.04) + 's';
+                    return `<span class="char" style="--bx:${bx};--by:${by};--d:${d}">${c === ' ' ? '&nbsp;' : c}</span>`;
+                }).join('');
+                title.classList.add('blackhole');
+                setTimeout(() => {
+                    title.classList.remove('blackhole');
+                    title.textContent = '';
+                    resolve();
+                }, 1800);
+            });
+        }
+
+        function vortex() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                title.innerHTML = text.split('').map((c, i) => {
+                    const spin = (720 + Math.random() * 720) + 'deg';
+                    const d = (i * 0.05) + 's';
+                    return `<span class="char" style="--spin:${spin};--d:${d}">${c === ' ' ? '&nbsp;' : c}</span>`;
+                }).join('');
+                title.classList.add('vortex');
+                setTimeout(() => {
+                    title.classList.remove('vortex');
+                    title.textContent = '';
+                    resolve();
+                }, 2200);
+            });
+        }
+
+        function typewriterErase() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                let i = text.length;
+                const interval = setInterval(() => {
+                    i--;
+                    title.textContent = text.slice(0, i) + '\u2588';
+                    if (i <= 0) {
+                        clearInterval(interval);
+                        title.textContent = '';
+                        resolve();
+                    }
+                }, 50);
+            });
+        }
+
+        function typewriterWrite(text) {
+            return new Promise(resolve => {
+                let i = 0;
+                title.textContent = '\u2588';
+                const interval = setInterval(() => {
+                    i++;
+                    title.textContent = text.slice(0, i) + (i < text.length ? '\u2588' : '');
+                    if (i >= text.length) {
+                        clearInterval(interval);
+                        title.textContent = text;
+                        resolve();
+                    }
+                }, 60);
+            });
+        }
+
+        function earthquake(duration) {
+            return new Promise(resolve => {
+                title.classList.add('earthquake');
+                setTimeout(() => {
+                    title.classList.remove('earthquake');
+                    resolve();
+                }, duration);
+            });
+        }
+
+        function haunted(duration) {
+            return new Promise(resolve => {
+                title.classList.add('haunted');
+                setTimeout(() => {
+                    title.classList.remove('haunted');
+                    title.style.color = '';
+                    title.style.letterSpacing = '';
+                    resolve();
+                }, duration);
+            });
+        }
+
+        function binaryFlash() {
+            return new Promise(resolve => {
+                let frame = 0;
+                const total = 20;
+                const interval = setInterval(() => {
+                    frame++;
+                    const len = originalText.length;
+                    title.textContent = Array.from({length: len}, () => Math.random() > 0.5 ? '1' : '0').join('');
+                    title.style.color = frame % 2 === 0 ? '#00ff41' : '#00A896';
+                    if (frame >= total) {
+                        clearInterval(interval);
+                        title.style.color = '';
+                        resolve();
+                    }
+                }, 60);
+            });
+        }
+
+        function reverseReveal() {
+            return new Promise(resolve => {
+                const text = title.textContent;
+                const reversed = text.split('').reverse().join('');
+                let frame = 0;
+                const total = text.length;
+                title.textContent = reversed;
+                const interval = setInterval(() => {
+                    frame++;
+                    const unreversed = text.slice(0, frame) + reversed.slice(frame);
+                    title.textContent = unreversed;
+                    if (frame >= total) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                }, 70);
+            });
+        }
+
+        function slotMachine() {
+            return new Promise(async resolve => {
+                for (let i = 0; i < 6; i++) {
+                    await glitchTo(madTitles[Math.floor(Math.random() * madTitles.length)]);
+                    await new Promise(r => setTimeout(r, 200 + i * 100));
+                }
+                resolve();
+            });
+        }
+
+        title.addEventListener('click', async () => {
+            if (busy) return;
+            busy = true;
+            clickCount++;
+
+            const mode = clickCount % 12;
+            const t = madTitles[Math.floor(Math.random() * madTitles.length)];
+
+            if (mode === 1) {
+                await typewriterErase();
+                await typewriterWrite(t);
+                await new Promise(r => setTimeout(r, 1200));
+                await typewriterErase();
+                await typewriterWrite(originalText);
+            } else if (mode === 2) {
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 800));
+                await explode();
+                await typewriterWrite(originalText);
+            } else if (mode === 3) {
+                await binaryFlash();
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 1200));
+                await binaryFlash();
+                title.textContent = originalText;
+            } else if (mode === 4) {
+                await earthquake(600);
+                title.textContent = t;
+                await haunted(1800);
+                title.textContent = originalText;
+            } else if (mode === 5) {
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 800));
+                await meltdown();
+                await typewriterWrite(originalText);
+            } else if (mode === 6) {
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 700));
+                await blackhole();
+                await new Promise(r => setTimeout(r, 300));
+                await reverseReveal();
+                title.textContent = originalText;
+            } else if (mode === 7) {
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 600));
+                await vortex();
+                await binaryFlash();
+                title.textContent = originalText;
+            } else if (mode === 8) {
+                title.textContent = t;
+                await new Promise(r => setTimeout(r, 500));
+                await reverseReveal();
+                await new Promise(r => setTimeout(r, 300));
+                title.textContent = originalText.split('').reverse().join('');
+                await reverseReveal();
+            } else if (mode === 9) {
+                await glitchTo(t);
+                await new Promise(r => setTimeout(r, 1500));
+                await glitchTo(originalText);
+            } else if (mode === 10) {
+                await slotMachine();
+                await new Promise(r => setTimeout(r, 300));
+                title.textContent = originalText;
+            } else if (mode === 11) {
+                title.textContent = t;
+                await earthquake(800);
+                await explode();
+                await new Promise(r => setTimeout(r, 200));
+                title.classList.add('nuked');
+                title.textContent = originalText;
+                setTimeout(() => title.classList.remove('nuked'), 400);
+            } else if (mode === 0) {
+                await typewriterErase();
+                await typewriterWrite(t);
+                await haunted(1200);
+                await meltdown();
+                await binaryFlash();
+                await typewriterWrite(originalText);
+            }
+
+            busy = false;
+        });
     </script>
 </body>
 </html>

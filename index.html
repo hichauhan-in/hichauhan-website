@@ -498,6 +498,7 @@
             <div class="command-palette-section">
                 <div class="command-palette-section-title">Info</div>
                 <div class="command-palette-items">
+                    <div class="command-palette-item" data-cmd="cv">cv</div>
                     <div class="command-palette-item" data-cmd="about">about</div>
                     <div class="command-palette-item" data-cmd="whoami">whoami</div>
                     <div class="command-palette-item" data-cmd="linkedin">linkedin</div>
@@ -508,15 +509,9 @@
                 <div class="command-palette-section-title">Utility</div>
                 <div class="command-palette-items">
                     <div class="command-palette-item" data-cmd="help">help</div>
-                    <div class="command-palette-item" data-cmd="clear">clear</div>
+                    <div class="command-palette-item" data-cmd="clear">clear <span class="shortcut">cls</span></div>
                     <div class="command-palette-item" data-cmd="date">date</div>
-                </div>
-            </div>
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Try Me</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="matrix">matrix <span class="shortcut">?</span></div>
-                    <div class="command-palette-item" data-cmd="hack">hack <span class="shortcut">?</span></div>
+                    <div class="command-palette-item" data-cmd="uptime">uptime</div>
                 </div>
             </div>
         </div>
@@ -556,7 +551,7 @@
 
         <!-- Side buttons -->
         <div class="side-buttons">
-            <a href="#" data-href="#" data-cmd="resume" class="side-btn">.\CV</a>
+            <a href="cv.html" data-href="cv.html" data-cmd="resume" class="side-btn">.\CV</a>
             <a href="#" data-href="experience.html" class="side-btn">.\Experience</a>
             <a href="#" data-href="skills.html" class="side-btn">.\Skills</a>
             <a href="#" data-href="education.html" class="side-btn">.\Education</a>
@@ -685,7 +680,8 @@
             contact: { url: 'contact.html', key: 'contact' },
             con: { url: 'contact.html', key: 'contact' },
             linkedin: { url: 'https://www.linkedin.com/in/hichauhan-in/', external: true, key: 'linkedin' },
-            resume: { url: '#', key: 'resume' },
+            resume: { url: 'cv.html', key: 'resume' },
+            cv: { url: 'cv.html', key: 'resume' },
         };
 
         // Fun sarcastic messages per command (multiple sets, picked randomly)

@@ -1,6 +1,8 @@
 // Main JavaScript for Himanshu Chauhan Personal Website
 // Handles navigation, interactions, animations, and terminal functionality
 
+window._pageLoadTime = Date.now();
+
 class PersonalWebsite {
     constructor() {
         this.commandPalette = document.getElementById('commandPalette');
@@ -23,6 +25,7 @@ class PersonalWebsite {
             'contact': this.navigateToContact.bind(this),
             'con': this.navigateToContact.bind(this),
             'linkedin': this.openLinkedIn.bind(this),
+            'cv': this.downloadResume.bind(this),
             'resume': this.downloadResume.bind(this),
             'location': this.showLocation.bind(this),
             'experience': this.navigateToExperience.bind(this),
@@ -41,8 +44,6 @@ class PersonalWebsite {
             'about': this.showAbout.bind(this),
             'date': this.showDate.bind(this),
             'uptime': this.showUptime.bind(this),
-            'matrix': this.runMatrix.bind(this),
-            'hack': this.runHack.bind(this)
         };
         
         this.init();
@@ -298,40 +299,42 @@ class PersonalWebsite {
             'Available commands:',
             '',
             '  Navigation:',
-            '    experience, exp  - Go to experience page',
-            '    skills, skl      - Go to skills page',
-            '    projects, pro    - Go to projects page',
-            '    education, edu   - Go to education page',
-            '    contact, con     - Go to contact page',
+            '    experience, exp  - Career timeline',
+            '    skills, skl      - Technical expertise',
+            '    projects, pro    - Side projects',
+            '    education, edu   - Academic credentials',
+            '    contact, con     - Get in touch',
+            '    cv               - View CV',
             '',
             '  Info:',
             '    about            - About me',
-            '    whoami           - Show current user info',
-            '    linkedin         - Open LinkedIn profile',
-            '    location         - Show current location',
+            '    whoami           - Visitor info',
+            '    linkedin         - LinkedIn profile',
+            '    location         - Current location',
             '',
             '  Utility:',
-            '    help             - Show this help message',
-            '    clear            - Clear terminal',
-            '    date             - Show current date',
-            '    uptime           - Show system uptime'
+            '    help             - Show this message',
+            '    clear, cls       - Clear terminal',
+            '    date             - Current date/time',
+            '    uptime           - Time on this page',
+            '',
+            '  Shortcut: Ctrl+K   - Command palette',
         ];
         this.addExpandedTerminalMultiLine(helpLines);
     }
     
     showAboutExpanded() {
         const aboutLines = [
-            'About Himanshu Chauhan:',
+            'Himanshu Chauhan',
             '',
-            '  Support Escalation Engineer at Microsoft',
-            '  Specializing in Windows Networking, DNS, TCP/IP',
-            '  5+ years in enterprise networking support',
+            '  Role     : Escalation Engineer @ Microsoft',
+            '  Domain   : Windows Debugging, Kernel, Networking',
+            '  Stack    : WinDbg, Crash Dumps, TCP/IP, DNS, AD',
+            '  Learning : MSc Data Science (Manipal, 2024-26)',
+            '  Location : Bangalore, India',
             '',
-            '  Currently pursuing MSc in Data Science',
-            '  Passionate about problem-solving and automation',
-            '',
-            '  Type "experience" to see my work history',
-            '  Type "skills" to see my technical expertise'
+            '  4+ years debugging what others couldn\'t.',
+            '  Currently breaking things in kernel mode.',
         ];
         this.addExpandedTerminalMultiLine(aboutLines);
     }
@@ -568,23 +571,26 @@ class PersonalWebsite {
             'Available commands:',
             '',
             '  Navigation:',
-            '    experience, exp  - Go to experience page',
-            '    skills, skl      - Go to skills page',
-            '    projects, pro    - Go to projects page',
-            '    education, edu   - Go to education page',
-            '    contact, con     - Go to contact page',
+            '    experience, exp  - Career timeline',
+            '    skills, skl      - Technical expertise',
+            '    projects, pro    - Side projects',
+            '    education, edu   - Academic credentials',
+            '    contact, con     - Get in touch',
+            '    cv               - View CV',
             '',
             '  Info:',
             '    about            - About me',
-            '    whoami           - Show current user info',
-            '    linkedin         - Open LinkedIn profile',
-            '    location         - Show current location',
+            '    whoami           - Visitor info',
+            '    linkedin         - LinkedIn profile',
+            '    location         - Current location',
             '',
             '  Utility:',
-            '    help             - Show this help message',
-            '    clear            - Clear terminal',
-            '    date             - Show current date',
-            '    uptime           - Show system uptime'
+            '    help             - Show this message',
+            '    clear, cls       - Clear terminal',
+            '    date             - Current date/time',
+            '    uptime           - Time on this page',
+            '',
+            '  Shortcut: Ctrl+K   - Command palette',
         ];
         this.addTerminalOutput(helpText.join('\n'));
     }
@@ -599,8 +605,7 @@ class PersonalWebsite {
     }
     
     downloadResume() {
-        // In a real implementation, this would trigger a download
-        this.addTerminalOutput('Resume download feature coming soon!\nContact me directly for resume.');
+        window.location.href = 'cv.html';
     }
     
     showLocation() {
@@ -625,17 +630,16 @@ class PersonalWebsite {
     
     showAbout() {
         const aboutInfo = [
-            'About Himanshu Chauhan:',
+            'Himanshu Chauhan',
             '',
-            '  Support Escalation Engineer at Microsoft',
-            '  Specializing in Windows Networking, DNS, TCP/IP',
-            '  5+ years in enterprise networking support',
+            '  Role     : Escalation Engineer @ Microsoft',
+            '  Domain   : Windows Debugging, Kernel, Networking',
+            '  Stack    : WinDbg, Crash Dumps, TCP/IP, DNS, AD',
+            '  Learning : MSc Data Science (Manipal, 2024-26)',
+            '  Location : Bangalore, India',
             '',
-            '  Currently pursuing MSc in Data Science',
-            '  Passionate about problem-solving and automation',
-            '',
-            '  Type "experience" to see my work history',
-            '  Type "skills" to see my technical expertise'
+            '  4+ years debugging what others couldn\'t.',
+            '  Currently breaking things in kernel mode.',
         ];
         this.addTerminalOutput(aboutInfo.join('\n'));
     }
@@ -712,27 +716,18 @@ class PersonalWebsite {
     }
     
     showUptime() {
-        // Simulate system uptime
-        const uptime = Math.floor(Math.random() * 365) + 1;
-        const days = Math.floor(uptime);
-        const hours = Math.floor((uptime - days) * 24);
-        const minutes = Math.floor(((uptime - days) * 24 - hours) * 60);
-        
-        this.addTerminalOutput(`Uptime: ${days} days, ${hours} hours, ${minutes} minutes\nSystem Status: Operational ✅`);
-    }
-    
-    runMatrix() {
-        // Use the global commands.matrix function
-        if (typeof commands !== 'undefined' && commands.matrix) {
-            commands.matrix();
-        }
-    }
-    
-    runHack() {
-        // Use the global commands.hack function
-        if (typeof commands !== 'undefined' && commands.hack) {
-            commands.hack();
-        }
+        const now = Date.now();
+        const elapsed = now - window._pageLoadTime;
+        const secs = Math.floor(elapsed / 1000);
+        const mins = Math.floor(secs / 60);
+        const hrs = Math.floor(mins / 60);
+        const d = Math.floor(hrs / 24);
+        const parts = [];
+        if (d > 0) parts.push(`${d}d`);
+        if (hrs % 24 > 0) parts.push(`${hrs % 24}h`);
+        if (mins % 60 > 0) parts.push(`${mins % 60}m`);
+        parts.push(`${secs % 60}s`);
+        this.addTerminalOutput(`Session uptime: ${parts.join(' ')}\nPage loaded: ${new Date(window._pageLoadTime).toLocaleTimeString()}`);
     }
 
     showError(message) {
@@ -920,35 +915,38 @@ const commands = {
         'Available commands:',
         '',
         '  Navigation:',
-        '    experience, exp  - Go to experience page',
-        '    skills, skl      - Go to skills page',
-        '    projects, pro    - Go to projects page',
-        '    education, edu   - Go to education page',
-        '    contact, con     - Go to contact page',
+        '    experience, exp  - Career timeline',
+        '    skills, skl      - Technical expertise',
+        '    projects, pro    - Side projects',
+        '    education, edu   - Academic credentials',
+        '    contact, con     - Get in touch',
+        '    cv               - View CV',
         '',
         '  Info:',
         '    about            - About me',
-        '    whoami           - Show current user info',
-        '    linkedin         - Open LinkedIn profile',
-        '    location         - Show current location',
+        '    whoami           - Visitor info',
+        '    linkedin         - LinkedIn profile',
+        '    location         - Current location',
         '',
         '  Utility:',
-        '    help             - Show this help message',
-        '    clear            - Clear terminal',
-        '    date             - Show current date',
+        '    help             - Show this message',
+        '    clear, cls       - Clear terminal',
+        '    date             - Current date/time',
+        '    uptime           - Time on this page',
         '',
-        '  Try Me:',
-        '    matrix           - ???',
-        '    hack             - ???'
+        '  Shortcut: Ctrl+K   - Command palette',
     ],
     about: () => [
-        'Hi! I\'m Himanshu Chauhan',
-        'Support Escalation Engineer at Microsoft',
-        'I specialize in Enterprise Networks and Active Directory',
-        'Currently pursuing MSc in Data Science',
+        'Himanshu Chauhan',
         '',
-        'Type "experience" to see my work history',
-        'Type "skills" to see my technical expertise'
+        '  Role     : Escalation Engineer @ Microsoft',
+        '  Domain   : Windows Debugging, Kernel, Networking',
+        '  Stack    : WinDbg, Crash Dumps, TCP/IP, DNS, AD',
+        '  Learning : MSc Data Science (Manipal, 2024-26)',
+        '  Location : Bangalore, India',
+        '',
+        '  4+ years debugging what others couldn\'t.',
+        '  Currently breaking things in kernel mode.',
     ],
     whoami: async () => {
         try {
@@ -1041,139 +1039,28 @@ const commands = {
         window.open('https://www.linkedin.com/in/hichauhan-in/', '_blank');
         return ['Opening LinkedIn profile...'];
     },
-    matrix: async () => {
-        const lines = [
-            '> Initiating Matrix protocol...',
-            '',
-            '  ░█▀▄▀█ ─█▀▀█ ▀▀█▀▀ █▀▀█ ─▀─ █─█ ',
-            '  ░█░█░█ ░█▄▄█ ──█── █▄▄▀ ▀█▀ ▄▀▄ ',
-            '  ░█──░█ ░█─░█ ──█── █─░█ ▀▀▀ ▀─▀ ',
-            '',
-            '  Wake up, Neo...',
-            '  The Matrix has you...',
-            '  Follow the white rabbit.',
-            '',
-            '  Knock, knock.'
-        ];
-        
-        // Clear terminal first
-        terminalOutput.innerHTML = '';
-        
-        // Add lines with delay
-        for (let i = 0; i < lines.length; i++) {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            line.style.color = '#00FF41';
-            line.textContent = lines[i];
-            terminalOutput.appendChild(line);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
-        
-        // Matrix rain effect
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
-        
-        for (let j = 0; j < 8; j++) {
-            await new Promise(resolve => setTimeout(resolve, 150));
-            let rainLine = '  ';
-            for (let k = 0; k < 40; k++) {
-                rainLine += chars[Math.floor(Math.random() * chars.length)];
-            }
-            const rain = document.createElement('div');
-            rain.className = 'terminal-line';
-            rain.style.color = '#00FF41';
-            rain.style.opacity = 1 - (j * 0.1);
-            rain.textContent = rainLine;
-            terminalOutput.appendChild(rain);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const end = document.createElement('div');
-        end.className = 'terminal-line';
-        end.style.color = '#00FF41';
-        end.textContent = '  > Connection terminated. Welcome back to reality.';
-        terminalOutput.appendChild(end);
-        terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        
-        return [];
+    cv: () => {
+        window.location.href = 'cv.html';
+        return ['Opening CV...'];
     },
-    hack: async () => {
-        terminalOutput.innerHTML = '';
-        
-        const addHackLine = async (text, color = '#00FF41', delay = 100) => {
-            await new Promise(resolve => setTimeout(resolve, delay));
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            line.style.color = color;
-            line.textContent = text;
-            terminalOutput.appendChild(line);
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        };
-        
-        const progressBar = async (label, color = '#00FF41') => {
-            const line = document.createElement('div');
-            line.className = 'terminal-line';
-            line.style.color = color;
-            terminalOutput.appendChild(line);
-            
-            for (let i = 0; i <= 100; i += 5) {
-                const filled = '█'.repeat(Math.floor(i / 5));
-                const empty = '░'.repeat(20 - Math.floor(i / 5));
-                line.textContent = `  ${label} [${filled}${empty}] ${i}%`;
-                await new Promise(resolve => setTimeout(resolve, 50));
-            }
-            terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        };
-        
-        await addHackLine('> INITIATING HACK SEQUENCE...', '#FF5F56', 200);
-        await addHackLine('', '#00FF41', 100);
-        await addHackLine('  ██╗  ██╗ █████╗  ██████╗██╗  ██╗', '#FF5F56', 50);
-        await addHackLine('  ██║  ██║██╔══██╗██╔════╝██║ ██╔╝', '#FF5F56', 50);
-        await addHackLine('  ███████║███████║██║     █████╔╝ ', '#FF5F56', 50);
-        await addHackLine('  ██╔══██║██╔══██║██║     ██╔═██╗ ', '#FF5F56', 50);
-        await addHackLine('  ██║  ██║██║  ██║╚██████╗██║  ██╗', '#FF5F56', 50);
-        await addHackLine('  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝', '#FF5F56', 50);
-        await addHackLine('', '#00FF41', 200);
-        
-        await addHackLine('  [*] Scanning target: visitor_machine', '#FFBD2E', 150);
-        await addHackLine(`  [*] Target IP: ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`, '#FFBD2E', 150);
-        await addHackLine('  [*] Detecting open ports...', '#FFBD2E', 200);
-        await addHackLine('  [+] Port 22 (SSH) - OPEN', '#00FF41', 100);
-        await addHackLine('  [+] Port 80 (HTTP) - OPEN', '#00FF41', 100);
-        await addHackLine('  [+] Port 443 (HTTPS) - OPEN', '#00FF41', 100);
-        await addHackLine('  [+] Port 8080 (PROXY) - OPEN', '#00FF41', 100);
-        await addHackLine('', '#00FF41', 100);
-        
-        await addHackLine('  [*] Bypassing firewall...', '#FFBD2E', 200);
-        await progressBar('FIREWALL BYPASS', '#FF5F56');
-        await addHackLine('  [✓] Firewall bypassed!', '#00FF41', 200);
-        await addHackLine('', '#00FF41', 100);
-        
-        await addHackLine('  [*] Injecting payload...', '#FFBD2E', 200);
-        await progressBar('PAYLOAD INJECTION', '#FFBD2E');
-        await addHackLine('  [✓] Payload injected!', '#00FF41', 200);
-        await addHackLine('', '#00FF41', 100);
-        
-        await addHackLine('  [*] Gaining root access...', '#FFBD2E', 200);
-        await progressBar('ROOT ACCESS', '#00FF41');
-        await addHackLine('', '#00FF41', 200);
-        
-        await addHackLine('  ╔══════════════════════════════════════╗', '#00FF41', 100);
-        await addHackLine('  ║     🎉 ACCESS GRANTED 🎉             ║', '#00FF41', 100);
-        await addHackLine('  ╚══════════════════════════════════════╝', '#00FF41', 100);
-        await addHackLine('', '#00FF41', 300);
-        
-        await addHackLine('  Just kidding! 😄', '#FFBD2E', 500);
-        await addHackLine('  This is just a fun animation.', '#FFBD2E', 200);
-        await addHackLine('  No systems were harmed in making this easter egg.', '#FFBD2E', 200);
-        await addHackLine('', '#00FF41', 100);
-        await addHackLine('  Pro tip: Real hacking is way more boring.', '#808080', 300);
-        await addHackLine('  It\'s mostly reading logs and drinking coffee. ☕', '#808080', 200);
-        
-        return [];
-    }
+    resume: () => {
+        window.location.href = 'cv.html';
+        return ['Opening CV...'];
+    },
+    uptime: () => {
+        const elapsed = Date.now() - window._pageLoadTime;
+        const secs = Math.floor(elapsed / 1000);
+        const mins = Math.floor(secs / 60);
+        const hrs = Math.floor(mins / 60);
+        const parts = [];
+        if (hrs > 0) parts.push(`${hrs}h`);
+        if (mins % 60 > 0) parts.push(`${mins % 60}m`);
+        parts.push(`${secs % 60}s`);
+        return [
+            `Session uptime: ${parts.join(' ')}`,
+            `Page loaded: ${new Date(window._pageLoadTime).toLocaleTimeString()}`
+        ];
+    },
 };
 
 function addLine(text, className = '') {

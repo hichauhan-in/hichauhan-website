@@ -40,6 +40,59 @@
             gap: 24px;
         }
 
+        /* Page Header */
+        .page-header {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--teal);
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: text-shadow 0.15s;
+        }
+
+        .page-title:hover {
+            text-shadow: 0 0 12px rgba(0, 168, 150, 0.5);
+        }
+
+        .page-title.glitching {
+            animation: titleGlitch 0.06s steps(1) infinite;
+        }
+
+        @keyframes titleGlitch {
+            0%   { transform: translate(0); }
+            20%  { transform: translate(-2px, 1px); }
+            40%  { transform: translate(2px, -1px); }
+            60%  { transform: translate(-1px, -2px); }
+            80%  { transform: translate(1px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        .page-nav {
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid var(--steel);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .page-nav:hover {
+            color: var(--teal);
+            border-color: var(--teal);
+        }
+
         .terminal {
             width: 100%;
             max-width: 800px;
@@ -117,21 +170,6 @@
             color: var(--muted);
             font-size: 12px;
             flex: 1;
-        }
-
-        .bar-nav {
-            font-size: 11px;
-            color: var(--muted);
-            text-decoration: none;
-            padding: 4px 10px;
-            border: 1px solid var(--steel);
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .bar-nav:hover {
-            color: var(--teal);
-            border-color: var(--teal);
         }
 
         .terminal-body {
@@ -263,6 +301,11 @@
     </style>
 </head>
 <body>
+    <header class="page-header">
+        <h1 class="page-title">Contact</h1>
+        <a href="index.html" class="page-nav">cd ~/</a>
+    </header>
+
     <div class="minimized-dot" id="minDot"></div>
     <div class="terminal" id="terminal">
         <div class="terminal-bar">
@@ -270,7 +313,6 @@
             <div class="dot y"></div>
             <div class="dot g"></div>
             <span class="bar-title">hichauhan@blr:~/contact</span>
-            <a href="index.html" class="bar-nav">cd ~/</a>
         </div>
         <div class="terminal-body" id="output"></div>
         <div class="status-bar">
@@ -556,6 +598,77 @@
                     }, 2000);
                 }
             }, 700);
+        });
+
+        // ====== TITLE CHAOS ENGINE ======
+        const pageTitle = document.querySelector('.page-title');
+        const originalTitle = pageTitle.textContent;
+        let titleBusy = false;
+
+        const madContactTitles = [
+            'DON\'T SPAM ME', 'INBOX ZERO DREAM', 'PLEASE NO RECRUITERS',
+            'READ RECEIPTS OFF', 'REPLY EVENTUALLY', 'EMAIL ANXIETY',
+            'TYPING...', 'SEEN AT 3AM', 'UNREAD: 99+',
+            'PING ME MAYBE', '404 SOCIAL SKILLS', 'DO NOT DISTURB',
+            'AVAILABLE-ISH', 'MUTED NOTIFICATIONS', 'ASYNC ONLY',
+            'NO MEETINGS PLEASE', 'JUST SEND AN EMAIL', 'HI IS NOT A MESSAGE',
+            'WILL RESPOND MONDAY', 'OUT OF OFFICE FOREVER',
+            'SLACK IS NOT URGENT', 'CARRIER PIGEON PREFERRED',
+            'AUTORESPONDER ON', 'CONNECTION TIMEOUT', 'REACH ME IF YOU CAN',
+        ];
+
+        pageTitle.addEventListener('click', () => {
+            if (titleBusy) return;
+            titleBusy = true;
+
+            const target = madContactTitles[Math.floor(Math.random() * madContactTitles.length)];
+            const scrambleChars = '\u2588\u2593\u2592\u2591\u2580\u2584\u258c\u2590!@#$%&*<>{}[]|/\\^~';
+
+            // Phase 1: Scramble out current text
+            let frame = 0;
+            const outTotal = 10;
+            const outInterval = setInterval(() => {
+                frame++;
+                const text = pageTitle.textContent;
+                pageTitle.textContent = text.split('').map(c =>
+                    c === ' ' ? ' ' : (Math.random() < frame / outTotal ? scrambleChars[Math.floor(Math.random() * scrambleChars.length)] : c)
+                ).join('');
+                if (frame >= outTotal) {
+                    clearInterval(outInterval);
+                    // Phase 2: Scramble in new text
+                    let inFrame = 0;
+                    const inTotal = 12;
+                    const padded = target.padEnd(Math.max(target.length, originalTitle.length));
+                    const inInterval = setInterval(() => {
+                        inFrame++;
+                        pageTitle.textContent = padded.split('').map((c, i) =>
+                            c === ' ' ? ' ' : (Math.random() < inFrame / inTotal ? c : scrambleChars[Math.floor(Math.random() * scrambleChars.length)])
+                        ).join('').trimEnd();
+                        if (inFrame >= inTotal) {
+                            clearInterval(inInterval);
+                            pageTitle.textContent = target;
+                            // Phase 3: Hold, then scramble back to original
+                            setTimeout(() => {
+                                let revFrame = 0;
+                                const revTotal = 12;
+                                const revInterval = setInterval(() => {
+                                    revFrame++;
+                                    const src = pageTitle.textContent;
+                                    const orig = originalTitle.padEnd(Math.max(originalTitle.length, src.length));
+                                    pageTitle.textContent = orig.split('').map((c, i) =>
+                                        c === ' ' ? ' ' : (Math.random() < revFrame / revTotal ? c : scrambleChars[Math.floor(Math.random() * scrambleChars.length)])
+                                    ).join('').trimEnd();
+                                    if (revFrame >= revTotal) {
+                                        clearInterval(revInterval);
+                                        pageTitle.textContent = originalTitle;
+                                        titleBusy = false;
+                                    }
+                                }, 40);
+                            }, 2000);
+                        }
+                    }, 40);
+                }
+            }, 40);
         });
     </script>
 </body>
