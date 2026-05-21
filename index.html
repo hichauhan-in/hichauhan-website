@@ -76,14 +76,197 @@
             border: 2px solid var(--steel-grey);
             object-fit: cover;
             filter: grayscale(20%);
-            transition: all 0.3s ease;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
             box-shadow: 0 0 0 0 rgba(0, 168, 150, 0);
+            cursor: grab;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .dp-image:active {
+            cursor: grabbing;
         }
 
         .dp-image:hover {
             border-color: var(--neon-teal);
             filter: grayscale(0%);
             box-shadow: 0 0 20px rgba(0, 168, 150, 0.25);
+        }
+
+        .dp-displaced {
+            position: fixed;
+            z-index: 4000;
+            pointer-events: auto;
+        }
+
+        .dp-ghost {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            border: 2px dashed var(--neon-teal);
+            opacity: 0.4;
+            box-sizing: border-box;
+        }
+
+        /* Basketball hoop */
+        .bball-hoop {
+            position: fixed;
+            right: -250px;
+            top: 40%;
+            transform: translateY(-50%);
+            z-index: 3500;
+            transition: right 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+        }
+
+        .bball-hoop.visible {
+            right: 16px;
+        }
+
+        .bball-hoop.scored .hoop-rim {
+            border-color: var(--neon-teal);
+            box-shadow: 0 0 30px rgba(0, 168, 150, 0.6);
+        }
+
+        .bball-backboard {
+            width: 10px;
+            height: 140px;
+            background: var(--steel-grey);
+            border: 1px solid var(--muted-grey);
+            border-radius: 2px;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .hoop-rim {
+            width: 130px;
+            height: 28px;
+            border: 4px solid #FF5F56;
+            border-top: none;
+            border-radius: 0 0 65px 65px;
+            position: absolute;
+            right: 10px;
+            top: 80px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .hoop-net {
+            position: absolute;
+            right: 25px;
+            top: 106px;
+            width: 100px;
+            height: 70px;
+            border-left: 2px dashed var(--steel-grey);
+            border-right: 2px dashed var(--steel-grey);
+            border-bottom: 2px dashed var(--steel-grey);
+            border-radius: 0 0 12px 12px;
+            opacity: 0.5;
+        }
+
+        .bball-score-flash {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 168, 150, 0.08);
+            z-index: 4999;
+            pointer-events: none;
+            animation: scoreFlash 0.6s ease forwards;
+        }
+
+        @keyframes scoreFlash {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
+        .bball-score-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--graphite);
+            border: 1px solid var(--neon-teal);
+            border-radius: 8px;
+            padding: 20px 28px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            z-index: 5500;
+            opacity: 0;
+            animation: scorePopUp 0.3s ease 0.1s forwards;
+        }
+
+        @keyframes scorePopUp {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .bball-score-prompt .score-msg {
+            font-size: 14px;
+            color: var(--neon-teal);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .bball-score-prompt .score-sub {
+            font-size: 11px;
+            color: var(--muted-grey);
+        }
+
+        .site-greyed-out .terminal-container,
+        .site-greyed-out .side-buttons,
+        .site-greyed-out .command-hint,
+        .site-greyed-out .welcome-name,
+        .site-greyed-out .welcome-tag {
+            opacity: 0.2;
+            pointer-events: none;
+            filter: grayscale(100%);
+            transition: all 0.4s ease;
+        }
+
+        .site-greyed-out .hints-toggle,
+        .site-greyed-out .gravity-toggle {
+            opacity: 0.2;
+            pointer-events: none;
+            filter: grayscale(100%);
+            transition: all 0.4s ease;
+        }
+
+        .dp-snap-back {
+            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }
+
+        .dp-sarcasm-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--graphite);
+            border: 1px solid var(--neon-teal);
+            border-radius: 10px;
+            padding: 32px 40px;
+            z-index: 10000;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            opacity: 0;
+            animation: popupAppear 0.3s ease forwards;
+            max-width: 420px;
+        }
+
+        .dp-sarcasm-popup .sarcasm-msg {
+            font-size: 14px;
+            color: var(--warning-amber);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .dp-sarcasm-popup .sarcasm-hint {
+            font-size: 11px;
+            color: var(--muted-grey);
+        }
+
+        @keyframes popupAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .welcome-header {
@@ -310,6 +493,289 @@
             font-size: 11px;
         }
 
+        /* Hints toggle switch */
+        .hints-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--graphite);
+            border: 1px solid var(--steel-grey);
+            border-radius: 20px;
+            padding: 6px 14px 6px 8px;
+            cursor: pointer;
+            z-index: 4500;
+            transition: all 0.2s ease;
+            opacity: 0.5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hints-toggle:hover {
+            opacity: 0.9;
+            border-color: var(--muted-grey);
+        }
+
+        .hints-toggle.active {
+            border-color: var(--warning-amber);
+            opacity: 1;
+            box-shadow: 0 0 12px rgba(212, 165, 116, 0.15);
+        }
+
+        .hints-toggle .toggle-track {
+            width: 28px;
+            height: 14px;
+            background: var(--steel-grey);
+            border-radius: 7px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+
+        .hints-toggle.active .toggle-track {
+            background: rgba(212, 165, 116, 0.4);
+        }
+
+        .hints-toggle .toggle-knob {
+            width: 10px;
+            height: 10px;
+            background: var(--muted-grey);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .hints-toggle.active .toggle-knob {
+            left: 16px;
+            background: var(--warning-amber);
+        }
+
+        .hints-toggle .toggle-label {
+            font-size: 10px;
+            color: var(--muted-grey);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hints-toggle.active .toggle-label {
+            color: var(--warning-amber);
+        }
+
+        /* Gravity toggle - danger style */
+        .gravity-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 140px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--graphite);
+            border: 1px solid var(--steel-grey);
+            border-radius: 20px;
+            padding: 6px 14px 6px 8px;
+            cursor: pointer;
+            z-index: 4500;
+            transition: all 0.2s ease;
+            opacity: 0.5;
+            font-family: 'JetBrains Mono', monospace;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .gravity-toggle:hover {
+            opacity: 0.9;
+            border-color: #FF5F56;
+        }
+
+        .gravity-toggle.active {
+            border-color: #FF5F56;
+            opacity: 1;
+            box-shadow: 0 0 12px rgba(255, 95, 86, 0.25);
+            animation: dangerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes dangerPulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 95, 86, 0.25); }
+            50% { box-shadow: 0 0 20px rgba(255, 95, 86, 0.4); }
+        }
+
+        .gravity-toggle .toggle-track {
+            width: 28px;
+            height: 14px;
+            background: var(--steel-grey);
+            border-radius: 7px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+
+        .gravity-toggle.active .toggle-track {
+            background: rgba(255, 95, 86, 0.4);
+        }
+
+        .gravity-toggle .toggle-knob {
+            width: 10px;
+            height: 10px;
+            background: var(--muted-grey);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .gravity-toggle.active .toggle-knob {
+            left: 16px;
+            background: #FF5F56;
+        }
+
+        .gravity-toggle .toggle-label {
+            font-size: 10px;
+            color: var(--muted-grey);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gravity-toggle.active .toggle-label {
+            color: #FF5F56;
+        }
+
+        .gravity-body {
+            position: fixed !important;
+            margin: 0 !important;
+            z-index: 3000;
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        .gravity-body,
+        .gravity-body * {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .gravity-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, rgba(255, 95, 86, 0.05));
+            pointer-events: none;
+            z-index: 3999;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .gravity-overlay.active {
+            opacity: 1;
+        }
+
+        .gravity-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--graphite);
+            border: 1px solid #FF5F56;
+            border-radius: 8px;
+            padding: 16px 28px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            z-index: 5000;
+            opacity: 0;
+            animation: popIn 0.4s ease 0.5s forwards;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .gravity-prompt .msg {
+            font-size: 13px;
+            color: #FF5F56;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .gravity-prompt .restart-btn {
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid #FF5F56;
+            color: #FF5F56;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+
+        .gravity-prompt .restart-btn:hover {
+            background: #FF5F56;
+            color: #0A0A0A;
+        }
+
+        /* Hint indicators */
+        .chaos-hint {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--warning-amber);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .chaos-hint::before {
+            content: '⚠ ';
+        }
+
+        body.hints-active .chaos-hint {
+            opacity: 1;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        body.hints-active .dp-circular-hint {
+            opacity: 1;
+            animation: spinHint 12s linear infinite;
+            transform-origin: 80px 80px;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes spinHint {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chaos-hint-arrow {
+            position: absolute;
+            font-size: 14px;
+            color: var(--warning-amber);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        body.hints-active .chaos-hint-arrow {
+            opacity: 0.8;
+            animation: hintBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes hintBounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(4px); }
+        }
+
         /* Terminal */
         .terminal-container {
             background: var(--graphite);
@@ -471,6 +937,27 @@
             .welcome-tag {
                 font-size: 11px;
             }
+
+            .gravity-toggle {
+                left: 24px;
+                right: auto;
+                bottom: 64px;
+            }
+
+            .gravity-prompt {
+                padding: 14px 18px;
+                width: 85vw;
+                max-width: 320px;
+            }
+
+            .gravity-prompt .msg {
+                font-size: 12px;
+            }
+
+            .gravity-prompt .restart-btn {
+                font-size: 11px;
+                padding: 7px 16px;
+            }
         }
     </style>
 </head>
@@ -523,8 +1010,16 @@
         <div class="main-content">
             <!-- Welcome -->
             <div class="welcome-header">
-                <div class="dp-container">
+                <div class="dp-container" style="position:relative;">
                     <img src="resources/dp.png" alt="Himanshu Chauhan" class="dp-image">
+                    <svg class="chaos-hint dp-circular-hint" width="160" height="160" viewBox="0 0 160 160" style="position:absolute; top:-24px; left:-24px; pointer-events:none;">
+                        <defs>
+                            <path id="circlePath" d="M 80,80 m -65,0 a 65,65 0 1,1 130,0 a 65,65 0 1,1 -130,0" fill="none"/>
+                        </defs>
+                        <text font-family="JetBrains Mono, monospace" font-size="9.5" fill="#D4A574" letter-spacing="3">
+                            <textPath href="#circlePath" startOffset="0%">⚠ Warning ⚠ It's draggable You can hold it · </textPath>
+                        </text>
+                    </svg>
                 </div>
                 <div class="welcome-name" id="welcomeName"></div>
                 <div class="welcome-tag"><span>Windows Debug Engineer</span> @Microsoft</div>
@@ -533,11 +1028,12 @@
             <div class="terminal-row">
             <!-- Terminal -->
             <div class="terminal-container" onclick="document.getElementById('terminalInput').focus()">
-            <div class="terminal-header">
+            <div class="terminal-header" style="position:relative;">
                 <div class="terminal-dot red"></div>
                 <div class="terminal-dot yellow"></div>
                 <div class="terminal-dot green"></div>
                 <span class="terminal-title">terminal</span>
+                <span class="chaos-hint" style="top:-18px; left:0;">DO NOT click these dots</span>
             </div>
             <div class="terminal-output" id="terminalOutput">
                 <div class="terminal-line">Welcome to the Terminal!</div>
@@ -564,6 +1060,27 @@
     </div>
 
     <div class="command-hint">Press <kbd>Ctrl+K</kbd> for quick commands</div>
+
+    <!-- Hints toggle -->
+    <div class="hints-toggle" id="hintsToggle" title="Toggle easter egg hints">
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">hints</span>
+    </div>
+
+    <!-- Gravity toggle -->
+    <div class="gravity-toggle" id="gravityToggle" title="Enable gravity (g=9.8)">
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">g=0.0</span>
+        <span class="chaos-hint" style="top:-22px; left:50%; transform:translateX(-50%); white-space:nowrap;">don't touch</span>
+    </div>
+    <div class="gravity-overlay" id="gravityOverlay"></div>
+
+    <!-- Basketball hoop -->
+    <div class="bball-hoop" id="bballHoop">
+        <div class="bball-backboard"></div>
+        <div class="hoop-rim" id="hoopRim"></div>
+        <div class="hoop-net"></div>
+    </div>
 
     <script src="main.js"></script>
     <script>
@@ -634,7 +1151,7 @@
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
-                if (window.terminalDisabled) return;
+                if (window.terminalDisabled || window.dpDisplaced) return;
                 if (commandPalette.classList.contains('active')) {
                     closePalette();
                 } else {
@@ -1633,6 +2150,1136 @@
                 }, 800);
             }, 4200);
         }
+
+        // ====== DP DRAG CHAOS ======
+        (function() {
+            const dp = document.querySelector('.dp-image');
+            const dpContainer = document.querySelector('.dp-container');
+            if (!dp || !dpContainer) return;
+
+            let isDragging = false;
+            let startX, startY, offsetX, offsetY;
+            let originalRect = null;
+            let displaced = false;
+            let dragCount = 0;
+
+            const sarcasticMessages = [
+                "You really think it looks good there?",
+                "Ah yes, interior decorating skills on full display.",
+                "Congratulations, you broke the layout. Happy now?",
+                "That's... certainly a choice. A bad one, but still a choice.",
+                "Even my CSS is cringing right now.",
+                "You move your furniture this recklessly too?",
+                "Drag and drop? More like drag and disaster.",
+                "The grid system called. It's filing for divorce.",
+                "Bold move. Wrong move. But bold.",
+                "My face goes THERE. Put it back. NOW.",
+                "This isn't a puzzle game. There's only one correct position.",
+                "Are you redecorating or committing a crime against UX?",
+                "Cool, cool. Now the page looks like a ransom note.",
+                "If I had feelings, this would hurt them.",
+                "You just gave a UX designer a heart attack somewhere.",
+                "Ah, the Picasso of page layouts has arrived.",
+                "That's not where I live. I have a lease agreement with that div.",
+                "You're the reason we can't have nice things.",
+                "I didn't spend hours in Figma for THIS.",
+                "Somewhere, a CSS professor just shed a tear.",
+                "My therapist is going to hear about this.",
+                "You wouldn't download a car, but you'd rearrange my face?",
+                "Plot twist: it doesn't look good anywhere else.",
+                "The layout is crying. Can you hear it? No? Just me?",
+                "This is the digital equivalent of putting ketchup on steak.",
+            ];
+
+            // Escalating messages when user keeps doing it
+            const escalatingMessages = [
+                // 3+ times
+                [
+                    "Okay we get it. You discovered drag. Congrats.",
+                    "Three times? This is a pattern now.",
+                    "At this point you're just stress-testing my patience.",
+                    "Is this your idea of fun? Because same, honestly. Wait no.",
+                    "You keep dragging me around like I'm your emotional baggage.",
+                ],
+                // 5+ times
+                [
+                    "FIVE TIMES. Do you need a hobby? I can recommend WinDbg.",
+                    "You're more persistent than a kernel memory leak.",
+                    "I'm starting to think you enjoy watching me suffer.",
+                    "This is harassment. I'm contacting HR. (I don't have HR.)",
+                    "Even Windows Update doesn't force-move things this much.",
+                ],
+                // 8+ times
+                [
+                    "Genuinely impressive commitment to chaos. You single?",
+                    "My developer didn't code me to handle this level of abuse.",
+                    "You've dragged me more times than I've been dragged on Twitter.",
+                    "I'm filing a restraining order. Stay 50px away from me.",
+                    "Congratulations: you've unlocked the 'Needs Therapy' achievement.",
+                ],
+                // 12+ times
+                [
+                    "...you're still going? I literally have nothing left to say.",
+                    "I've run out of insults. You win. Are you happy now?",
+                    "At this point I respect the dedication. Slightly.",
+                    "You've spent more time dragging my face than reading my resume.",
+                    "The ghost circle is my home. I miss it. Please stop.",
+                    "I'm not angry. I'm just disappointed. (I'm also angry.)",
+                ],
+            ];
+
+            function getOriginalPosition() {
+                if (!originalRect) {
+                    originalRect = dp.getBoundingClientRect();
+                }
+                return originalRect;
+            }
+
+            // Initialize original position
+            setTimeout(() => getOriginalPosition(), 100);
+
+            function startDrag(e) {
+                if (window.terminalDisabled) return;
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const rect = dp.getBoundingClientRect();
+                if (!originalRect && !displaced) {
+                    originalRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+                }
+
+                // Stop any active physics
+                if (physicsRAF) { cancelAnimationFrame(physicsRAF); physicsRAF = null; }
+
+                offsetX = clientX - rect.left;
+                offsetY = clientY - rect.top;
+                isDragging = true;
+                window.dpDragging = true;
+                lastDragX = clientX;
+                lastDragY = clientY;
+                lastDragTime = Date.now();
+                velX = 0;
+                velY = 0;
+
+                // Reserve space so layout doesn't shift
+                const containerRect = dpContainer.getBoundingClientRect();
+                dpContainer.style.width = containerRect.width + 'px';
+                dpContainer.style.height = containerRect.height + 'px';
+                dpContainer.style.minHeight = containerRect.height + 'px';
+
+                // Show ghost placeholder
+                if (!dpContainer.querySelector('.dp-ghost')) {
+                    const ghost = document.createElement('div');
+                    ghost.className = 'dp-ghost';
+                    dpContainer.appendChild(ghost);
+                }
+
+                // Pull out of flow
+                dp.classList.add('dp-displaced');
+                dp.classList.remove('dp-snap-back');
+                dp.style.left = rect.left + 'px';
+                dp.style.top = rect.top + 'px';
+                dp.style.cursor = 'grabbing';
+                dp.style.transition = 'none';
+                // Keep current rotation — don't reset mid-motion
+            }
+
+            // Physics state
+            let velX = 0, velY = 0;
+            let lastDragX = 0, lastDragY = 0, lastDragTime = 0;
+            let physicsRAF = null;
+            let rotation = 0;
+            let angularVel = 0;
+            const GRAVITY = 1800;    // px/s²
+            const BOUNCE = 0.6;      // energy retained on bounce
+            const FRICTION = 0.985;  // air friction per frame
+            const GROUND_FRICTION = 0.92;
+            const ROLL_FRICTION = 0.97;
+            const SIZE = 112;
+
+            function moveDrag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const now = Date.now();
+                const dt = (now - lastDragTime) / 1000;
+                if (dt > 0) {
+                    // Track velocity for throw
+                    velX = (clientX - lastDragX) / dt;
+                    velY = (clientY - lastDragY) / dt;
+                    // Clamp max velocity
+                    const maxVel = 3000;
+                    velX = Math.max(-maxVel, Math.min(maxVel, velX));
+                    velY = Math.max(-maxVel, Math.min(maxVel, velY));
+                }
+                lastDragX = clientX;
+                lastDragY = clientY;
+                lastDragTime = now;
+
+                dp.style.left = (clientX - offsetX) + 'px';
+                dp.style.top = (clientY - offsetY) + 'px';
+                dp.style.transform = `rotate(${rotation}deg)`;
+            }
+
+            function endDrag(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                window.dpDragging = false;
+                dp.style.cursor = 'grab';
+
+                const currentRect = dp.getBoundingClientRect();
+                const dist = Math.hypot(
+                    currentRect.left - originalRect.left,
+                    currentRect.top - originalRect.top
+                );
+
+                // If dropped close to original spot, snap back silently
+                if (dist < 30 && Math.hypot(velX, velY) < 200) {
+                    snapBack(false);
+                    return;
+                }
+
+                // Start physics simulation
+                displaced = true;
+                window.dpDisplaced = true;
+                dragCount++;
+                document.body.classList.add('site-greyed-out');
+
+                // Add some angular velocity based on throw
+                angularVel = velX * 0.3;
+
+                startPhysics();
+                showSarcasticPopup();
+            }
+
+            function startPhysics() {
+                let posX = parseFloat(dp.style.left);
+                let posY = parseFloat(dp.style.top);
+                let lastTime = performance.now();
+                let settled = false;
+                let settleFrames = 0;
+
+                function step(now) {
+                    // Bail if gravity system took over
+                    if (window.gravityEnabled) { physicsRAF = null; return; }
+                    const dt = Math.min((now - lastTime) / 1000, 0.05); // cap dt
+                    lastTime = now;
+
+                    const floor = window.innerHeight - SIZE;
+                    const wallRight = window.innerWidth - SIZE;
+                    const ceiling = 0;
+                    const wallLeft = 0;
+
+                    // Apply gravity
+                    velY += GRAVITY * dt;
+
+                    // Apply air friction
+                    velX *= FRICTION;
+
+                    // Move
+                    posX += velX * dt;
+                    posY += velY * dt;
+
+                    // Floor collision
+                    if (posY >= floor) {
+                        posY = floor;
+                        velY = -velY * BOUNCE;
+                        velX *= GROUND_FRICTION;
+                        angularVel = velX * 0.5; // roll based on horizontal speed
+                        // Kill tiny bounces
+                        if (Math.abs(velY) < 30) velY = 0;
+                    }
+
+                    // Ceiling collision
+                    if (posY <= ceiling) {
+                        posY = ceiling;
+                        velY = -velY * BOUNCE;
+                    }
+
+                    // Wall collisions
+                    if (posX >= wallRight) {
+                        posX = wallRight;
+                        velX = -velX * BOUNCE;
+                        angularVel = -angularVel * 0.7;
+                    }
+                    if (posX <= wallLeft) {
+                        posX = wallLeft;
+                        velX = -velX * BOUNCE;
+                        angularVel = -angularVel * 0.7;
+                    }
+
+                    // Collide with terminal container
+                    const terminal = document.querySelector('.terminal-container');
+                    if (terminal) {
+                        const tr = terminal.getBoundingClientRect();
+                        const dpCX = posX + SIZE / 2;
+                        const dpCY = posY + SIZE / 2;
+                        const dpR = SIZE / 2;
+
+                        // Check if dp circle overlaps terminal rect
+                        const closestX = Math.max(tr.left, Math.min(dpCX, tr.right));
+                        const closestY = Math.max(tr.top, Math.min(dpCY, tr.bottom));
+                        const distX = dpCX - closestX;
+                        const distY = dpCY - closestY;
+                        const distSq = distX * distX + distY * distY;
+
+                        if (distSq < dpR * dpR && distSq > 0) {
+                            const dist = Math.sqrt(distSq);
+                            const nx = distX / dist;
+                            const ny = distY / dist;
+                            const overlap = dpR - dist;
+
+                            // Push out
+                            posX += nx * overlap;
+                            posY += ny * overlap;
+
+                            // Reflect velocity
+                            const dot = velX * nx + velY * ny;
+                            if (dot < 0) {
+                                velX -= 2 * dot * nx * BOUNCE;
+                                velY -= 2 * dot * ny * BOUNCE;
+                                angularVel = velX * 0.4;
+                            }
+                        }
+                    }
+
+                    // Collide with side buttons
+                    const buttons = document.querySelector('.side-buttons');
+                    if (buttons) {
+                        const br = buttons.getBoundingClientRect();
+                        const dpCX = posX + SIZE / 2;
+                        const dpCY = posY + SIZE / 2;
+                        const dpR = SIZE / 2;
+
+                        const closestX = Math.max(br.left, Math.min(dpCX, br.right));
+                        const closestY = Math.max(br.top, Math.min(dpCY, br.bottom));
+                        const distX = dpCX - closestX;
+                        const distY = dpCY - closestY;
+                        const distSq = distX * distX + distY * distY;
+
+                        if (distSq < dpR * dpR && distSq > 0) {
+                            const dist = Math.sqrt(distSq);
+                            const nx = distX / dist;
+                            const ny = distY / dist;
+                            const overlap = dpR - dist;
+
+                            posX += nx * overlap;
+                            posY += ny * overlap;
+
+                            const dot = velX * nx + velY * ny;
+                            if (dot < 0) {
+                                velX -= 2 * dot * nx * BOUNCE;
+                                velY -= 2 * dot * ny * BOUNCE;
+                                angularVel = velX * 0.3;
+                            }
+                        }
+                    }
+
+                    // Rolling on floor
+                    if (posY >= floor - 1) {
+                        velX *= ROLL_FRICTION;
+                        angularVel *= ROLL_FRICTION;
+                    }
+
+                    // Rotation
+                    rotation += angularVel * dt;
+                    angularVel *= 0.99;
+
+                    // Apply position
+                    dp.style.left = posX + 'px';
+                    dp.style.top = posY + 'px';
+                    dp.style.transform = `rotate(${rotation}deg)`;
+
+                    // Check if settled
+                    if (Math.abs(velX) < 5 && Math.abs(velY) < 5 && posY >= floor - 2) {
+                        settleFrames++;
+                        if (settleFrames > 30) settled = true;
+                    } else {
+                        settleFrames = 0;
+                    }
+
+                    // Check if near ghost (snap back)
+                    const distToHome = Math.hypot(posX - originalRect.left, posY - originalRect.top);
+                    if (distToHome < 50 && Math.hypot(velX, velY) < 100) {
+                        cancelAnimationFrame(physicsRAF);
+                        physicsRAF = null;
+                        snapBack(true);
+                        return;
+                    }
+
+                    if (!settled) {
+                        physicsRAF = requestAnimationFrame(step);
+                    } else {
+                        physicsRAF = null;
+                    }
+                }
+
+                physicsRAF = requestAnimationFrame(step);
+            }
+
+            function showSarcasticPopup() {
+                // Remove existing popup
+                document.querySelector('.dp-sarcasm-popup')?.remove();
+
+                // Pick message pool based on how many times they've done this
+                let pool;
+                if (dragCount >= 12) pool = escalatingMessages[3];
+                else if (dragCount >= 8) pool = escalatingMessages[2];
+                else if (dragCount >= 5) pool = escalatingMessages[1];
+                else if (dragCount >= 3) pool = escalatingMessages[0];
+                else pool = sarcasticMessages;
+
+                const msg = pool[Math.floor(Math.random() * pool.length)];
+                const popup = document.createElement('div');
+                popup.className = 'dp-sarcasm-popup';
+
+                // Escalating hint text - always instruction + remark
+                const hints = [
+                    'Put it back in the circle. /// ...before I lose what\'s left of my dignity.',
+                    'Drag it to the dotted circle. /// ...you absolute menace.',
+                    'Return it to its home. /// ...it has separation anxiety.',
+                    'Put. It. Back. /// ...I shouldn\'t have to say this twice.',
+                    'The circle wants its face back. /// ...and so does my layout.',
+                    'Snap it back to the ghost zone. /// ...like nothing happened. Please.',
+                    'Restore the natural order. /// ...or live with the grey void forever.',
+                    'Place it in the dotted outline. /// ...it\'s not that hard. Allegedly.',
+                    'Drag it home. /// ...home misses it. I miss it. We all miss it.',
+                    'Put my face back where it was. /// ...this is non-negotiable.',
+                ];
+                if (dragCount >= 8) {
+                    hints.push(
+                        'JUST PUT IT BACK. /// ...I have nothing left.',
+                        'CIRCLE. FACE. NOW. /// ...is three words too complex?',
+                        'Return to sender. /// ...I\'m the sender AND the package.',
+                        'Dock it. /// ...or I swear I\'ll remove drag entirely next deploy.',
+                    );
+                }
+                const hint = hints[Math.floor(Math.random() * hints.length)];
+                const [instruction, remark] = hint.split(' /// ');
+
+                popup.innerHTML = `
+                    <div class="sarcasm-msg">${msg}</div>
+                    <div class="sarcasm-hint" style="margin-top:14px; font-size:11px; color:#B0B0B0;">${instruction}</div>
+                    <div class="sarcasm-hint" style="margin-top:6px; font-size:10px; color:#808080; font-style:italic;">${remark}</div>
+                `;
+                document.body.appendChild(popup);
+
+                // Auto-dismiss after 5s
+                setTimeout(() => {
+                    popup.style.transition = 'opacity 0.3s ease';
+                    popup.style.opacity = '0';
+                    setTimeout(() => popup.remove(), 300);
+                }, 5000);
+            }
+
+            function snapBack(animate = true) {
+                if (physicsRAF) { cancelAnimationFrame(physicsRAF); physicsRAF = null; }
+                velX = 0; velY = 0; angularVel = 0;
+                document.querySelector('.dp-sarcasm-popup')?.remove();
+
+                if (animate) {
+                    dp.classList.add('dp-snap-back');
+                    // Longer transition for smooth rotation recovery
+                    const rotDuration = Math.min(0.8, Math.abs(rotation % 360) / 360 * 0.6 + 0.3);
+                    dp.style.transition = `left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform ${rotDuration}s ease-out`;
+                }
+                dp.style.left = originalRect.left + 'px';
+                dp.style.top = originalRect.top + 'px';
+                dp.style.transform = 'rotate(0deg)';
+                rotation = 0;
+
+                const delay = animate ? 600 : 0;
+                setTimeout(() => {
+                    // Unblock site after animation completes
+                    displaced = false;
+                    window.dpDisplaced = false;
+                    document.body.classList.remove('site-greyed-out');
+
+                    dp.classList.remove('dp-displaced', 'dp-snap-back');
+                    dp.style.left = '';
+                    dp.style.top = '';
+                    dp.style.transform = '';
+                    dp.style.transition = '';
+                    dp.style.cursor = 'grab';
+                    // Remove ghost and restore container
+                    dpContainer.querySelector('.dp-ghost')?.remove();
+                    dpContainer.style.width = '';
+                    dpContainer.style.height = '';
+                    dpContainer.style.minHeight = '';
+                }, delay);
+            }
+
+            // Check if dropped back near original position
+            function checkSnapBack() {
+                if (!displaced) return;
+                const currentRect = dp.getBoundingClientRect();
+                const dist = Math.hypot(
+                    currentRect.left - originalRect.left,
+                    currentRect.top - originalRect.top
+                );
+                if (dist < 50) {
+                    snapBack(true);
+                }
+            }
+
+            // Mouse events
+            dp.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', moveDrag);
+            document.addEventListener('mouseup', (e) => {
+                endDrag(e);
+            });
+
+            // Touch events
+            dp.addEventListener('touchstart', startDrag, { passive: false });
+            document.addEventListener('touchmove', moveDrag, { passive: false });
+            document.addEventListener('touchend', (e) => {
+                endDrag(e);
+            });
+
+            // Recalculate original pos on resize
+            window.addEventListener('resize', () => {
+                if (!displaced) {
+                    originalRect = null;
+                    setTimeout(() => getOriginalPosition(), 50);
+                }
+            });
+        })();
+
+        // ====== BASKETBALL HOOP ======
+        (function() {
+            const hoop = document.getElementById('bballHoop');
+            const rim = document.getElementById('hoopRim');
+            const dp = document.querySelector('.dp-image');
+            if (!hoop || !rim || !dp) return;
+
+            let hoopVisible = false;
+            let scoreCount = 0;
+            let showTimeout = null;
+            let checkRAF = null;
+            let prevDpY = 0;
+            let dpInRimZone = false;
+            let scoreBtn = null;
+
+            // Escalating sarcasm pools
+            const scoreMessages = [
+                // 1-2 goals
+                [
+                    "SWISH! ...are you satisfied now?",
+                    "Nothing but net. Now put it back.",
+                    "Kobe! ...he would've done it faster though.",
+                    "3 points! ...and zero productivity.",
+                    "GOAAAL! Wait, wrong sport. Whatever.",
+                    "NBA scouts are NOT watching. Put it back.",
+                    "Alright, Steph Curry. You done?",
+                    "Congrats on your meaningless achievement.",
+                ],
+                // 3-5 goals
+                [
+                    "Again? This isn't a career path, you know.",
+                    "You're speedrunning wasted time.",
+                    "The hoop is questioning its life choices.",
+                    "That's ${n} now. Your mom would be... confused.",
+                    "Do you put this on your resume? 'Pixel basketball: ${n}'",
+                    "At this point you're just avoiding real work.",
+                    "Another one. DJ Khaled would be bored by now.",
+                    "You're ${n} shots in. Touch grass.",
+                ],
+                // 6-10 goals
+                [
+                    "STILL going?! I'm running out of insults.",
+                    "${n} baskets. Zero life decisions reconsidered.",
+                    "This is genuinely concerning behavior.",
+                    "Your browser's RAM is judging you harder than I am.",
+                    "At ${n} goals, this officially qualifies as an addiction.",
+                    "I'm billing you for hoop maintenance.",
+                    "The backboard filed a restraining order.",
+                    "Do you need someone to talk to? Seriously.",
+                ],
+                // 11+ goals
+                [
+                    "I literally cannot believe you're still doing this.",
+                    "${n}. ${N}! GO OUTSIDE!",
+                    "At this point I'm just impressed. And horrified.",
+                    "You've scored ${n} times on a PERSONAL WEBSITE.",
+                    "I'm adding a paywall to the hoop next deploy.",
+                    "This has gone from easter egg to mental health concern.",
+                    "Achievement unlocked: Wasted An Entire Day On Nothing.",
+                    "I'm disabling this feature. (I'm not. But I should.)",
+                ],
+            ];
+
+            const pointsBtnMessages = [
+                "You really thought I'd waste memory storing your useless score?",
+                "Imagine allocating RAM for this. I'd rather segfault.",
+                "Points? I'm not your cheerleader, dude.",
+                "Score tracking? In THIS economy? Absolutely not.",
+                "You think localStorage grows on trees? Get lost.",
+                "I'd rather track how many braincells you lost doing this.",
+                "Scoreboard machine broke. Permanently. For you specifically.",
+                "Your score is stored in /dev/null where it belongs.",
+                "I have better things to track. Like literally anything else.",
+                "The audacity to ask for points on someone's portfolio site.",
+            ];
+
+            function getHoopZone() {
+                const rimRect = rim.getBoundingClientRect();
+                return {
+                    left: rimRect.left + 10,
+                    right: rimRect.right - 10,
+                    top: rimRect.top,
+                    bottom: rimRect.top + 35,
+                };
+            }
+
+            function showHoop() {
+                if (hoopVisible || window.gravityEnabled) return;
+                hoopVisible = true;
+                dpInRimZone = false;
+                hoop.classList.add('visible');
+                startTracking();
+            }
+
+            function hideHoop() {
+                hoopVisible = false;
+                hoop.classList.remove('visible', 'scored');
+                stopTracking();
+            }
+
+            function startTracking() {
+                if (checkRAF) return;
+                function check() {
+                    if (!hoopVisible) return;
+                    const dpRect = dp.getBoundingClientRect();
+                    const dpCX = dpRect.left + dpRect.width / 2;
+                    const dpCY = dpRect.top + dpRect.height / 2;
+                    const zone = getHoopZone();
+
+                    const inX = dpCX >= zone.left && dpCX <= zone.right;
+                    const inY = dpCY >= zone.top && dpCY <= zone.bottom;
+                    const goingDown = dpCY > prevDpY;
+
+                    if (inX && inY && goingDown && !dpInRimZone) {
+                        onScore();
+                    }
+
+                    dpInRimZone = inX && inY;
+                    prevDpY = dpCY;
+                    checkRAF = requestAnimationFrame(check);
+                }
+                checkRAF = requestAnimationFrame(check);
+            }
+
+            function stopTracking() {
+                if (checkRAF) {
+                    cancelAnimationFrame(checkRAF);
+                    checkRAF = null;
+                }
+            }
+
+            function getScoreMessage() {
+                let pool;
+                if (scoreCount <= 2) pool = scoreMessages[0];
+                else if (scoreCount <= 5) pool = scoreMessages[1];
+                else if (scoreCount <= 10) pool = scoreMessages[2];
+                else pool = scoreMessages[3];
+
+                let msg = pool[Math.floor(Math.random() * pool.length)];
+                msg = msg.replace(/\$\{n\}/g, scoreCount).replace(/\$\{N\}/g, scoreCount);
+                return msg;
+            }
+
+            function onScore() {
+                scoreCount++;
+                hoop.classList.add('scored');
+                stopTracking();
+
+                // Remove the sarcasm popup — only show score popup
+                document.querySelector('.dp-sarcasm-popup')?.remove();
+
+                // Screen flash
+                const flash = document.createElement('div');
+                flash.className = 'bball-score-flash';
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), 600);
+
+                const msg = getScoreMessage();
+                const prompt = document.createElement('div');
+                prompt.className = 'bball-score-prompt';
+                prompt.innerHTML = `
+                    <div class="score-msg">${msg}</div>
+                    <div class="score-sub">...now drag it back to the circle, please.</div>
+                `;
+                document.body.appendChild(prompt);
+
+                setTimeout(() => {
+                    prompt.style.transition = 'opacity 0.4s';
+                    prompt.style.opacity = '0';
+                    setTimeout(() => prompt.remove(), 400);
+                }, 3500);
+
+                // Hide hoop after score, only bring back if user drags again
+                setTimeout(() => {
+                    hideHoop();
+                }, 1200);
+            }
+
+            function showScoreBtn() {
+                if (scoreCount === 0 || scoreBtn) return;
+                scoreBtn = document.createElement('button');
+                scoreBtn.className = 'bball-points-btn';
+                scoreBtn.textContent = '🏀 points';
+                scoreBtn.style.cssText = 'position:fixed;top:24px;right:24px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:6px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;cursor:pointer;transition:opacity 0.3s,border-color 0.3s;opacity:0;';
+                document.body.appendChild(scoreBtn);
+                requestAnimationFrame(() => { scoreBtn.style.opacity = '1'; });
+
+                scoreBtn.addEventListener('click', () => {
+                    let msg = pointsBtnMessages[Math.floor(Math.random() * pointsBtnMessages.length)];
+                    msg = msg.replace(/\$\{n\}/g, scoreCount);
+
+                    // Show remark
+                    const remark = document.createElement('div');
+                    remark.style.cssText = 'position:fixed;top:64px;right:24px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:8px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;max-width:300px;opacity:0;transform:translateY(-8px);transition:opacity 0.3s,transform 0.3s;';
+                    remark.textContent = msg;
+                    document.body.appendChild(remark);
+                    requestAnimationFrame(() => { remark.style.opacity = '1'; remark.style.transform = 'translateY(0)'; });
+                    setTimeout(() => {
+                        remark.style.opacity = '0';
+                        remark.style.transform = 'translateY(-8px)';
+                        setTimeout(() => remark.remove(), 300);
+                    }, 3000);
+
+                    // Hide button after click
+                    scoreBtn.style.opacity = '0';
+                    setTimeout(() => { scoreBtn.remove(); scoreBtn = null; }, 300);
+                });
+            }
+
+            // Watch for dp displacement
+            const observer = new MutationObserver(() => {
+                if (dp.classList.contains('dp-displaced')) {
+                    // Only show hoop if user is actively holding/dragging the DP
+                    if (!window.dpDragging) return;
+                    if (showTimeout) clearTimeout(showTimeout);
+                    showTimeout = setTimeout(showHoop, 2500);
+                    // Hide score button during play
+                    if (scoreBtn) {
+                        scoreBtn.style.opacity = '0';
+                        setTimeout(() => { if (scoreBtn) { scoreBtn.remove(); scoreBtn = null; } }, 300);
+                    }
+                } else {
+                    // DP returned home
+                    if (hoopVisible) hideHoop();
+                    if (showTimeout) { clearTimeout(showTimeout); showTimeout = null; }
+                    // Show points button if they've scored
+                    if (scoreCount > 0) {
+                        setTimeout(showScoreBtn, 800);
+                    }
+                }
+            });
+
+            observer.observe(dp, { attributes: true, attributeFilter: ['class'] });
+
+            // Also show hoop when user grabs an already-displaced DP
+            dp.addEventListener('mousedown', () => {
+                if (dp.classList.contains('dp-displaced')) {
+                    if (showTimeout) clearTimeout(showTimeout);
+                    showTimeout = setTimeout(showHoop, 2500);
+                }
+            });
+            dp.addEventListener('touchstart', () => {
+                if (dp.classList.contains('dp-displaced')) {
+                    if (showTimeout) clearTimeout(showTimeout);
+                    showTimeout = setTimeout(showHoop, 2500);
+                }
+            });
+
+            // Cancel hoop show if user releases without holding long enough
+            document.addEventListener('mouseup', () => {
+                if (!window.dpDragging && !hoopVisible && showTimeout) {
+                    clearTimeout(showTimeout);
+                    showTimeout = null;
+                }
+            });
+            document.addEventListener('touchend', () => {
+                if (!window.dpDragging && !hoopVisible && showTimeout) {
+                    clearTimeout(showTimeout);
+                    showTimeout = null;
+                }
+            });
+        })();
+
+        // ====== HINTS SYSTEM ======
+        (function() {
+            const toggle = document.getElementById('hintsToggle');
+            if (!toggle) return;
+
+            let toggleCount = 0;
+
+            const enableMessages = [
+                "Couldn't figure it out on your own, huh?",
+                "Skill issue detected. Hints: ON.",
+                "Fine. I'll hold your hand through this.",
+                "Welcome to easy mode, champ.",
+                "Even the easter eggs feel sorry for you now.",
+                "Hint: you're bad at this. There, free hint.",
+                "Training wheels: engaged.",
+                "Imagine needing help on a personal website.",
+                "The easter eggs were hiding FROM you.",
+                "Assistance mode activated. Dignity mode deactivated.",
+            ];
+
+            const reEnableMessages = [
+                "Back already? That was embarrassing.",
+                "Loser mode: re-engaged.",
+                "Ah, the quitter returns.",
+                "Couldn't last 10 seconds without help. Noted.",
+                "You had one job: not need hints. You failed.",
+                "The hints missed you too. (They didn't.)",
+                "Round 2 of giving up. Impressive consistency.",
+                "Welcome back to the kiddie pool.",
+                "Even the toggle is judging you right now.",
+                "Speedrun: giving up any% WR.",
+            ];
+
+            const disableMessages = [
+                "Respect. Going in blind.",
+                "Brave. Stupid, but brave.",
+                "Challenge accepted? Bold of you.",
+                "Fine, do it the hard way. I believe in you. (I don't.)",
+                "Hints off. Good luck, you'll need it.",
+                "Hardcore mode. This won't end well.",
+                "Plot twist: you'll be back in 30 seconds.",
+                "The easter eggs just got harder. (Not really.)",
+                "Going commando. I respect the energy.",
+                "Timer starts now. Let's see how long you last.",
+            ];
+
+            function showRemark(msg) {
+                const existing = document.querySelector('.hints-remark');
+                if (existing) existing.remove();
+
+                const el = document.createElement('div');
+                el.className = 'hints-remark';
+                el.textContent = msg;
+                el.style.cssText = `
+                    position: fixed;
+                    bottom: 70px;
+                    left: 24px;
+                    background: var(--graphite);
+                    border: 1px solid var(--steel-grey);
+                    border-radius: 6px;
+                    padding: 8px 14px;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 11px;
+                    color: var(--warning-amber);
+                    z-index: 4600;
+                    opacity: 0;
+                    transform: translateY(8px);
+                    transition: opacity 0.3s, transform 0.3s;
+                    max-width: 280px;
+                    pointer-events: none;
+                `;
+                document.body.appendChild(el);
+                requestAnimationFrame(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                });
+                setTimeout(() => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(8px)';
+                    setTimeout(() => el.remove(), 300);
+                }, 2500);
+            }
+
+            // Check localStorage on load
+            if (localStorage.getItem('chaos-hints') === 'on') {
+                document.body.classList.add('hints-active');
+                toggle.classList.add('active');
+            }
+
+            toggle.addEventListener('click', () => {
+                const active = document.body.classList.toggle('hints-active');
+                toggle.classList.toggle('active', active);
+                localStorage.setItem('chaos-hints', active ? 'on' : 'off');
+                toggleCount++;
+
+                if (active) {
+                    const pool = toggleCount > 1 ? reEnableMessages : enableMessages;
+                    showRemark(pool[Math.floor(Math.random() * pool.length)]);
+                } else {
+                    showRemark(disableMessages[Math.floor(Math.random() * disableMessages.length)]);
+                }
+            });
+        })();
+
+        // ====== GRAVITY SYSTEM (g=9.8) ======
+        (function() {
+            const toggle = document.getElementById('gravityToggle');
+            const overlay = document.getElementById('gravityOverlay');
+            const label = toggle ? toggle.querySelector('.toggle-label') : null;
+            if (!toggle) return;
+
+            let active = false;
+
+            const messages = [
+                "Newton sends his regards.",
+                "You turned on gravity. On a website. Congrats.",
+                "Everything falls. Just like your productivity.",
+                "g = 9.8 m/s². Your page = 0 usability/s².",
+                "Sir Isaac Newton didn't die for this.",
+                "Physics engine activated. Regret engine loading...",
+                "Gravity: the one force even CSS can't override.",
+            ];
+
+            toggle.addEventListener('click', () => {
+                if (active) return;
+                active = true;
+                toggle.classList.add('active');
+                overlay.classList.add('active');
+                if (label) label.textContent = 'g=9.8';
+                window.terminalDisabled = true;
+                window.gravityEnabled = true;
+
+                // Kill DP drag system
+                const dpImg = document.querySelector('.dp-image');
+                if (dpImg && dpImg.classList.contains('dp-displaced')) {
+                    dpImg.classList.remove('dp-displaced', 'dp-snap-back');
+                    dpImg.removeAttribute('style');
+                }
+                document.querySelector('.dp-ghost')?.remove();
+                document.body.classList.remove('site-greyed-out');
+
+                // Gather all elements to drop (including the toggle itself)
+                const selectors = [
+                    '.dp-container',
+                    '.welcome-name',
+                    '.welcome-tag',
+                    '.terminal-container',
+                    '.side-btn',
+                    '.command-hint',
+                    '.hints-toggle',
+                    '.gravity-toggle',
+                ];
+
+                const bodies = [];
+                selectors.forEach(sel => {
+                    document.querySelectorAll(sel).forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.width === 0 || rect.height === 0) return;
+                        bodies.push({
+                            el,
+                            x: rect.left,
+                            y: rect.top,
+                            w: rect.width,
+                            h: rect.height,
+                            vx: 0,
+                            vy: 0,
+                            angle: 0,
+                            va: 0,     // angular velocity
+                            grounded: false,
+                        });
+                    });
+                });
+
+                // Setup: pull each element out of flow into fixed position
+                bodies.forEach(b => {
+                    b.el.removeAttribute('style');
+                    b.el.style.cssText = `
+                        position: fixed;
+                        left: ${b.x}px;
+                        top: ${b.y}px;
+                        width: ${b.w}px;
+                        height: ${b.h}px;
+                        margin: 0;
+                        z-index: 3000;
+                        will-change: transform;
+                    `;
+                    b.el.classList.add('gravity-body');
+                    b.el.classList.remove('dp-displaced');
+                });
+
+                // Physics constants
+                const G = 1400;          // gravity acceleration (px/s²)
+                const RESTITUTION = 0.4; // bounciness
+                const FLOOR_Y = window.innerHeight;
+                const WALL_LEFT = 0;
+                const WALL_RIGHT = window.innerWidth;
+                const AIR_DRAG = 0.999;
+                const GROUND_DRAG = 0.92;
+                const ANG_DAMP = 0.95;
+
+                // Release all elements at once (uniform fall speed)
+                bodies.forEach(b => {
+                    b._delay = 0;
+                    b._released = true;
+                });
+
+                const startTime = performance.now();
+                let prevTime = startTime;
+                let running = true;
+
+                function tick(now) {
+                    if (!running) return;
+                    const dt = Math.min((now - prevTime) / 1000, 0.025); // cap at 40fps min
+                    prevTime = now;
+
+                    // Integrate: apply gravity, update positions
+                    for (const b of bodies) {
+                        if (!b._released) continue;
+
+                        b.vy += G * dt;
+                        b.vx *= AIR_DRAG;
+                        b.vy *= AIR_DRAG;
+
+                        b.x += b.vx * dt;
+                        b.y += b.vy * dt;
+                        b.angle += b.va * dt;
+                    }
+
+                    // Resolve collisions: floor, walls, inter-body
+                    for (const b of bodies) {
+                        if (!b._released) continue;
+
+                        const floor = FLOOR_Y - b.h;
+
+                        // Floor
+                        if (b.y > floor) {
+                            b.y = floor;
+                            if (b.vy > 0) {
+                                b.vy = -b.vy * RESTITUTION;
+                                b.va += b.vx * 0.003; // spin from slide
+                                b.vx *= GROUND_DRAG;
+                                b.va *= 0.7;
+                                if (Math.abs(b.vy) < 5) b.vy = 0;
+                            }
+                            b.grounded = true;
+                        } else {
+                            b.grounded = false;
+                        }
+
+                        // Walls
+                        if (b.x < WALL_LEFT) {
+                            b.x = WALL_LEFT;
+                            if (b.vx < 0) b.vx = -b.vx * RESTITUTION;
+                        }
+                        if (b.x + b.w > WALL_RIGHT) {
+                            b.x = WALL_RIGHT - b.w;
+                            if (b.vx > 0) b.vx = -b.vx * RESTITUTION;
+                        }
+
+                        // Ground friction
+                        if (b.grounded) {
+                            b.vx *= GROUND_DRAG;
+                            b.va *= ANG_DAMP;
+                        }
+                    }
+
+                    // Body-to-body collisions (multiple iterations for stable stacking)
+                    for (let iter = 0; iter < 4; iter++) {
+                        for (let i = 0; i < bodies.length; i++) {
+                            const a = bodies[i];
+                            if (!a._released) continue;
+                            for (let j = i + 1; j < bodies.length; j++) {
+                                const b = bodies[j];
+                                if (!b._released) continue;
+
+                                // AABB overlap
+                                const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+                                const oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+                                if (ox <= 0 || oy <= 0) continue;
+
+                                const aMass = a.w * a.h;
+                                const bMass = b.w * b.h;
+                                const total = aMass + bMass;
+                                const ar = bMass / total;
+                                const br = aMass / total;
+
+                                if (ox < oy) {
+                                    // Horizontal separation
+                                    if (a.x + a.w / 2 < b.x + b.w / 2) {
+                                        a.x -= ox * ar;
+                                        b.x += ox * br;
+                                    } else {
+                                        a.x += ox * ar;
+                                        b.x -= ox * br;
+                                    }
+                                    if (iter === 0) {
+                                        const avgVx = (a.vx * aMass + b.vx * bMass) / total;
+                                        a.vx = avgVx + (a.vx - avgVx) * -RESTITUTION;
+                                        b.vx = avgVx + (b.vx - avgVx) * -RESTITUTION;
+                                    }
+                                } else {
+                                    // Vertical separation (stacking)
+                                    if (a.y + a.h / 2 < b.y + b.h / 2) {
+                                        a.y -= oy * ar;
+                                        b.y += oy * br;
+                                    } else {
+                                        a.y += oy * ar;
+                                        b.y -= oy * br;
+                                    }
+                                    if (iter === 0) {
+                                        const avgVy = (a.vy * aMass + b.vy * bMass) / total;
+                                        a.vy = avgVy + (a.vy - avgVy) * -RESTITUTION;
+                                        b.vy = avgVy + (b.vy - avgVy) * -RESTITUTION;
+                                        a.va *= 0.85;
+                                        b.va *= 0.85;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Re-enforce floor after each iteration (prevents sinking)
+                        for (const b of bodies) {
+                            if (!b._released) continue;
+                            const floor = FLOOR_Y - b.h;
+                            if (b.y > floor) {
+                                b.y = floor;
+                                if (b.vy > 0) b.vy = 0;
+                            }
+                        }
+                    }
+
+                    // Render using transform (GPU accelerated, no layout thrash)
+                    let allSettled = true;
+                    for (const b of bodies) {
+                        if (!b._released) { allSettled = false; continue; }
+
+                        b.el.style.left = b.x + 'px';
+                        b.el.style.top = b.y + 'px';
+                        b.el.style.transform = `rotate(${b.angle.toFixed(1)}deg)`;
+
+                        // Check if settled
+                        if (Math.abs(b.vy) > 1 || Math.abs(b.vx) > 1 || b.y < FLOOR_Y - b.h - 3) {
+                            allSettled = false;
+                        }
+                    }
+
+                    if (!allSettled) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        running = false;
+                    }
+                }
+
+                requestAnimationFrame(tick);
+
+                // Show restart message
+                setTimeout(() => {
+                    const msg = messages[Math.floor(Math.random() * messages.length)];
+                    const el = document.createElement('div');
+                    el.className = 'gravity-prompt';
+                    el.innerHTML = `
+                        <div class="msg">${msg}</div>
+                        <button class="restart-btn" onclick="location.reload()">↻ reload page</button>
+                        <div style="margin-top:12px; font-size:10px; color:#808080;">or toggle off g=9.8 (just kidding, you can't)</div>
+                    `;
+                    document.body.appendChild(el);
+                }, 1500);
+            });
+        })();
     </script>
 </body>
 </html>
