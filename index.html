@@ -3377,6 +3377,19 @@
         (function() {
             const btn = document.getElementById('lightModeBtn');
             if (!btn) return;
+            const remarks = [
+                "Just kidding. We don't do that here.",
+                "Light mode? In this economy?",
+                "My retinas filed a restraining order.",
+                "You want light mode? Go outside.",
+                "Dark mode isn't a preference. It's a lifestyle.",
+                "Light mode is for people who enjoy migraines.",
+                "Did you really just try that? Bold.",
+                "The void stares back. It prefers dark mode.",
+                "Error 403: Light mode permanently forbidden.",
+                "Your monitor thanks me for saving its dignity."
+            ];
+            let remarkIndex = 0;
             btn.addEventListener('click', () => {
                 const flash = document.createElement('div');
                 flash.className = 'lightmode-flash';
@@ -3385,7 +3398,7 @@
                     flash.remove();
                     const msg = document.createElement('div');
                     msg.className = 'lightmode-msg';
-                    msg.textContent = "Just kidding. We don't do that here.";
+                    msg.textContent = remarks[Math.floor(Math.random() * remarks.length)];
                     document.body.appendChild(msg);
                     setTimeout(() => {
                         msg.style.opacity = '0';
