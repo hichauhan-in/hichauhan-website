@@ -303,11 +303,26 @@
             .contact-buttons { flex-wrap: wrap; }
             .contact-btn { flex: 1 1 45%; }
         }
+
+        .chaos-hint { position:absolute; font-family:'JetBrains Mono',monospace; font-size:10px; color:#D4A574; opacity:0; pointer-events:none; transition:opacity 0.3s; white-space:nowrap; z-index:100; }
+        .chaos-hint::before { content:'\26A0  '; }
+        body.hints-active .chaos-hint { opacity:1; animation:hintPulse 2s ease-in-out infinite; }
+        @keyframes hintPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
+        .hints-toggle { position:fixed; bottom:24px; left:24px; display:flex; align-items:center; gap:10px; background:#1E1E1E; border:1px solid #2A2A2A; border-radius:20px; padding:6px 14px 6px 8px; cursor:pointer; z-index:4500; transition:all 0.2s; opacity:0.5; font-family:'JetBrains Mono',monospace; }
+        .hints-toggle:hover { opacity:0.9; border-color:#808080; }
+        .hints-toggle.active { border-color:#D4A574; opacity:1; box-shadow:0 0 12px rgba(212,165,116,0.15); }
+        .hints-toggle .toggle-track { width:28px; height:14px; background:#2A2A2A; border-radius:7px; position:relative; transition:background 0.2s; }
+        .hints-toggle.active .toggle-track { background:rgba(212,165,116,0.4); }
+        .hints-toggle .toggle-knob { width:10px; height:10px; background:#808080; border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s; }
+        .hints-toggle.active .toggle-knob { left:16px; background:#D4A574; }
+        .hints-toggle .toggle-label { font-size:10px; color:#808080; text-transform:uppercase; letter-spacing:1px; }
+        .hints-toggle.active .toggle-label { color:#D4A574; }
     </style>
 </head>
 <body>
-    <header class="page-header">
+    <header class="page-header" style="position:relative;">
         <h1 class="page-title">Contact</h1>
+        <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">click the title. also the dots. especially the dots.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
@@ -694,6 +709,82 @@
                 }
             }, 40);
         });
+
+        // Hints system
+        (function() {
+            const toggle = document.getElementById('hintsToggle');
+            if (!toggle) return;
+            let toggleCount = 0;
+
+            const enableMessages = [
+                "Couldn't figure it out on your own, huh?",
+                "Skill issue detected. Hints: ON.",
+                "Fine. I'll hold your hand through this.",
+                "Welcome to easy mode, champ.",
+                "Even the easter eggs feel sorry for you now.",
+                "Hint: you're bad at this. There, free hint.",
+                "Training wheels: engaged.",
+                "Imagine needing help on a personal website.",
+                "The easter eggs were hiding FROM you.",
+                "Assistance mode activated. Dignity mode deactivated.",
+            ];
+
+            const reEnableMessages = [
+                "Back already? That was embarrassing.",
+                "Loser mode: re-engaged.",
+                "Ah, the quitter returns.",
+                "Couldn't last 10 seconds without help. Noted.",
+                "You had one job: not need hints. You failed.",
+                "The hints missed you too. (They didn't.)",
+                "Round 2 of giving up. Impressive consistency.",
+                "Welcome back to the kiddie pool.",
+                "Even the toggle is judging you right now.",
+                "Speedrun: giving up any% WR.",
+            ];
+
+            const disableMessages = [
+                "Respect. Going in blind.",
+                "Brave. Stupid, but brave.",
+                "Challenge accepted? Bold of you.",
+                "Fine, do it the hard way. I believe in you. (I don't.)",
+                "Hints off. Good luck, you'll need it.",
+                "Hardcore mode. This won't end well.",
+                "Plot twist: you'll be back in 30 seconds.",
+                "The easter eggs just got harder. (Not really.)",
+                "Going commando. I respect the energy.",
+                "Timer starts now. Let's see how long you last.",
+            ];
+
+            function showRemark(msg) {
+                const existing = document.querySelector('.hints-remark');
+                if (existing) existing.remove();
+                const el = document.createElement('div');
+                el.className = 'hints-remark';
+                el.textContent = msg;
+                el.style.cssText = 'position:fixed;bottom:70px;left:24px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:8px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;opacity:0;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s;max-width:280px;pointer-events:none;';
+                document.body.appendChild(el);
+                requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+                setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; setTimeout(() => el.remove(), 300); }, 2500);
+            }
+
+            if (localStorage.getItem('chaos-hints') === 'on') {
+                document.body.classList.add('hints-active');
+                toggle.classList.add('active');
+            }
+            toggle.addEventListener('click', () => {
+                const active = document.body.classList.toggle('hints-active');
+                toggle.classList.toggle('active', active);
+                localStorage.setItem('chaos-hints', active ? 'on' : 'off');
+                toggleCount++;
+                if (active) {
+                    const pool = toggleCount > 1 ? reEnableMessages : enableMessages;
+                    showRemark(pool[Math.floor(Math.random() * pool.length)]);
+                } else {
+                    showRemark(disableMessages[Math.floor(Math.random() * disableMessages.length)]);
+                }
+            });
+        })();
     </script>
+    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 </body>
 </html>
