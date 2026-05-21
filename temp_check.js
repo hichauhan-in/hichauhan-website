@@ -1,1181 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Himanshu Chauhan</title>
-    <link rel="icon" type="image/png" href="resources/logo.png">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --deep-void: #0A0A0A;
-            --charcoal-core: #141414;
-            --graphite: #1E1E1E;
-            --steel-grey: #2A2A2A;
-            --neon-teal: #00A896;
-            --steel-blue: #4A6FA5;
-            --warning-amber: #D4A574;
-            --pure-white: #FFFFFF;
-            --light-grey: #B0B0B0;
-            --muted-grey: #808080;
-        }
-        
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            background: #0A0A0A;
-            background-image: radial-gradient(rgba(0, 168, 150, 0.07) 1px, transparent 1px);
-            background-size: 30px 30px;
-            color: var(--pure-white);
-            overflow: hidden;
-            line-height: 1.6;
-            height: 100vh;
-            width: 100vw;
-        }
 
-
-
-        /* Main container */
-        .page-container {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 48px;
-            position: relative;
-            gap: 32px;
-            z-index: 1;
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-            max-width: 1000px;
-            width: 100%;
-        }
-
-        .dp-container {
-            margin-bottom: 12px;
-        }
-
-        .dp-image {
-            width: 112px;
-            height: 112px;
-            border-radius: 50%;
-            border: 2px solid var(--steel-grey);
-            object-fit: cover;
-            filter: grayscale(20%);
-            transition: box-shadow 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
-            box-shadow: 0 0 0 0 rgba(0, 168, 150, 0);
-            cursor: grab;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
-        .dp-image:active {
-            cursor: grabbing;
-        }
-
-        .dp-image:hover {
-            border-color: var(--neon-teal);
-            filter: grayscale(0%);
-            box-shadow: 0 0 20px rgba(0, 168, 150, 0.25);
-        }
-
-        .dp-displaced {
-            position: fixed;
-            z-index: 4000;
-            pointer-events: auto;
-        }
-
-        .dp-ghost {
-            width: 112px;
-            height: 112px;
-            border-radius: 50%;
-            border: 2px dashed var(--neon-teal);
-            opacity: 0.4;
-            box-sizing: border-box;
-        }
-
-        /* Basketball hoop */
-        .bball-hoop {
-            position: fixed;
-            right: -250px;
-            top: 40%;
-            transform: translateY(-50%);
-            z-index: 3500;
-            transition: right 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            pointer-events: none;
-        }
-
-        .bball-hoop.visible {
-            right: 16px;
-        }
-
-        .bball-hoop.scored .hoop-rim {
-            border-color: var(--neon-teal);
-            box-shadow: 0 0 30px rgba(0, 168, 150, 0.6);
-        }
-
-        .bball-backboard {
-            width: 10px;
-            height: 140px;
-            background: var(--steel-grey);
-            border: 1px solid var(--muted-grey);
-            border-radius: 2px;
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-
-        .hoop-rim {
-            width: 130px;
-            height: 28px;
-            border: 4px solid #FF5F56;
-            border-top: none;
-            border-radius: 0 0 65px 65px;
-            position: absolute;
-            right: 10px;
-            top: 80px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .hoop-net {
-            position: absolute;
-            right: 25px;
-            top: 106px;
-            width: 100px;
-            height: 70px;
-            border-left: 2px dashed var(--steel-grey);
-            border-right: 2px dashed var(--steel-grey);
-            border-bottom: 2px dashed var(--steel-grey);
-            border-radius: 0 0 12px 12px;
-            opacity: 0.5;
-        }
-
-        .bball-score-flash {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 168, 150, 0.08);
-            z-index: 4999;
-            pointer-events: none;
-            animation: scoreFlash 0.6s ease forwards;
-        }
-
-        @keyframes scoreFlash {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 0; }
-        }
-
-        .bball-score-prompt {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--graphite);
-            border: 1px solid var(--neon-teal);
-            border-radius: 8px;
-            padding: 20px 28px;
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
-            z-index: 5500;
-            opacity: 0;
-            animation: scorePopUp 0.3s ease 0.1s forwards;
-        }
-
-        @keyframes scorePopUp {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .bball-score-prompt .score-msg {
-            font-size: 14px;
-            color: var(--neon-teal);
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .bball-score-prompt .score-sub {
-            font-size: 11px;
-            color: var(--muted-grey);
-        }
-
-        .site-greyed-out .terminal-container,
-        .site-greyed-out .side-buttons,
-        .site-greyed-out .command-hint,
-        .site-greyed-out .welcome-name,
-        .site-greyed-out .welcome-tag {
-            opacity: 0.2;
-            pointer-events: none;
-            filter: grayscale(100%);
-            transition: all 0.4s ease;
-        }
-
-        .site-greyed-out .hints-toggle,
-        .site-greyed-out .gravity-toggle {
-            opacity: 0.2;
-            pointer-events: none;
-            filter: grayscale(100%);
-            transition: all 0.4s ease;
-        }
-
-        .dp-snap-back {
-            transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-        }
-
-        .dp-sarcasm-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: var(--graphite);
-            border: 1px solid var(--neon-teal);
-            border-radius: 10px;
-            padding: 32px 40px;
-            z-index: 10000;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            opacity: 0;
-            animation: popupAppear 0.3s ease forwards;
-            max-width: 420px;
-        }
-
-        .dp-sarcasm-popup .sarcasm-msg {
-            font-size: 14px;
-            color: var(--warning-amber);
-            line-height: 1.7;
-            margin-bottom: 20px;
-        }
-
-        .dp-sarcasm-popup .sarcasm-hint {
-            font-size: 11px;
-            color: var(--muted-grey);
-        }
-
-        @keyframes popupAppear {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .welcome-header {
-            font-family: 'JetBrains Mono', monospace;
-            padding-left: 4px;
-        }
-
-        .welcome-name {
-            font-size: 22px;
-            color: var(--neon-teal);
-            font-weight: 600;
-            margin-bottom: 4px;
-            min-height: 1.6em;
-        }
-
-        .welcome-tag {
-            font-size: 13px;
-            color: var(--muted-grey);
-        }
-
-        .welcome-tag span {
-            color: var(--light-grey);
-        }
-
-        .terminal-row {
-            display: flex;
-            align-items: center;
-            gap: 32px;
-            width: 100%;
-        }
-
-        /* Side buttons */
-        .side-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .side-btn {
-            padding: 10px 20px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 6px;
-            color: var(--light-grey);
-            text-decoration: none;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        .side-btn:hover {
-            border-color: var(--neon-teal);
-            color: var(--neon-teal);
-            transform: translateX(4px);
-            box-shadow: 0 0 15px rgba(0, 168, 150, 0.15);
-        }
-
-        .side-btn.clear-btn {
-            border-color: #FF5F56;
-            color: #FF5F56;
-            opacity: 0.8;
-        }
-
-        .side-btn.clear-btn:hover {
-            border-color: #FF5F56;
-            color: #FF5F56;
-            box-shadow: 0 0 15px rgba(255, 95, 86, 0.2);
-            opacity: 1;
-        }
-
-
-
-
-
-        /* Command Palette */
-        .command-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 5000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .command-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .command-palette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--steel-grey);
-            padding: 24px 48px;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-            z-index: 5001;
-        }
-
-        .command-palette.active {
-            transform: translateY(0);
-        }
-
-        .command-palette-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .command-palette-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--pure-white);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
-            outline: none;
-        }
-
-        .command-palette-input::placeholder {
-            color: var(--muted-grey);
-        }
-
-        .command-palette-close {
-            width: 32px;
-            height: 32px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 6px;
-            color: var(--light-grey);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            transition: all 0.2s ease;
-        }
-
-        .command-palette-close:hover {
-            border-color: var(--neon-teal);
-            color: var(--neon-teal);
-        }
-
-        .command-palette-body {
-            display: flex;
-            gap: 48px;
-            flex-wrap: wrap;
-        }
-
-        .command-palette-section {
-            min-width: 150px;
-        }
-
-        .command-palette-section-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--muted-grey);
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .command-palette-items {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .command-palette-item {
-            padding: 8px 16px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--light-grey);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .command-palette-item:hover {
-            border-color: var(--neon-teal);
-            color: var(--neon-teal);
-        }
-
-        .command-palette-item .shortcut {
-            font-size: 11px;
-            color: var(--muted-grey);
-            background: var(--steel-grey);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        /* Command hint */
-        .command-hint {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            font-size: 12px;
-            color: var(--muted-grey);
-            opacity: 0.7;
-        }
-
-        .command-hint kbd {
-            background: var(--graphite);
-            padding: 3px 7px;
-            border-radius: 4px;
-            border: 1px solid var(--steel-grey);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-        }
-
-        /* Light mode joke button */
-        .lightmode-btn {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 6px;
-            padding: 5px 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--muted-grey);
-            cursor: pointer;
-            z-index: 4500;
-            transition: all 0.2s ease;
-            opacity: 0.5;
-        }
-        .lightmode-btn:hover {
-            opacity: 1;
-            border-color: var(--warning-amber);
-            color: var(--warning-amber);
-        }
-        .lightmode-flash {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #FFFFFF;
-            z-index: 99999;
-            pointer-events: none;
-            animation: lmFlicker 2s steps(1) forwards;
-        }
-        @keyframes lmFlicker {
-            0%   { opacity: 1; }
-            8%   { opacity: 0; }
-            12%  { opacity: 1; }
-            18%  { opacity: 0; }
-            22%  { opacity: 1; }
-            28%  { opacity: 0; }
-            35%  { opacity: 1; }
-            40%  { opacity: 0; }
-            44%  { opacity: 1; }
-            50%  { opacity: 0; }
-            55%  { opacity: 1; }
-            60%  { opacity: 0; }
-            65%  { opacity: 1; }
-            70%  { opacity: 0; }
-            75%  { opacity: 1; }
-            80%  { opacity: 0; }
-            85%  { opacity: 1; }
-            90%  { opacity: 0; }
-            95%  { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        .lightmode-msg {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--graphite);
-            border: 1px solid var(--warning-amber);
-            border-radius: 8px;
-            padding: 20px 28px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--warning-amber);
-            text-align: center;
-            z-index: 99999;
-            opacity: 0;
-            animation: lmFadeIn 0.3s ease 0.15s forwards;
-        }
-        @keyframes lmFadeIn {
-            to { opacity: 1; }
-        }
-
-        /* Hints toggle switch */
-        .hints-toggle {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 20px;
-            padding: 6px 14px 6px 8px;
-            cursor: pointer;
-            z-index: 4500;
-            transition: all 0.2s ease;
-            opacity: 0.5;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .hints-toggle:hover {
-            opacity: 0.9;
-            border-color: var(--muted-grey);
-        }
-
-        .hints-toggle.active {
-            border-color: var(--warning-amber);
-            opacity: 1;
-            box-shadow: 0 0 12px rgba(212, 165, 116, 0.15);
-        }
-
-        .hints-toggle .toggle-track {
-            width: 28px;
-            height: 14px;
-            background: var(--steel-grey);
-            border-radius: 7px;
-            position: relative;
-            transition: background 0.2s ease;
-        }
-
-        .hints-toggle.active .toggle-track {
-            background: rgba(212, 165, 116, 0.4);
-        }
-
-        .hints-toggle .toggle-knob {
-            width: 10px;
-            height: 10px;
-            background: var(--muted-grey);
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .hints-toggle.active .toggle-knob {
-            left: 16px;
-            background: var(--warning-amber);
-        }
-
-        .hints-toggle .toggle-label {
-            font-size: 10px;
-            color: var(--muted-grey);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hints-toggle.active .toggle-label {
-            color: var(--warning-amber);
-        }
-
-        /* Gravity toggle - danger style */
-        .gravity-toggle {
-            position: fixed;
-            bottom: 24px;
-            left: 140px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 20px;
-            padding: 6px 14px 6px 8px;
-            cursor: pointer;
-            z-index: 4500;
-            transition: all 0.2s ease;
-            opacity: 0.5;
-            font-family: 'JetBrains Mono', monospace;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .gravity-toggle:hover {
-            opacity: 0.9;
-            border-color: #FF5F56;
-        }
-
-        .gravity-toggle.active {
-            border-color: #FF5F56;
-            opacity: 1;
-            box-shadow: 0 0 12px rgba(255, 95, 86, 0.25);
-            animation: dangerPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dangerPulse {
-            0%, 100% { box-shadow: 0 0 12px rgba(255, 95, 86, 0.25); }
-            50% { box-shadow: 0 0 20px rgba(255, 95, 86, 0.4); }
-        }
-
-        .gravity-toggle .toggle-track {
-            width: 28px;
-            height: 14px;
-            background: var(--steel-grey);
-            border-radius: 7px;
-            position: relative;
-            transition: background 0.2s ease;
-        }
-
-        .gravity-toggle.active .toggle-track {
-            background: rgba(255, 95, 86, 0.4);
-        }
-
-        .gravity-toggle .toggle-knob {
-            width: 10px;
-            height: 10px;
-            background: var(--muted-grey);
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .gravity-toggle.active .toggle-knob {
-            left: 16px;
-            background: #FF5F56;
-        }
-
-        .gravity-toggle .toggle-label {
-            font-size: 10px;
-            color: var(--muted-grey);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .gravity-toggle.active .toggle-label {
-            color: #FF5F56;
-        }
-
-        .gravity-body {
-            position: fixed !important;
-            margin: 0 !important;
-            z-index: 3000;
-            will-change: transform;
-            pointer-events: none;
-        }
-
-        .gravity-body,
-        .gravity-body * {
-            transition: none !important;
-            animation: none !important;
-        }
-
-        .gravity-overlay {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: linear-gradient(transparent, rgba(255, 95, 86, 0.05));
-            pointer-events: none;
-            z-index: 3999;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .gravity-overlay.active {
-            opacity: 1;
-        }
-
-        .gravity-prompt {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--graphite);
-            border: 1px solid #FF5F56;
-            border-radius: 8px;
-            padding: 16px 28px;
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
-            z-index: 5000;
-            opacity: 0;
-            animation: popIn 0.4s ease 0.5s forwards;
-        }
-
-        @keyframes popIn {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .gravity-prompt .msg {
-            font-size: 13px;
-            color: #FF5F56;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
-        .gravity-prompt .restart-btn {
-            padding: 8px 20px;
-            background: transparent;
-            border: 1px solid #FF5F56;
-            color: #FF5F56;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            transition: all 0.2s;
-            pointer-events: auto;
-        }
-
-        .gravity-prompt .restart-btn:hover {
-            background: #FF5F56;
-            color: #0A0A0A;
-        }
-
-        /* Hint indicators */
-        .chaos-hint {
-            position: absolute;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: var(--warning-amber);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            white-space: nowrap;
-            z-index: 100;
-        }
-
-        .chaos-hint::before {
-            content: '⚠ ';
-        }
-
-        body.hints-active .chaos-hint {
-            opacity: 1;
-            animation: hintPulse 2s ease-in-out infinite;
-        }
-
-        body.hints-active .dp-circular-hint {
-            opacity: 1;
-            animation: spinHint 12s linear infinite;
-            transform-origin: 80px 80px;
-        }
-
-        @keyframes hintPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes spinHint {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .chaos-hint-arrow {
-            position: absolute;
-            font-size: 14px;
-            color: var(--warning-amber);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 100;
-        }
-
-        body.hints-active .chaos-hint-arrow {
-            opacity: 0.8;
-            animation: hintBounce 1.5s ease-in-out infinite;
-        }
-
-        @keyframes hintBounce {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(4px); }
-        }
-
-        /* Terminal */
-        .terminal-container {
-            background: var(--graphite);
-            border: 1px solid var(--steel-grey);
-            border-radius: 8px;
-            padding: 32px;
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .terminal-container:hover {
-            box-shadow: 0 8px 30px rgba(0, 168, 150, 0.15);
-            border-color: var(--neon-teal);
-        }
-
-        .terminal-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--steel-grey);
-        }
-
-        .terminal-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .terminal-dot.red { background: #FF5F56; cursor: pointer; }
-        .terminal-dot.yellow { background: #FFBD2E; cursor: pointer; }
-        .terminal-dot.green { background: #27CA3F; cursor: pointer; }
-
-        .terminal-title {
-            margin-left: 16px;
-            color: var(--muted-grey);
-            font-size: 12px;
-        }
-
-        .terminal-output {
-            color: var(--neon-teal);
-            height: 200px;
-            overflow-y: auto;
-        }
-
-        .terminal-output::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .terminal-output::-webkit-scrollbar-track {
-            background: var(--steel-grey);
-            border-radius: 3px;
-        }
-
-        .terminal-output::-webkit-scrollbar-thumb {
-            background: var(--neon-teal);
-            border-radius: 3px;
-        }
-
-        .terminal-line {
-            margin-bottom: 4px;
-        }
-
-        .terminal-output .command-line {
-            color: var(--pure-white);
-        }
-
-        .terminal-output .response-line {
-            color: var(--neon-teal);
-            padding-left: 16px;
-        }
-
-        .terminal-output .error-line {
-            color: var(--warning-amber);
-        }
-
-        .terminal-input-line {
-            display: flex;
-            align-items: center;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--steel-grey);
-        }
-
-        .terminal-prompt {
-            color: var(--neon-teal);
-            font-weight: bold;
-        }
-
-        .terminal-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--pure-white);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            outline: none;
-            caret-color: var(--neon-teal);
-        }
-
-        .terminal-input::placeholder {
-            color: var(--muted-grey);
-            font-size: 12px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .page-container {
-                padding: 16px;
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .terminal-row {
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .side-buttons {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .side-btn {
-                padding: 8px 14px;
-                font-size: 11px;
-            }
-
-            .terminal-container {
-                padding: 16px;
-                font-size: 12px;
-            }
-
-            .terminal-output {
-                max-height: 200px;
-            }
-
-            .terminal-input {
-                font-size: 16px;
-            }
-
-            .command-hint {
-                bottom: 12px;
-                right: 12px;
-                font-size: 10px;
-            }
-
-            .welcome-name {
-                font-size: 18px;
-            }
-
-            .welcome-tag {
-                font-size: 11px;
-            }
-
-            .gravity-toggle {
-                left: 24px;
-                right: auto;
-                bottom: 64px;
-            }
-
-            .gravity-prompt {
-                padding: 14px 18px;
-                width: 85vw;
-                max-width: 320px;
-            }
-
-            .gravity-prompt .msg {
-                font-size: 12px;
-            }
-
-            .gravity-prompt .restart-btn {
-                font-size: 11px;
-                padding: 7px 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Light Mode Button -->
-    <button class="lightmode-btn" id="lightModeBtn">☀ light mode</button>
-
-    <!-- Command Overlay -->
-    <div class="command-overlay" id="commandOverlay"></div>
-
-    <!-- Command Palette -->
-    <div class="command-palette" id="commandPalette">
-        <div class="command-palette-header">
-            <input type="text" class="command-palette-input" id="commandPaletteInput" placeholder="Type a command..." autocomplete="off" spellcheck="false">
-            <button class="command-palette-close" id="commandPaletteClose">&times;</button>
-        </div>
-        <div class="command-palette-body" id="commandPaletteBody">
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Navigation</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="experience">experience <span class="shortcut">exp</span></div>
-                    <div class="command-palette-item" data-cmd="skills">skills <span class="shortcut">skl</span></div>
-                    <div class="command-palette-item" data-cmd="projects">projects <span class="shortcut">pro</span></div>
-                    <div class="command-palette-item" data-cmd="education">education <span class="shortcut">edu</span></div>
-                    <div class="command-palette-item" data-cmd="contact">contact <span class="shortcut">con</span></div>
-                </div>
-            </div>
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Info</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="cv">cv</div>
-                    <div class="command-palette-item" data-cmd="about">about</div>
-                    <div class="command-palette-item" data-cmd="whoami">whoami</div>
-                    <div class="command-palette-item" data-cmd="linkedin">linkedin</div>
-                    <div class="command-palette-item" data-cmd="location">location</div>
-                </div>
-            </div>
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Utility</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="help">help</div>
-                    <div class="command-palette-item" data-cmd="clear">clear <span class="shortcut">cls</span></div>
-                    <div class="command-palette-item" data-cmd="date">date</div>
-                    <div class="command-palette-item" data-cmd="uptime">uptime</div>
-                </div>
-            </div>
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Games</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="snake">snake</div>
-                    <div class="command-palette-item" data-cmd="pong">pong</div>
-                    <div class="command-palette-item" data-cmd="tetris">tetris</div>
-                    <div class="command-palette-item" data-cmd="dodge">dodge</div>
-                </div>
-            </div>
-            <div class="command-palette-section">
-                <div class="command-palette-section-title">Danger Zone</div>
-                <div class="command-palette-items">
-                    <div class="command-palette-item" data-cmd="sudo help">sudo</div>
-                    <div class="command-palette-item" data-cmd="rm -rf /">rm -rf / <span class="shortcut">don't</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Page -->
-    <div class="page-container">
-        <!-- Main content column -->
-        <div class="main-content">
-            <!-- Welcome -->
-            <div class="welcome-header">
-                <div class="dp-container" style="position:relative;">
-                    <img src="resources/dp.png" alt="Himanshu Chauhan" class="dp-image">
-                    <svg class="chaos-hint dp-circular-hint" width="160" height="160" viewBox="0 0 160 160" style="position:absolute; top:-24px; left:-24px; pointer-events:none;">
-                        <defs>
-                            <path id="circlePath" d="M 80,80 m -65,0 a 65,65 0 1,1 130,0 a 65,65 0 1,1 -130,0" fill="none"/>
-                        </defs>
-                        <text font-family="JetBrains Mono, monospace" font-size="9.5" fill="#D4A574" letter-spacing="3">
-                            <textPath href="#circlePath" startOffset="0%">⚠ Warning ⚠ It's draggable You can hold it · </textPath>
-                        </text>
-                    </svg>
-                </div>
-                <div class="welcome-name" id="welcomeName"></div>
-                <div class="welcome-tag"><span>Windows Debug Engineer</span> <span style="color:var(--neon-teal);">@Microsoft</span></div>
-            </div>
-            <!-- Terminal + Buttons row -->
-            <div class="terminal-row">
-            <!-- Terminal -->
-            <div class="terminal-container" onclick="document.getElementById('terminalInput').focus()">
-            <div class="terminal-header" style="position:relative;">
-                <div class="terminal-dot red"></div>
-                <div class="terminal-dot yellow"></div>
-                <div class="terminal-dot green"></div>
-                <span class="terminal-title">terminal</span>
-                <span class="chaos-hint" style="top:-18px; left:0;">DO NOT click these dots</span>
-            </div>
-            <div class="terminal-output" id="terminalOutput">
-                <div class="terminal-line">Welcome to the Terminal!</div>
-                <div class="terminal-line">Type 'help' to see available commands.</div>
-            </div>
-            <div class="terminal-input-line">
-                <span class="terminal-prompt">&gt;&nbsp;</span>
-                <input type="text" class="terminal-input" id="terminalInput" placeholder="Type a command..." autocomplete="off" spellcheck="false">
-            </div>
-        </div>
-
-        <!-- Side buttons -->
-        <div class="side-buttons">
-            <a href="cv.html" data-href="cv.html" data-cmd="resume" class="side-btn">.\CV</a>
-            <a href="#" data-href="experience.html" class="side-btn">.\Experience</a>
-            <a href="#" data-href="skills.html" class="side-btn">.\Skills</a>
-            <a href="#" data-href="education.html" class="side-btn">.\Education</a>
-            <a href="#" data-href="https://www.linkedin.com/in/hichauhan-in/" data-external="true" class="side-btn">.\LinkedIn</a>
-            <a href="#" data-href="contact.html" class="side-btn">.\Contact</a>
-            <a href="#" data-cmd="clear" class="side-btn clear-btn">.\Clear</a>
-        </div>
-        </div>
-        </div>
-    </div>
-
-    <div class="command-hint">Press <kbd>Ctrl+K</kbd> for quick commands</div>
-
-    <!-- Hints toggle -->
-    <div class="hints-toggle" id="hintsToggle" title="Toggle easter egg hints">
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-        <span class="toggle-label">hints</span>
-    </div>
-
-    <!-- Gravity toggle -->
-    <div class="gravity-toggle" id="gravityToggle" title="Enable gravity (g=9.8)">
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-        <span class="toggle-label">g=0.0</span>
-        <span class="chaos-hint" style="top:-22px; left:50%; transform:translateX(-50%); white-space:nowrap;">don't touch</span>
-    </div>
-    <div class="gravity-overlay" id="gravityOverlay"></div>
-
-    <!-- Basketball hoop -->
-    <div class="bball-hoop" id="bballHoop">
-        <div class="bball-backboard"></div>
-        <div class="hoop-rim" id="hoopRim"></div>
-        <div class="hoop-net"></div>
-    </div>
-
-    <script src="main.js"></script>
-    <script>
         // Welcome name typing animation
         (function() {
             const nameEl = document.getElementById('welcomeName');
@@ -2923,7 +1746,7 @@
                 scoreBtn = document.createElement('button');
                 scoreBtn.className = 'bball-points-btn';
                 scoreBtn.textContent = '🏀 points';
-                scoreBtn.style.cssText = 'position:fixed;top:24px;right:140px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:6px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;cursor:pointer;transition:opacity 0.3s,border-color 0.3s;opacity:0;';
+                scoreBtn.style.cssText = 'position:fixed;top:24px;right:24px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:6px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;cursor:pointer;transition:opacity 0.3s,border-color 0.3s;opacity:0;';
                 document.body.appendChild(scoreBtn);
                 requestAnimationFrame(() => { scoreBtn.style.opacity = '1'; });
 
@@ -2933,7 +1756,7 @@
 
                     // Show remark
                     const remark = document.createElement('div');
-                    remark.style.cssText = 'position:fixed;top:64px;right:140px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:8px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;max-width:300px;opacity:0;transform:translateY(-8px);transition:opacity 0.3s,transform 0.3s;';
+                    remark.style.cssText = 'position:fixed;top:64px;right:24px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:8px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:#D4A574;z-index:4600;max-width:300px;opacity:0;transform:translateY(-8px);transition:opacity 0.3s,transform 0.3s;';
                     remark.textContent = msg;
                     document.body.appendChild(remark);
                     requestAnimationFrame(() => { remark.style.opacity = '1'; remark.style.transform = 'translateY(0)'; });
@@ -3373,200 +2196,190 @@
             });
         })();
 
-        // Light mode joke
+        // ====== IDLE TIMEOUT ROAST ======
         (function() {
-            const btn = document.getElementById('lightModeBtn');
-            if (!btn) return;
-            btn.addEventListener('click', () => {
-                const flash = document.createElement('div');
-                flash.className = 'lightmode-flash';
-                document.body.appendChild(flash);
-                setTimeout(() => {
-                    flash.remove();
-                    const msg = document.createElement('div');
-                    msg.className = 'lightmode-msg';
-                    msg.textContent = "Just kidding. We don't do that here.";
-                    document.body.appendChild(msg);
-                    setTimeout(() => {
-                        msg.style.opacity = '0';
-                        msg.style.transition = 'opacity 0.4s ease';
-                        setTimeout(() => msg.remove(), 400);
-                    }, 2200);
-                }, 2000);
-            });
-        })();
-
-        // Rapid click rage
-        (function() {
-            let clicks = [];
-            const THRESHOLD = 5;
-            const WINDOW = 1500;
-            let rageActive = false;
-
-            document.addEventListener('click', () => {
-                if (rageActive) return;
-                const now = Date.now();
-                clicks.push(now);
-                clicks = clicks.filter(t => now - t < WINDOW);
-                if (clicks.length >= THRESHOLD) {
-                    clicks = [];
-                    rageActive = true;
-                    const overlay = document.createElement('div');
-                    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.95);z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer;';
-                    overlay.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:22px;color:#FF5F56;font-weight:bold;letter-spacing:2px;">STOP. CLICKING.</div><div style="font-family:JetBrains Mono,monospace;font-size:13px;color:#808080;">Read something for once.</div><div style="font-family:JetBrains Mono,monospace;font-size:10px;color:#4A4A4A;margin-top:20px;">(click to dismiss, ironically)</div>';
-                    document.body.appendChild(overlay);
-                    overlay.addEventListener('click', () => {
-                        overlay.style.opacity = '0';
-                        overlay.style.transition = 'opacity 0.4s ease';
-                        setTimeout(() => { overlay.remove(); rageActive = false; }, 400);
-                    });
-                }
-            });
-        })();
-
-        // Scroll attempt roast
-        (function() {
-            const msgs = [
-                "There's nowhere to scroll. Everything is right here. Check it out.",
-                "Scrolling won't reveal hidden content. This is it. Appreciate it.",
-                "You scroll like someone who skips tutorials.",
-                "The page ends where your patience should begin.",
-                "Still scrolling? There's no secret footer. I promise.",
-                "This isn't Twitter. You can't doomscroll here."
-            ];
-            let toast = null;
-            let cooldown = false;
-
-            window.addEventListener('wheel', (e) => {
-                if (e.target.closest('.terminal-output') || e.target.closest('.command-palette-body')) return;
-                if (cooldown) return;
-                cooldown = true;
-                if (toast) toast.remove();
-                toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:10px 18px;z-index:100001;font-family:JetBrains Mono,monospace;font-size:11px;color:#808080;opacity:0;transition:opacity 0.3s,transform 0.3s;white-space:nowrap;';
-                toast.textContent = msgs[Math.floor(Math.random() * msgs.length)];
-                document.body.appendChild(toast);
-                requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)'; });
-                setTimeout(() => {
-                    if (toast) { toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(10px)'; setTimeout(() => { if (toast) { toast.remove(); toast = null; } }, 300); }
-                }, 2500);
-                setTimeout(() => { cooldown = false; }, 4000);
-            });
-        })();
-
-        // Idle timeout roast
-        (function() {
-            const roasts = [
-                "Hello? Anyone there? I put effort into this site you know.",
-                "...is this thing on? *taps screen*",
-                "I don't render pixels for my health. Do something.",
-                "You opened this tab just to ignore me? Rude.",
-                "Fun fact: every second you idle, a CSS variable cries.",
-                "I could be running on someone else's browser right now. Someone who CARES.",
-                "Are you reading this on your phone while watching TV? I can tell.",
-                "30 seconds of nothing. New record. I'm so proud.",
-                "The terminal misses you. Type something. Anything. Please.",
-                "I bet you have 47 other tabs open. I'm not special to you.",
-                "If you're AFK, just know I'm judging you in your absence.",
-                "This is what my developer spent weekends on. Silence."
+            const idleMessages = [
+                "Hello? Anyone there?",
+                "I put actual effort into this site, you know.",
+                "The terminal is RIGHT THERE. Type something.",
+                "...",
+                "Fine. I'll just sit here. Alone. Unappreciated.",
+                "You opened my portfolio to stare at it?",
+                "This isn't a screensaver. Interact with me.",
+                "I can see you're still here. Do something.",
+                "Even my cursor is getting bored.",
+                "Are you AFK on someone's resume? Really?",
             ];
             let idleTimer = null;
-            let roastIndex = 0;
+            let idleCount = 0;
+            let isTyping = false;
 
             function resetIdle() {
-                clearTimeout(idleTimer);
-                idleTimer = setTimeout(roastUser, 30000);
+                if (idleTimer) clearTimeout(idleTimer);
+                if (isTyping) return;
+                idleTimer = setTimeout(triggerIdleRoast, 30000);
             }
 
-            function roastUser() {
+            function triggerIdleRoast() {
+                if (isTyping || activeGame) return;
                 const output = document.getElementById('terminalOutput');
-                if (!output) return;
-                if (window.activeGame) { resetIdle(); return; }
+                const input = document.getElementById('terminalInput');
+                if (!output || !input || document.activeElement === input) { resetIdle(); return; }
+
+                isTyping = true;
+                const msg = idleMessages[idleCount % idleMessages.length];
+                idleCount++;
+
                 const line = document.createElement('div');
-                line.style.cssText = 'color:#808080;font-style:italic;opacity:0;transition:opacity 0.5s;';
-                line.textContent = '> ' + roasts[roastIndex % roasts.length];
+                line.className = 'terminal-line';
+                line.style.color = '#D4A574';
                 output.appendChild(line);
-                requestAnimationFrame(() => { line.style.opacity = '1'; });
-                output.scrollTop = output.scrollHeight;
-                roastIndex++;
-                idleTimer = setTimeout(roastUser, 25000 + Math.random() * 15000);
+
+                let i = 0;
+                const typeChar = setInterval(() => {
+                    if (i < msg.length) {
+                        line.textContent += msg[i];
+                        i++;
+                    } else {
+                        clearInterval(typeChar);
+                        output.scrollTop = output.scrollHeight;
+                        isTyping = false;
+                        // Next idle triggers after another 30s
+                        idleTimer = setTimeout(triggerIdleRoast, 30000);
+                    }
+                }, 50);
             }
 
-            ['mousemove','keydown','click','scroll','touchstart'].forEach(evt => {
+            ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
                 document.addEventListener(evt, resetIdle, { passive: true });
             });
             resetIdle();
         })();
 
-        // Right-click intercept
+        // ====== RAPID CLICK RAGE ======
         (function() {
-            let menu = null;
-            const items = [
-                { label: 'View Source', responses: [
-                    'No.',
-                    'You think my source is just gonna expose itself like that?',
-                    'The source is vibes. You can\'t view vibes.',
-                    'Nice try. It\'s all spaghetti anyway.',
-                    'Access denied. Emotionally.',
-                    'I wrote this at 3am. You don\'t want to see it.'
-                ]},
-                { label: 'Inspect Element', responses: [
-                    'I see you.',
-                    'Inspecting me? At least buy me dinner first.',
-                    'Bold of you to assume there\'s structure here.',
-                    'You\'re not my tech lead. Step away from the DOM.',
-                    'Everything you see is a lie wrapped in a div.',
-                    'What are you, a QA engineer? Relax.'
-                ]},
-                { label: 'Copy', responses: [
-                    'Get your own content.',
-                    'Ctrl+C won\'t save you from having no ideas.',
-                    'Plagiarism? In this economy?',
-                    'My words. Mine. Go journal or something.',
-                    'Copy what? The existential dread? It\'s not transferable.',
-                    'You wouldn\'t download a personality. Oh wait—'
-                ]}
-            ];
+            let clicks = [];
+            let rageCooldown = false;
 
-            function showPopup(text) {
-                const popup = document.createElement('div');
-                popup.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1E1E1E;border:1px solid #FF5F56;border-radius:8px;padding:14px 20px;z-index:100001;font-family:JetBrains Mono,monospace;font-size:12px;color:#FF5F56;max-width:300px;box-shadow:0 8px 32px rgba(255,95,86,0.2);opacity:0;transform:translateY(10px);transition:opacity 0.3s,transform 0.3s;';
-                popup.textContent = text;
-                document.body.appendChild(popup);
-                requestAnimationFrame(() => { popup.style.opacity = '1'; popup.style.transform = 'translateY(0)'; });
+            document.addEventListener('mousedown', (e) => {
+                if (rageCooldown) return;
+                const now = Date.now();
+                clicks.push(now);
+                // Keep only clicks in last 2 seconds
+                clicks = clicks.filter(t => now - t < 2000);
+
+                if (clicks.length >= 6) {
+                    clicks = [];
+                    rageCooldown = true;
+                    showRage();
+                }
+            });
+
+            function showRage() {
+                const messages = [
+                    "STOP. CLICKING.",
+                    "Read something for once.",
+                    "This is a portfolio, not a stress ball.",
+                    "My pixels have feelings too.",
+                    "WHAT DO YOU WANT FROM ME.",
+                    "Calm. Down.",
+                    "You click like you're trying to escape.",
+                    "One click was enough. That was seven.",
+                ];
+                const overlay = document.createElement('div');
+                overlay.className = 'rage-overlay';
+                overlay.innerHTML = `<div class="rage-text">${messages[Math.floor(Math.random() * messages.length)]}</div>`;
+                document.body.appendChild(overlay);
+
+                overlay.addEventListener('click', () => {
+                    overlay.style.opacity = '0';
+                    overlay.style.transition = 'opacity 0.3s';
+                    setTimeout(() => overlay.remove(), 300);
+                    setTimeout(() => { rageCooldown = false; }, 3000);
+                });
+
+                // Auto dismiss after 3s
                 setTimeout(() => {
-                    popup.style.opacity = '0';
-                    popup.style.transform = 'translateY(10px)';
-                    setTimeout(() => popup.remove(), 300);
-                }, 2500);
+                    if (overlay.parentNode) {
+                        overlay.style.opacity = '0';
+                        overlay.style.transition = 'opacity 0.3s';
+                        setTimeout(() => overlay.remove(), 300);
+                        setTimeout(() => { rageCooldown = false; }, 1000);
+                    }
+                }, 3000);
             }
+        })();
+
+        // ====== CUSTOM RIGHT-CLICK MENU ======
+        (function() {
+            let activeMenu = null;
 
             document.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                if (menu) menu.remove();
-                menu = document.createElement('div');
-                menu.style.cssText = `position:fixed;top:${e.clientY}px;left:${e.clientX}px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:6px;padding:4px 0;z-index:100000;font-family:JetBrains Mono,monospace;font-size:12px;min-width:200px;box-shadow:0 4px 16px rgba(0,0,0,0.5);`;
-                items.forEach(item => {
-                    const row = document.createElement('div');
-                    row.style.cssText = 'padding:8px 16px;color:#B0B0B0;cursor:pointer;display:flex;justify-content:space-between;gap:20px;transition:background 0.1s;';
-                    row.innerHTML = `<span>${item.label}</span>`;
-                    row.addEventListener('mouseenter', () => { row.style.background = '#2A2A2A'; });
-                    row.addEventListener('mouseleave', () => { row.style.background = 'none'; });
-                    row.addEventListener('click', (ev) => {
-                        ev.stopPropagation();
-                        const msg = item.responses[Math.floor(Math.random() * item.responses.length)];
-                        if (menu) { menu.remove(); menu = null; }
-                        showPopup(msg);
-                    });
-                    menu.appendChild(row);
-                });
+                removeMenu();
+
+                const menu = document.createElement('div');
+                menu.className = 'custom-context-menu';
+                menu.innerHTML = `
+                    <div class="ctx-item" data-action="source">View Source <span class="ctx-shortcut">No.</span></div>
+                    <div class="ctx-item" data-action="inspect">Inspect Element <span class="ctx-shortcut">I see you.</span></div>
+                    <div class="ctx-separator"></div>
+                    <div class="ctx-item" data-action="copy">Copy <span class="ctx-shortcut">Get your own.</span></div>
+                    <div class="ctx-item" data-action="paste">Paste <span class="ctx-shortcut">Paste what?</span></div>
+                    <div class="ctx-separator"></div>
+                    <div class="ctx-item" data-action="refresh">Refresh <span class="ctx-shortcut">Why?</span></div>
+                    <div class="ctx-item" data-action="back">Go Back <span class="ctx-shortcut">Please don't.</span></div>
+                `;
+
+                // Position
+                let x = e.clientX, y = e.clientY;
                 document.body.appendChild(menu);
+                // Adjust if off-screen
+                const rect = menu.getBoundingClientRect();
+                if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 5;
+                if (y + rect.height > window.innerHeight) y = window.innerHeight - rect.height - 5;
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                activeMenu = menu;
+
+                // Item clicks
+                menu.querySelectorAll('.ctx-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const action = item.dataset.action;
+                        removeMenu();
+                        handleCtxAction(action);
+                    });
+                });
             });
 
-            document.addEventListener('click', () => {
-                if (menu) { menu.remove(); menu = null; }
-            });
+            document.addEventListener('click', () => removeMenu());
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') removeMenu(); });
+
+            function removeMenu() {
+                if (activeMenu) { activeMenu.remove(); activeMenu = null; }
+            }
+
+            function handleCtxAction(action) {
+                const output = document.getElementById('terminalOutput');
+                if (!output) return;
+                const responses = {
+                    source: "You really thought I'd let you view source from a right-click? Ctrl+U exists. But I'm judging you.",
+                    inspect: "DevTools? Go ahead. I have nothing to hide. ...mostly.",
+                    copy: "Original content only. Write your own portfolio.",
+                    paste: "What are you pasting INTO a static site? Think about it.",
+                    refresh: "Was my site that traumatic? Fine.",
+                    back: "There's nowhere to go back to. You came here on purpose.",
+                };
+                const msg = responses[action];
+                if (msg && !activeGame) {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.style.color = '#D4A574';
+                    line.textContent = `> ${msg}`;
+                    output.appendChild(line);
+                    output.scrollTop = output.scrollHeight;
+                }
+                if (action === 'refresh') setTimeout(() => location.reload(), 1500);
+            }
         })();
-    </script>
-</body>
-</html>
+    
