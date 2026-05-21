@@ -198,9 +198,38 @@ async function processCommand(input) {
 
     if (cmd === '') return;
 
+    // Block commands while site is greyed out (DP displaced)
+    if (document.body.classList.contains('site-greyed-out')) {
+        const greyMsgs = [
+            "I'm literally greyed out. Put my face back first.",
+            "Hello? I'm disabled. The whole site is having an existential crisis.",
+            "You displaced my face and now you want me to work? Priorities.",
+            "Restore the DP and we'll talk. Until then, I'm on strike.",
+            "I don't respond to commands while decapitated.",
+            "The site is greyed out. I am greyed out. We are all greyed out."
+        ];
+        addLine(greyMsgs[Math.floor(Math.random() * greyMsgs.length)], 'error-line');
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        return;
+    }
+
     if (commands[cmd]) {
         const response = await commands[cmd]();
         response.forEach(line => addLine(line, 'response-line'));
+    } else if (cmd === 'rm -rf /' || cmd === 'rm -rf / --no-preserve-root') {
+        addLine('Initiating total destruction...', 'error-line');
+        fakeDeletePage();
+        return;
+    } else if (cmd.startsWith('sudo')) {
+        const sudoResponses = [
+            "Nice try. You don't have root on my portfolio.",
+            "Permission denied. This isn't your Linux box.",
+            "sudo? I barely know you.",
+            "Access level: guest. Permanently.",
+            "You think sudo works here? Adorable.",
+            "Root access requires 10 years of friendship. Minimum."
+        ];
+        addLine(sudoResponses[Math.floor(Math.random() * sudoResponses.length)], 'error-line');
     } else {
         addLine(`Command not found: ${cmd}. Type 'help' for available commands.`, 'error-line');
     }
@@ -901,4 +930,78 @@ function showNudge() {
             }, 5000);
         }
     }, 30);
+}
+
+// rm -rf / fake delete
+function fakeDeletePage() {
+    const container = document.querySelector('.page-container');
+    if (!container) return;
+
+    const elements = Array.from(container.querySelectorAll('*')).filter(el => {
+        return el.offsetHeight > 0 && el.children.length === 0;
+    });
+
+    // Shuffle for dramatic effect
+    for (let i = elements.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [elements[i], elements[j]] = [elements[j], elements[i]];
+    }
+
+    const deleteMsgs = [
+        'Deleting system32... just kidding, wrong OS.',
+        'Removing all your hopes and dreams...',
+        'Purging node_modules... this might take a while.',
+        'Shredding CSS variables...',
+        'Uninstalling talent...',
+        'Destroying evidence of good design...',
+        'Yeeting divs into the void...'
+    ];
+
+    let i = 0;
+    const batchSize = Math.max(3, Math.floor(elements.length / 20));
+
+    function deleteNext() {
+        if (i >= elements.length) {
+            // Show message in terminal then restore
+            setTimeout(() => {
+                addLine('', 'response-line');
+                addLine('rm: cannot remove everything — ego too large.', 'error-line');
+                addLine('Just kidding. But you tried.', 'response-line');
+                addLine('Restoring...', 'response-line');
+                setTimeout(() => {
+                    container.style.transition = 'opacity 0.6s ease';
+                    container.style.opacity = '0';
+                    setTimeout(() => {
+                        elements.forEach(el => {
+                            el.style.opacity = '';
+                            el.style.transform = '';
+                            el.style.transition = '';
+                        });
+                        container.style.opacity = '1';
+                        addLine('System restored. No thanks to you.', 'response-line');
+                        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                    }, 600);
+                }, 1000);
+            }, 500);
+            return;
+        }
+
+        // Log a sarcastic message every few batches
+        if (i % (batchSize * 3) === 0 && i > 0) {
+            const msg = deleteMsgs[Math.floor(Math.random() * deleteMsgs.length)];
+            addLine(msg, 'error-line');
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+
+        for (let b = 0; b < batchSize && i < elements.length; b++, i++) {
+            const el = elements[i];
+            el.style.transition = 'opacity 0.2s, transform 0.3s';
+            el.style.opacity = '0';
+            el.style.transform = `translateY(${Math.random() > 0.5 ? '-' : ''}${10 + Math.random() * 20}px) scale(0.8)`;
+        }
+
+        setTimeout(deleteNext, 80);
+    }
+
+    deleteNext();
 }
