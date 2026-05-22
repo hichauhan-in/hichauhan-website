@@ -1639,6 +1639,7 @@
             };
         }
         // === SARCASTIC DOUBLE-CLICK SYSTEM ===
+        let dotActionInProgress = false;
         const dotClickCounts = { red: 0, yellow: 0, green: 0 };
         const dotSarcasticMsgs = {
             red: [
@@ -1690,8 +1691,10 @@
 
         // Red dot close button chaos
         document.querySelector('.terminal-dot.red')?.addEventListener('click', () => {
+            if (dotActionInProgress) return;
             dotClickCounts.red++;
             if (dotClickCounts.red > 1) { showIndexSarcasticPrompt('red'); return; }
+            dotActionInProgress = true;
             triggerChaos();
         });
 
@@ -1898,8 +1901,10 @@
 
         // Yellow dot minimize button
         document.querySelector('.terminal-dot.yellow')?.addEventListener('click', () => {
+            if (dotActionInProgress) return;
             dotClickCounts.yellow++;
             if (dotClickCounts.yellow > 1) { showIndexSarcasticPrompt('yellow'); return; }
+            dotActionInProgress = true;
             triggerMinimize();
         });
 
@@ -2050,8 +2055,10 @@
 
         // Green dot maximize button - BSOD
         document.querySelector('.terminal-dot.green')?.addEventListener('click', () => {
+            if (dotActionInProgress) return;
             dotClickCounts.green++;
             if (dotClickCounts.green > 1) { showIndexSarcasticPrompt('green'); return; }
+            dotActionInProgress = true;
             triggerMaximize();
         });
 
@@ -2085,6 +2092,16 @@
                 hint.style.transition = 'opacity 0.3s';
                 hint.style.opacity = '0';
             }
+            // Hide hints, gravity toggles, and light mode button
+            const hintsToggle = document.querySelector('.hints-toggle');
+            const gravityToggle = document.querySelector('.gravity-toggle');
+            const lightModeBtn = document.querySelector('.lightmode-btn');
+            if (hintsToggle) { hintsToggle.style.transition = 'opacity 0.3s'; hintsToggle.style.opacity = '0'; hintsToggle.style.pointerEvents = 'none'; }
+            if (gravityToggle) { gravityToggle.style.transition = 'opacity 0.3s'; gravityToggle.style.opacity = '0'; gravityToggle.style.pointerEvents = 'none'; }
+            if (lightModeBtn) { lightModeBtn.style.transition = 'opacity 0.3s'; lightModeBtn.style.opacity = '0'; lightModeBtn.style.pointerEvents = 'none'; }
+            // Hide welcome header
+            const welcomeHeader = document.querySelector('.welcome-header');
+            if (welcomeHeader) { welcomeHeader.style.transition = 'opacity 0.3s'; welcomeHeader.style.opacity = '0'; welcomeHeader.style.pointerEvents = 'none'; }
 
             // Step 2: Terminal expands to fullscreen (smooth from current position)
             requestAnimationFrame(() => {
@@ -2210,11 +2227,11 @@
                     </div>
                     <div class="bsod-percent" id="bsodPercent">0% complete</div>
                     <div class="bsod-qr-section">
-                        <div class="bsod-qr">QR CODE<br>(it's fake)</div>
+                        <div class="bsod-qr">QR CODE<br>SCAN ME</div>
                         <div class="bsod-search">
                             If you're curious enough to actually Bing this error,<br>
-                            go ahead: <a href="https://www.bing.com/search?q=0xDEAD0069+MAXIMIZED_BEYOND_REASON+bugcheck" target="_blank">0xDEAD0069 MAXIMIZED_BEYOND_REASON</a><br>
-                            <span style="font-size:10px; opacity:0.6;">Good luck. You'll need it. (Yes, we said Bing. This is a Microsoft household.)</span>
+                            go ahead: <a href="https://www.bing.com/search?q=0xDEAD0069+MAXIMIZED_BEYOND_REASON+bugcheck" target="blank">0xDEAD0069 MAXIMIZED_BEYOND_REASON</a><br>
+                            <span style="font-size:10px; opacity:0.6;" id="bsodBingRemark"></span>
                         </div>
                     </div>
                     <div class="bsod-code">
@@ -2226,6 +2243,19 @@
                     <button class="bsod-reload" onclick="location.reload()">Reboot website</button>
                 `;
                 document.body.appendChild(bsod);
+
+                // Randomize Bing sarcasm
+                const bingRemarks = [
+                    "Bing will definitely have answers for a made-up bugcheck. Definitely.",
+                    "Spoiler: Bing will suggest you restart. Which... yeah.",
+                    "Even Copilot can't save you from this one.",
+                    "Bing's top result will be a Reddit thread from 2009. Enjoy.",
+                    "You're really gonna Bing a fake error code? Peak desperation.",
+                    "Bing: for when Google judges you too hard.",
+                    "The fact that this link actually works is concerning. Don't click it.",
+                ];
+                const remarkEl = document.getElementById('bsodBingRemark');
+                if (remarkEl) remarkEl.textContent = bingRemarks[Math.floor(Math.random() * bingRemarks.length)];
 
                 // Fake percentage counter
                 let percent = 0;
@@ -3417,18 +3447,21 @@
             let rageActive = false;
 
             document.addEventListener('click', () => {
-                if (rageActive) return;
+                if (rageActive || dotActionInProgress) return;
                 const now = Date.now();
                 clicks.push(now);
                 clicks = clicks.filter(t => now - t < WINDOW);
                 if (clicks.length >= THRESHOLD) {
                     clicks = [];
                     rageActive = true;
+                    let dismissable = false;
                     const overlay = document.createElement('div');
-                    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.95);z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer;';
+                    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.95);z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:not-allowed;';
                     overlay.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:22px;color:#FF5F56;font-weight:bold;letter-spacing:2px;">STOP. CLICKING.</div><div style="font-family:JetBrains Mono,monospace;font-size:13px;color:#808080;">Read something for once.</div><div style="font-family:JetBrains Mono,monospace;font-size:10px;color:#4A4A4A;margin-top:20px;">(click to dismiss, ironically)</div>';
                     document.body.appendChild(overlay);
+                    setTimeout(() => { dismissable = true; overlay.style.cursor = 'pointer'; }, 2000);
                     overlay.addEventListener('click', () => {
+                        if (!dismissable) return;
                         overlay.style.opacity = '0';
                         overlay.style.transition = 'opacity 0.4s ease';
                         setTimeout(() => { overlay.remove(); rageActive = false; }, 400);
@@ -3451,6 +3484,7 @@
             let cooldown = false;
 
             window.addEventListener('wheel', (e) => {
+                if (dotActionInProgress) return;
                 if (e.target.closest('.terminal-output') || e.target.closest('.command-palette-body')) return;
                 if (cooldown) return;
                 cooldown = true;
