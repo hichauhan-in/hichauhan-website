@@ -322,9 +322,10 @@
 <body>
     <header class="page-header" style="position:relative;">
         <h1 class="page-title">Contact</h1>
-        <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">click the title. also the dots. especially the dots.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
+
+    <span class="chaos-hint" style="position:relative; display:block; width:100%; max-width:800px; margin:0 auto; padding:0; top:-12px; margin-bottom:-8px; text-align:left;">click the title. also the dots. especially the dots.</span>
 
     <div class="minimized-dot" id="minDot" data-msg="click to respawn, genius"></div>
     <div class="terminal" id="terminal">
@@ -372,6 +373,8 @@
             </span>
         </span>
     </div>
+
+    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 
     <script>
         const lines = [
@@ -785,6 +788,5 @@
             });
         })();
     </script>
-    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 </body>
 </html>
