@@ -256,6 +256,55 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
+        /* Card flip */
+        .role-card {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .role-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .role-card .card-front,
+        .role-card .card-back {
+            backface-visibility: hidden;
+        }
+
+        .role-card .card-back {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            transform: rotateY(180deg);
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+            overflow: auto;
+        }
+
+        .role-card .card-back .rant-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--red);
+        }
+
+        .role-card .card-back .rant-text {
+            font-size: 12px;
+            color: var(--grey);
+            line-height: 1.7;
+        }
+
+        .role-card .card-back .rant-footer {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
         .role-header {
             display: flex;
             align-items: flex-start;
@@ -361,12 +410,105 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .certs-header-text:hover {
+            color: var(--teal);
         }
 
         .certs-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
+            position: relative;
+        }
+
+        .certs-grid.loading-mode .cert {
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            padding: 0;
+            border-radius: 4px;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .certs-grid.loading-mode .cert > * {
+            display: none;
+        }
+
+        .cert-progress-bar {
+            display: none;
+            width: 100%;
+            height: 40px;
+            background: var(--charcoal);
+            border: 1px solid var(--steel);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cert-progress-bar.active {
+            display: block;
+        }
+
+        .cert-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--teal), var(--blue));
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .cert-progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 8px,
+                rgba(255,255,255,0.04) 8px,
+                rgba(255,255,255,0.04) 16px
+            );
+            animation: barStripes 0.8s linear infinite;
+        }
+
+        @keyframes barStripes {
+            from { background-position: 0 0; }
+            to { background-position: 32px 0; }
+        }
+
+        .cert-progress-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--white);
+            z-index: 2;
+        }
+
+        .cert-progress-stuck {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--amber);
+            margin-top: 12px;
+            opacity: 0;
+            transition: opacity 0.4s;
+            text-align: center;
+        }
+
+        .cert-progress-stuck.show {
+            opacity: 1;
         }
 
         .cert {
@@ -450,6 +592,162 @@
         .hints-toggle.active .toggle-knob { left:16px; background:#D4A574; }
         .hints-toggle .toggle-label { font-size:10px; color:#808080; text-transform:uppercase; letter-spacing:1px; }
         .hints-toggle.active .toggle-label { color:#D4A574; }
+
+        /* Bottom-right action buttons */
+        .chaos-actions {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 4500;
+        }
+        .chaos-actions button {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--steel);
+            background: var(--graphite);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chaos-actions button:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            box-shadow: 0 0 12px rgba(0, 168, 150, 0.15);
+        }
+        .chaos-actions .save-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+            box-shadow: 0 0 12px rgba(255, 95, 86, 0.15);
+        }
+        .chaos-actions .save-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Edit button on cards */
+        .card-edit-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--steel);
+            background: var(--charcoal);
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+            backface-visibility: hidden;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-edit-btn:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            box-shadow: 0 0 8px rgba(0, 168, 150, 0.2);
+        }
+
+        .card-edit-btn.is-save {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .card-edit-btn.is-save:hover {
+            background: var(--teal);
+            color: var(--void);
+        }
+
+        /* Notepad mode */
+        .role-card.editing {
+            transform: none !important;
+            cursor: default;
+        }
+
+        .role-card.editing .card-front {
+            visibility: hidden;
+        }
+
+        .role-card.editing .card-back {
+            display: none;
+        }
+
+        .role-card .card-notepad {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            flex-direction: column;
+            gap: 0;
+            padding: 28px 32px;
+        }
+
+        .role-card.editing .card-notepad {
+            display: flex;
+        }
+
+        .notepad-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--charcoal);
+            border-bottom: 1px solid var(--steel);
+            border-radius: 9px 9px 0 0;
+            margin: -28px -32px 12px;
+            padding-right: 32px;
+        }
+
+        .notepad-bar span {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .notepad-bar .notepad-save {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid var(--teal);
+            background: none;
+            color: var(--teal);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .notepad-bar .notepad-save:hover {
+            background: var(--teal);
+            color: var(--void);
+        }
+
+        .notepad-textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--grey);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            resize: none;
+            padding: 12px 0;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -457,15 +755,17 @@
         <div class="page-header-left">
             <h1 class="page-title">Career Timeline</h1>
         </div>
-        <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">the title is clickable. you've been warned.</span>
+        <span class="chaos-hint" style="position:absolute; top:28px; left:32px;">the title is clickable. you've been warned.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
-    <section class="timeline">
+    <section class="timeline" style="position:relative;">
+        <span class="chaos-hint" style="position:absolute; top:-18px; right:40px;">click cards for the unfiltered version</span>
         <!-- Escalation Engineer -->
         <div class="role current">
             <div class="role-node"></div>
-            <div class="role-card">
+            <div class="role-card" data-role="escalation">
+                <div class="card-front">
                 <div class="role-header">
                     <h2 class="role-title">Escalation Engineer</h2>
                     <span class="role-badge">CURRENT</span>
@@ -485,13 +785,29 @@
                     <li>Developing diagnostic tools and automation for faster issue triage and resolution</li>
                     <li>Handling highest-severity escalations with direct customer and partner engagement</li>
                 </ul>
+                </div>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-back">
+                    <div class="rant-title">🔥 THE REAL VERSION</div>
+                    <div class="rant-text">
+                        Professional "have you tried turning it off and on again" but for kernel panics. I stare at crash dumps until they confess. 
+                        When Tier-3 gives up, they call me — the Tier-3.5 that shouldn't exist. My WinDbg has more hours than my Netflix. 
+                        I debug problems so deep even the stack trace needs therapy.
+                    </div>
+                    <div class="rant-footer">[ click to flip back to the corporate version ]</div>
+                </div>
+                <div class="card-notepad">
+                    <div class="notepad-bar"><span>editing — escalation_engineer.txt</span></div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
         </div>
 
         <!-- Support Escalation Engineer -->
         <div class="role">
             <div class="role-node"></div>
-            <div class="role-card">
+            <div class="role-card" data-role="support-esc">
+                <div class="card-front">
                 <div class="role-header">
                     <h2 class="role-title">Support Escalation Engineer</h2>
                 </div>
@@ -511,13 +827,30 @@
                     <li>Led investigations for Sev A / Sev 1 production incidents with structured RCA</li>
                     <li>Mentored engineers and created internal troubleshooting documentation</li>
                 </ul>
+                </div>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-back">
+                    <div class="rant-title">🔥 THE REAL VERSION</div>
+                    <div class="rant-text">
+                        Got 7 badges that basically say "congratulations, you now own everyone else's problems." 
+                        200+ DNS cases means I've typed "nslookup" more times than I've typed "hello." 
+                        CSAT 4.95 because apparently solving your production meltdown at 3am earns a 4/5. 
+                        "Mentored engineers" = taught juniors not to restart production DNS servers at peak hours.
+                    </div>
+                    <div class="rant-footer">[ click to flip back to the corporate version ]</div>
+                </div>
+                <div class="card-notepad">
+                    <div class="notepad-bar"><span>editing — support_escalation.txt</span></div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
         </div>
 
         <!-- Technical Support Engineer -->
         <div class="role">
             <div class="role-node"></div>
-            <div class="role-card">
+            <div class="role-card" data-role="tech-support">
+                <div class="card-front">
                 <div class="role-header">
                     <h2 class="role-title">Technical Support Engineer</h2>
                 </div>
@@ -535,13 +868,29 @@
                     <li>Triaged and resolved customer incidents within SLA targets</li>
                     <li>Developed troubleshooting methodologies that accelerated case resolution</li>
                 </ul>
+                </div>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-back">
+                    <div class="rant-title">🔥 THE REAL VERSION</div>
+                    <div class="rant-text">
+                        Four years of "hi, my network is broken" — spoiler: it was always DNS. Every. Single. Time. 
+                        "Owned mission-critical cases" = got paged at 2am because someone unplugged the wrong cable. 
+                        Sev-1 coordination was 80% waiting on hold and 20% explaining that rebooting a domain controller mid-replication is, in fact, bad.
+                    </div>
+                    <div class="rant-footer">[ click to flip back to the corporate version ]</div>
+                </div>
+                <div class="card-notepad">
+                    <div class="notepad-bar"><span>editing — tech_support.txt</span></div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
         </div>
 
         <!-- Intern -->
         <div class="role">
             <div class="role-node"></div>
-            <div class="role-card">
+            <div class="role-card" data-role="intern">
+                <div class="card-front">
                 <div class="role-header">
                     <h2 class="role-title">Technical Support Intern</h2>
                 </div>
@@ -559,17 +908,34 @@
                     <li>Built strong foundation in customer communication and diagnostics</li>
                     <li>Learned enterprise support workflows and incident management processes</li>
                 </ul>
+                </div>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-back">
+                    <div class="rant-title">🔥 THE REAL VERSION</div>
+                    <div class="rant-text">
+                        Three months of pretending I understood what anyone was talking about. 
+                        "Gained hands-on experience" = broke things, googled furiously, fixed things, told no one. 
+                        "Built strong foundation in customer communication" = learned to say "let me look into that" instead of "I have no idea." 
+                        Survived the intern trial by fire. Barely.
+                    </div>
+                    <div class="rant-footer">[ click to flip back to the corporate version ]</div>
+                </div>
+                <div class="card-notepad">
+                    <div class="notepad-bar"><span>editing — intern.txt</span></div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Certifications -->
-    <section class="certs-section">
+    <section class="certs-section" style="position:relative;">
+        <span class="chaos-hint" style="position:absolute; top:-18px; left:32px;">click the header. trust me.</span>
         <div class="certs-header">
             <span class="certs-header-icon">⬡</span>
             <span class="certs-header-text">Certifications</span>
         </div>
-        <div class="certs-grid">
+        <div class="certs-grid" id="certsGrid">
             <div class="cert">
                 <div class="cert-icon">AI</div>
                 <div class="cert-name">AI Associate</div>
@@ -619,7 +985,19 @@
                 <div class="cert-year">2025</div>
             </div>
         </div>
+        <div class="cert-progress-bar" id="certProgressBar">
+            <div class="cert-progress-fill" id="certProgressFill"></div>
+            <div class="cert-progress-label" id="certProgressLabel">0%</div>
+        </div>
+        <div class="cert-progress-stuck" id="certProgressStuck"></div>
     </section>
+
+    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
+
+    <div class="chaos-actions">
+        <button id="shuffleBtn">Shuffle</button>
+        <button id="saveBtn" class="save-btn" disabled>Save</button>
+    </div>
 
     <script>
         // ====== THE UNHINGED TITLE ENGINE ======
@@ -966,6 +1344,258 @@
 
         document.querySelectorAll('.role, .cert').forEach(el => observer.observe(el));
 
+        // Card flip — click to show rant version
+        document.querySelectorAll('.role-card[data-role]').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.card-edit-btn') || e.target.closest('.card-notepad') || card.classList.contains('editing')) return;
+                card.classList.toggle('flipped');
+            });
+        });
+
+        // ====== EDIT BUTTON — NOTEPAD MODE ======
+        const editPopupRemarks = [
+            "You actually thought you could edit your own resume? That's adorable.",
+            "Changes rejected. Your employment history is a read-only filesystem.",
+            "Nice try. The past is immutable — just like your commit history on main.",
+            "Saving your edits would require a time machine and a better attitude.",
+            "Error: permission denied. You don't have write access to your own career.",
+            "Your revisions have been forwarded to HR. They're laughing.",
+            "This isn't Google Docs. Your changes exist only in the void now.",
+            "Overwrite denied. The original disappointment must be preserved for posterity.",
+        ];
+
+        function showEditPopup(card, btn) {
+            const remark = editPopupRemarks[Math.floor(Math.random() * editPopupRemarks.length)];
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;backdrop-filter:blur(3px);';
+            const popup = document.createElement('div');
+            popup.style.cssText = 'background:var(--graphite);border:1px solid var(--steel);border-radius:12px;padding:32px 36px;max-width:420px;text-align:center;font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--amber);box-shadow:0 16px 48px rgba(0,0,0,0.6);transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);';
+            const msg = document.createElement('p');
+            msg.style.cssText = 'margin:0 0 24px 0;line-height:1.6;';
+            msg.textContent = remark;
+            const dismissBtn = document.createElement('button');
+            dismissBtn.textContent = 'OK';
+            dismissBtn.style.cssText = 'background:var(--steel);border:1px solid var(--muted);color:var(--grey);font-family:"JetBrains Mono",monospace;font-size:12px;padding:8px 20px;border-radius:6px;cursor:pointer;transition:background 0.2s,color 0.2s;';
+            dismissBtn.onmouseenter = () => { dismissBtn.style.background = 'var(--teal)'; dismissBtn.style.color = 'var(--void)'; };
+            dismissBtn.onmouseleave = () => { dismissBtn.style.background = 'var(--steel)'; dismissBtn.style.color = 'var(--grey)'; };
+            popup.appendChild(msg);
+            popup.appendChild(dismissBtn);
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; popup.style.transform = 'scale(1)'; });
+
+            function dismiss() {
+                overlay.style.opacity = '0';
+                popup.style.transform = 'scale(0.85)';
+                setTimeout(() => overlay.remove(), 300);
+                // Revert card back to normal
+                card.classList.remove('editing');
+                btn.textContent = '/';
+                btn.classList.remove('is-save');
+            }
+
+            dismissBtn.addEventListener('click', dismiss);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+        }
+
+        document.querySelectorAll('.card-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = btn.closest('.role-card');
+
+                if (card.classList.contains('editing')) {
+                    // Check if user actually changed anything
+                    const textarea = card.querySelector('.notepad-textarea');
+                    if (textarea.value === textarea.dataset.original) {
+                        // No changes — just exit silently
+                        card.classList.remove('editing');
+                        btn.textContent = '/';
+                        btn.classList.remove('is-save');
+                    } else {
+                        // Changes made — show popup, revert on acknowledge
+                        showEditPopup(card, btn);
+                    }
+                    return;
+                }
+
+                // Enter edit mode
+                const front = card.querySelector('.card-front');
+                const desc = front.querySelector('.role-desc')?.textContent.trim() || '';
+                const achievements = [...front.querySelectorAll('.role-achievements li')].map(li => '• ' + li.textContent.trim()).join('\n');
+                const textarea = card.querySelector('.notepad-textarea');
+                const originalContent = desc + '\n\n' + achievements;
+                textarea.value = originalContent;
+                textarea.dataset.original = originalContent;
+                card.classList.remove('flipped');
+                card.classList.add('editing');
+                btn.textContent = '✓';
+                btn.classList.add('is-save');
+                textarea.focus();
+            });
+        });
+
+        // ====== SHUFFLE BUTTON ======
+        document.getElementById('shuffleBtn')?.addEventListener('click', () => {
+            const timeline = document.querySelector('.timeline');
+            const roles = [...timeline.querySelectorAll('.role')];
+            // Phase 1: Cards scatter off-screen in random directions
+            roles.forEach((role) => {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 800 + Math.random() * 400;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                const r = (Math.random() - 0.5) * 360;
+                role.style.transition = 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s';
+                role.style.transform = `translate(${x}px, ${y}px) rotate(${r}deg)`;
+                role.style.opacity = '0';
+            });
+            // Phase 2: Shuffle DOM order, then fly back in from random directions
+            setTimeout(() => {
+                const shuffled = roles.sort(() => Math.random() - 0.5);
+                shuffled.forEach((role, i) => {
+                    timeline.appendChild(role);
+                    // Set a new random starting position
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = 600 + Math.random() * 300;
+                    const sx = Math.cos(angle) * dist;
+                    const sy = Math.sin(angle) * dist;
+                    role.style.transition = 'none';
+                    role.style.transform = `translate(${sx}px, ${sy}px) rotate(${(Math.random()-0.5)*180}deg)`;
+                    role.style.opacity = '0';
+                    // Stagger the return
+                    setTimeout(() => {
+                        role.style.transition = 'transform 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s';
+                        role.style.transform = 'translate(0, 0) rotate(0deg)';
+                        role.style.opacity = '1';
+                    }, 100 + i * 150);
+                });
+                // Enable save button after shuffle
+                document.getElementById('saveBtn').disabled = false;
+            }, 800);
+        });
+
+        // ====== SAVE BUTTON ======
+        document.getElementById('saveBtn')?.addEventListener('click', () => {
+            const saveBtn = document.getElementById('saveBtn');
+            const remarks = [
+                "Save what exactly? The disorder you just created? I'm not your accomplice.",
+                "Error 418: I'm a teapot. Also, nothing here is worth persisting to disk.",
+                "You shuffled a perfectly good timeline and now you want to SAVE it? The audacity.",
+                "Saved to /dev/null. Your changes have been carefully discarded. You're welcome.",
+                "git commit -m 'destroyed my career timeline for fun, no regrets' — pushed to main.",
+                "Saving... just kidding. This isn't a real app and you're not a real editor.",
+                "Your progress has been permanently lost. It was never tracked. Nobody cares.",
+                "Ctrl+S won't save your career decisions. Trust me, I've tried.",
+                "Saving this would violate at least 3 design principles and 1 Geneva Convention.",
+            ];
+            const remark = remarks[Math.floor(Math.random() * remarks.length)];
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:24px;right:24px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--red);background:var(--graphite);border:1px solid var(--steel);padding:14px 20px;border-radius:8px;z-index:9999;opacity:0;transition:opacity 0.3s,transform 0.3s;transform:translateY(-10px);max-width:360px;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+            toast.textContent = remark;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+            // Disable save button after use
+            saveBtn.disabled = true;
+        });
+
+        // ====== CERT LOADING BAR EASTER EGG ======
+        (function() {
+            const header = document.querySelector('.certs-header-text');
+            const grid = document.getElementById('certsGrid');
+            const bar = document.getElementById('certProgressBar');
+            const fill = document.getElementById('certProgressFill');
+            const label = document.getElementById('certProgressLabel');
+            const stuckMsg = document.getElementById('certProgressStuck');
+            let isLoading = false;
+            let isStuck = false;
+
+            const stuckRemarks = [
+                "Installing certifications... 99% — estimating: the rest of your life.",
+                "Almost there! Just kidding. It's been stuck here since 2024.",
+                "99%. The last 1% requires 3 more years of experience you don't have.",
+                "Progress halted. Cert servers ran out of validation juice.",
+                "99% complete. The remaining 1% is trapped behind a paywall.",
+                "Loading... loading... ah forget it. You peaked at fundamentals.",
+                "Connection to ambition.exe timed out at 99%.",
+                "ERROR: cannot finish — impostor syndrome buffer overflow.",
+            ];
+
+            header.addEventListener('click', () => {
+                if (isStuck) {
+                    // Revert from stuck state with staggered drop-in animation
+                    bar.style.transition = 'opacity 0.3s, transform 0.3s';
+                    bar.style.opacity = '0';
+                    bar.style.transform = 'scaleX(0.8)';
+                    stuckMsg.classList.remove('show');
+
+                    setTimeout(() => {
+                        bar.classList.remove('active');
+                        bar.style.cssText = '';
+                        fill.style.width = '0%';
+                        label.textContent = '0%';
+                        grid.style.display = '';
+                        const certs = [...grid.querySelectorAll('.cert')];
+                        certs.forEach((cert, i) => {
+                            cert.style.transition = 'none';
+                            cert.style.transform = 'translateY(-40px) scale(0.8)';
+                            cert.style.opacity = '0';
+                        });
+                        // Staggered drop-in with bounce
+                        requestAnimationFrame(() => {
+                            certs.forEach((cert, i) => {
+                                setTimeout(() => {
+                                    cert.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+                                    cert.style.transform = 'translateY(0) scale(1)';
+                                    cert.style.opacity = '1';
+                                }, i * 70);
+                            });
+                        });
+                    }, 300);
+
+                    isStuck = false;
+                    return;
+                }
+                if (isLoading) return;
+                isLoading = true;
+
+                // Phase 1: Certs shrink and fade
+                const certs = [...grid.querySelectorAll('.cert')];
+                certs.forEach((cert, i) => {
+                    cert.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1) ' + (i * 0.05) + 's';
+                    cert.style.transform = 'scale(0.3) translateY(20px)';
+                    cert.style.opacity = '0';
+                });
+
+                // Phase 2: Show progress bar
+                setTimeout(() => {
+                    grid.style.display = 'none';
+                    bar.classList.add('active');
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        // Fast to 60, slow to 90, crawl to 99
+                        if (progress < 60) progress += Math.random() * 8 + 4;
+                        else if (progress < 90) progress += Math.random() * 3 + 1;
+                        else if (progress < 99) progress += Math.random() * 0.5 + 0.1;
+                        else { progress = 99; clearInterval(interval); stuck(); }
+                        progress = Math.min(progress, 99);
+                        fill.style.width = progress + '%';
+                        label.textContent = Math.floor(progress) + '%';
+                    }, 120);
+                }, certs.length * 50 + 400);
+
+                function stuck() {
+                    // Stuck at 99% forever until user clicks header again
+                    label.textContent = '99%';
+                    fill.style.width = '99%';
+                    stuckMsg.textContent = stuckRemarks[Math.floor(Math.random() * stuckRemarks.length)];
+                    stuckMsg.classList.add('show');
+                    isLoading = false;
+                    isStuck = true;
+                }
+            });
+        })();
+
         // Hints system
         (function() {
             const toggle = document.getElementById('hintsToggle');
@@ -1041,6 +1671,5 @@
             });
         })();
     </script>
-    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 </body>
 </html>

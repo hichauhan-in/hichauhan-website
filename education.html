@@ -310,6 +310,12 @@
         /* Truth mode */
         .edu-card {
             cursor: pointer;
+            transition: all 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .edu-card.flipping {
+            transform: rotateX(90deg) scale(0.95);
+            opacity: 0.3;
         }
 
         .edu-card.truth-mode {
@@ -336,15 +342,6 @@
             border-color: rgba(255, 95, 86, 0.3);
         }
 
-        .edu-truth-hint {
-            font-size: 10px;
-            color: var(--muted);
-            text-align: center;
-            margin-top: -8px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .page-header { padding: 36px 20px 32px; }
@@ -355,6 +352,7 @@
 
         .chaos-hint { position:absolute; font-family:'JetBrains Mono',monospace; font-size:10px; color:#D4A574; opacity:0; pointer-events:none; transition:opacity 0.3s; white-space:nowrap; z-index:100; }
         .chaos-hint::before { content:'\26A0  '; }
+        .chaos-hint.no-icon::before { content: none; }
         body.hints-active .chaos-hint { opacity:1; animation:hintPulse 2s ease-in-out infinite; }
         @keyframes hintPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
         .hints-toggle { position:fixed; bottom:24px; left:24px; display:flex; align-items:center; gap:10px; background:#1E1E1E; border:1px solid #2A2A2A; border-radius:20px; padding:6px 14px 6px 8px; cursor:pointer; z-index:4500; transition:all 0.2s; opacity:0.5; font-family:'JetBrains Mono',monospace; }
@@ -366,17 +364,43 @@
         .hints-toggle.active .toggle-knob { left:16px; background:#D4A574; }
         .hints-toggle .toggle-label { font-size:10px; color:#808080; text-transform:uppercase; letter-spacing:1px; }
         .hints-toggle.active .toggle-label { color:#D4A574; }
+
+        /* Secret Transcript */
+        .transcript-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); backdrop-filter:blur(6px); z-index:9000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+        .transcript-overlay.visible { opacity:1; pointer-events:all; }
+        .transcript-box { background:#0a0a0a; border:1px solid #00A896; border-radius:8px; padding:32px 40px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; transform:translateY(20px) scale(0.95); transition:transform 0.3s; font-family:'JetBrains Mono',monospace; }
+        .transcript-overlay.visible .transcript-box { transform:translateY(0) scale(1); }
+        .transcript-box h2 { font-size:13px; color:#00A896; text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; }
+        .transcript-box .t-subtitle { font-size:10px; color:#808080; margin-bottom:20px; display:block; }
+        .transcript-box table { width:100%; border-collapse:collapse; }
+        .transcript-box th { font-size:9px; color:#808080; text-align:left; padding:6px 8px; border-bottom:1px solid #2A2A2A; text-transform:uppercase; letter-spacing:1px; }
+        .transcript-box td { font-size:11px; padding:8px; border-bottom:1px solid #1E1E1E; color:#B0B0B0; }
+        .transcript-box td.grade { font-weight:700; text-align:center; }
+        .transcript-box .grade-a { color:#00A896; }
+        .transcript-box .grade-b { color:#4A6FA5; }
+        .transcript-box .grade-c { color:#D4A574; }
+        .transcript-box .grade-f { color:#FF5F56; }
+        .transcript-box .t-footer { font-size:9px; color:#808080; margin-top:16px; text-align:center; opacity:0.6; }
+        .transcript-box .t-dismiss { display:block; margin:20px auto 0; background:none; border:1px solid #2A2A2A; color:#808080; padding:6px 16px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:10px; transition:all 0.2s; }
+        .transcript-box .t-dismiss:hover { border-color:#00A896; color:#00A896; }
+
+        /* GPA Roulette */
+        .gpa-spinning { animation: gpaSpin 0.1s steps(1) infinite; }
+        @keyframes gpaSpin { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
+        .gpa-result { animation: gpaReveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes gpaReveal { 0%{transform:scale(1.8);color:#FF5F56} 100%{transform:scale(1)} }
     </style>
 </head>
 <body>
     <header class="page-header" style="position:relative;">
         <h1 class="page-title">Education</h1>
         <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">click the title. keep clicking.</span>
+        <span class="chaos-hint no-icon" style="position:absolute; bottom:-20px; left:0; font-size:9px;">type &quot;grades&quot; for classified records. triple-click a GPA.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
     <section class="education-section">
-        <p class="edu-truth-hint">[ click a card for the honest version ]</p>
+        <p class="chaos-hint no-icon" style="position:relative; text-align:center; margin-top:-8px; margin-bottom:20px; white-space:normal;">[ click a card for the honest version ]</p>
 
         <div class="edu-card" data-idx="0">
             <div class="edu-header">
@@ -428,6 +452,8 @@
             </ul>
         </div>
     </section>
+
+    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 
     <script>
         // Scroll reveal
@@ -492,30 +518,34 @@
             });
 
             card.addEventListener('click', () => {
-                const isTruth = card.classList.toggle('truth-mode');
-                const data = isTruth ? truthData[i] : originalData[i];
-                card.querySelector('.edu-degree').textContent = data.degree;
-                card.querySelector('.edu-institution').textContent = data.institution;
-                card.querySelector('.edu-period').textContent = data.period;
-                card.querySelector('.edu-gpa').textContent = data.gpa;
-                card.querySelector('.edu-badge').textContent = data.badge;
-                const lis = card.querySelectorAll('.edu-highlights li');
-                data.highlights.forEach((text, j) => {
-                    if (lis[j]) lis[j].textContent = text;
-                });
-                // Handle different number of highlights
-                const ul = card.querySelector('.edu-highlights');
-                if (data.highlights.length > lis.length) {
-                    for (let j = lis.length; j < data.highlights.length; j++) {
-                        const li = document.createElement('li');
-                        li.textContent = data.highlights[j];
-                        ul.appendChild(li);
+                if (card.classList.contains('flipping')) return;
+                card.classList.add('flipping');
+                setTimeout(() => {
+                    const isTruth = card.classList.toggle('truth-mode');
+                    const data = isTruth ? truthData[i] : originalData[i];
+                    card.querySelector('.edu-degree').textContent = data.degree;
+                    card.querySelector('.edu-institution').textContent = data.institution;
+                    card.querySelector('.edu-period').textContent = data.period;
+                    card.querySelector('.edu-gpa').textContent = data.gpa;
+                    card.querySelector('.edu-badge').textContent = data.badge;
+                    const lis = card.querySelectorAll('.edu-highlights li');
+                    data.highlights.forEach((text, j) => {
+                        if (lis[j]) lis[j].textContent = text;
+                    });
+                    const ul = card.querySelector('.edu-highlights');
+                    if (data.highlights.length > lis.length) {
+                        for (let j = lis.length; j < data.highlights.length; j++) {
+                            const li = document.createElement('li');
+                            li.textContent = data.highlights[j];
+                            ul.appendChild(li);
+                        }
+                    } else if (data.highlights.length < lis.length) {
+                        for (let j = lis.length - 1; j >= data.highlights.length; j--) {
+                            lis[j].remove();
+                        }
                     }
-                } else if (data.highlights.length < lis.length) {
-                    for (let j = lis.length - 1; j >= data.highlights.length; j--) {
-                        lis[j].remove();
-                    }
-                }
+                    card.classList.remove('flipping');
+                }, 250);
             });
         });
 
@@ -852,6 +882,151 @@
             busy = false;
         });
 
+        // ====== SECRET TRANSCRIPT (type "grades") ======
+        (function() {
+            let buffer = '';
+            const secret = 'grades';
+            const courses = [
+                ['Advanced Procrastination 401', 'A+', 'a'],
+                ['Intro to Googling Your Homework', 'A', 'a'],
+                ['Deadline Denial & Coping Mechanisms', 'B+', 'b'],
+                ['Stack Overflow Copy-Paste Lab', 'A+', 'a'],
+                ['Attending Class: A Theoretical Study', 'C-', 'c'],
+                ['Sleeping Through Lectures 201', 'A', 'a'],
+                ['How to Nod Like You Understand', 'B', 'b'],
+                ['Selective Hearing in Group Projects', 'A-', 'a'],
+                ['Last-Minute Presentation Skills', 'B+', 'b'],
+                ['Convincing TAs You Tried', 'A+', 'a'],
+                ['Existential Crisis Management', 'F', 'f'],
+                ['WiFi Troubleshooting During Exams', 'A', 'a'],
+                ['Strategic Seat Selection 101', 'A+', 'a'],
+                ['Pretending to Read the Textbook', 'B-', 'b'],
+                ['Caffeine Dependency & Performance', 'A+', 'a'],
+            ];
+
+            function showTranscript() {
+                if (document.querySelector('.transcript-overlay')) return;
+                const selected = courses.sort(() => Math.random() - 0.5).slice(0, 8);
+                const rows = selected.map(([name, grade, cls]) =>
+                    `<tr><td>${name}</td><td class="grade grade-${cls}">${grade}</td></tr>`
+                ).join('');
+                const overlay = document.createElement('div');
+                overlay.className = 'transcript-overlay';
+                overlay.innerHTML = `
+                    <div class="transcript-box">
+                        <h2>█ Official Academic Transcript</h2>
+                        <span class="t-subtitle">CLASSIFIED // NOT FOR EMPLOYER DISTRIBUTION</span>
+                        <table>
+                            <tr><th>Course</th><th>Grade</th></tr>
+                            ${rows}
+                        </table>
+                        <div class="t-footer">CGPA: ${(Math.random() * 2 + 1.5).toFixed(2)} / 10 &nbsp;—&nbsp; "Somehow still employed"</div>
+                        <button class="t-dismiss">[ destroy evidence ]</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                requestAnimationFrame(() => overlay.classList.add('visible'));
+                overlay.querySelector('.t-dismiss').addEventListener('click', () => {
+                    overlay.classList.remove('visible');
+                    setTimeout(() => overlay.remove(), 300);
+                });
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        overlay.classList.remove('visible');
+                        setTimeout(() => overlay.remove(), 300);
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                buffer += e.key.toLowerCase();
+                if (buffer.length > 20) buffer = buffer.slice(-20);
+                if (buffer.includes(secret)) {
+                    buffer = '';
+                    showTranscript();
+                }
+            });
+        })();
+
+        // ====== GPA ROULETTE (triple-click GPA) ======
+        (function() {
+            const absurdGPAs = [
+                'GPA: -3.7/10', 'GPA: NaN', 'GPA: undefined', 'GPA: 404',
+                'GPA: lol/10', 'GPA: ∞', 'GPA: yes', 'GPA: no',
+                'GPA: ████', 'GPA: -0.01/10', 'GPA: 11/10 (hacked)',
+                'GPA: rm -rf', 'GPA: sudo 10/10', 'GPA: segfault',
+                'GPA: 0xDEAD', 'GPA: REDACTED', 'GPA: [CLASSIFIED]',
+                'GPA: StackOverflow/10', 'GPA: 9.99999...8/10',
+                'GPA: trust me bro', 'GPA: ☃/10',
+                'GPA: 3+4i/10', 'GPA: potato', 'GPA: π/10',
+                'GPA: vibes only', 'GPA: ask my mom',
+                'GPA: 10/10 (source: me)', 'GPA: erm...next question',
+                'GPA: buffering...', 'GPA: [object Object]',
+                'GPA: HTTP 503', 'GPA: ECONNREFUSED',
+                'GPA: killed by OOM', 'GPA: core dumped',
+                'GPA: 127.0.0.1/10', 'GPA: DROP TABLE grades',
+                'GPA: git reset --hard', 'GPA: chmod 000',
+                'GPA: /dev/null', 'GPA: SIGKILL',
+                'GPA: ☠/10', 'GPA: ¯\\_(ツ)_/¯',
+                'GPA: works on my machine', 'GPA: 0.0...01/10',
+                'GPA: according to ChatGPT: 10/10',
+                'GPA: skill issue/10', 'GPA: 42',
+                'GPA: i tried ok', 'GPA: see attached resume',
+                'GPA: (left on read)', 'GPA: it compiles/10',
+                'GPA: cry/10', 'GPA: ENOMEM',
+                'GPA: Connection timed out', 'GPA: panic!',
+                'GPA: PhD in suffering', 'GPA: NullPointerException',
+            ];
+            const absurdPcts = [
+                '-12%', 'NaN%', '404%', '0.001%', '99.99999...%',
+                '∞%', '[REDACTED]', 'yes%', 'segfault%', '1337%',
+                'rm -rf %', 'undefined%', 'null%', 'ERROR',
+                'potato%', 'π%', '-0%', '0xFF%', 'vibes%',
+                'trust me%', '(ask my mom)%', 'skill issue%',
+                'NaN NaN NaN%', 'overflow%', '256%', '!true%',
+                'about 3%', '100% (in my dreams)', 'TIMEOUT%',
+                'ENOENT%', 'core dumped%', 'it depends%',
+                'works on my machine%', 'cry%', 'panic!%',
+            ];
+
+            document.querySelectorAll('.edu-gpa').forEach(gpa => {
+                let clickCount = 0;
+                let clickTimer = null;
+                const original = gpa.textContent;
+
+                gpa.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clickCount++;
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(() => { clickCount = 0; }, 400);
+
+                    if (clickCount >= 3) {
+                        clickCount = 0;
+                        // Spin animation
+                        gpa.classList.add('gpa-spinning');
+                        let spins = 0;
+                        const isPercent = original.includes('%');
+                        const pool = isPercent ? absurdPcts : absurdGPAs;
+                        const interval = setInterval(() => {
+                            gpa.textContent = pool[Math.floor(Math.random() * pool.length)];
+                            spins++;
+                            if (spins > 15) {
+                                clearInterval(interval);
+                                gpa.classList.remove('gpa-spinning');
+                                gpa.classList.add('gpa-result');
+                                gpa.textContent = pool[Math.floor(Math.random() * pool.length)];
+                                setTimeout(() => {
+                                    gpa.classList.remove('gpa-result');
+                                    gpa.textContent = original;
+                                }, 2500);
+                            }
+                        }, 80);
+                    }
+                });
+            });
+        })();
+
         // Hints system
         (function() {
             const toggle = document.getElementById('hintsToggle');
@@ -927,6 +1102,5 @@
             });
         })();
     </script>
-    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 </body>
 </html>

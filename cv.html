@@ -51,7 +51,7 @@
             border: 1px solid var(--steel);
             border-radius: 10px;
             box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
+            overflow: visible;
         }
 
         .viewer-bar {
@@ -135,6 +135,225 @@
             background: var(--steel);
         }
 
+        /* Hints toggle */
+        .hints-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-radius: 20px;
+            padding: 6px 14px 6px 8px;
+            cursor: pointer;
+            z-index: 4500;
+            transition: all 0.2s ease;
+            opacity: 0.5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hints-toggle:hover {
+            opacity: 0.9;
+            border-color: var(--muted);
+        }
+
+        .hints-toggle.active {
+            border-color: var(--amber);
+            opacity: 1;
+            box-shadow: 0 0 12px rgba(212, 165, 116, 0.15);
+        }
+
+        .hints-toggle .toggle-track {
+            width: 28px;
+            height: 14px;
+            background: var(--steel);
+            border-radius: 7px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+
+        .hints-toggle.active .toggle-track {
+            background: rgba(212, 165, 116, 0.4);
+        }
+
+        .hints-toggle .toggle-knob {
+            width: 10px;
+            height: 10px;
+            background: var(--muted);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .hints-toggle.active .toggle-knob {
+            left: 16px;
+            background: var(--amber);
+        }
+
+        .hints-toggle .toggle-label {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hints-toggle.active .toggle-label {
+            color: var(--amber);
+        }
+
+        /* Chaos hints */
+        .chaos-hint {
+            position: absolute;
+            font-size: 9px;
+            color: var(--amber);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        body.hints-active .chaos-hint {
+            opacity: 1;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Dot cursors */
+        .dot.r, .dot.y, .dot.g { cursor: pointer; position: relative; }
+
+        /* Exit popup */
+        .exit-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 10, 0.92);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .exit-popup {
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-radius: 10px;
+            padding: 32px 40px;
+            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        .exit-popup h3 {
+            font-size: 16px;
+            color: var(--red);
+            margin-bottom: 12px;
+        }
+
+        .exit-popup p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .exit-popup-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .exit-popup-btns button {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 18px;
+            border-radius: 5px;
+            border: 1px solid var(--steel);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: none;
+            color: var(--grey);
+        }
+
+        .exit-popup-btns .stay-btn {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .exit-popup-btns .stay-btn:hover {
+            background: var(--teal);
+            color: var(--void);
+        }
+
+        .exit-popup-btns .leave-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* Download meme popup */
+        .meme-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 10, 0.88);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .meme-popup {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 32px 36px;
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 168, 150, 0.05);
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .meme-popup img {
+            width: 280px;
+            height: 280px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+        }
+
+        .meme-popup .meme-remark {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--amber);
+            line-height: 1.5;
+            max-width: 280px;
+        }
+
+        .meme-popup .meme-dismiss {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .meme-popup .meme-dismiss:hover {
+            color: var(--teal);
+        }
+
         @media (max-width: 768px) {
             body { padding: 12px; }
             .viewer-container { max-width: 100%; border-radius: 8px; }
@@ -144,14 +363,15 @@
 </head>
 <body>
     <div class="viewer-container">
-        <div class="viewer-bar">
+        <div class="viewer-bar" style="position:relative; overflow:visible;">
             <div class="dot r"></div>
             <div class="dot y"></div>
             <div class="dot g"></div>
+            <span class="chaos-hint" style="position:absolute; top:-18px; left:12px; white-space:nowrap;">DO NOT press these buttons</span>
             <span class="bar-title">cv.pdf — Himanshu Chauhan</span>
             <div class="bar-actions">
-                <a href="index.html" class="bar-btn">cd ~/</a>
-                <a href="resources/cv.pdf" download class="bar-btn download">⬇ Download</a>
+                <a href="index.html" class="bar-btn" id="cdHomeBtn">cd ~/</a>
+                <a href="resources/cv.pdf" download class="bar-btn download" id="downloadBtn">⬇ Download</a>
             </div>
         </div>
         <iframe src="resources/cv.pdf" class="pdf-viewer" title="CV - Himanshu Chauhan"></iframe>
@@ -162,5 +382,293 @@
             <span style="margin-left: auto;">Himanshu Chauhan — Windows Debug Engineer</span>
         </div>
     </div>
+
+    <!-- Hints toggle -->
+    <div class="hints-toggle" id="hintsToggle" title="Toggle easter egg hints">
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
+        <span class="toggle-label">hints</span>
+    </div>
+
+    <!-- Chaos hints for dots are inside viewer-bar -->
+
+    <script>
+    (function() {
+        const pageLoadTime = Date.now();
+        let dotActionInProgress = false;
+
+        // ====== HINTS TOGGLE ======
+        const toggle = document.getElementById('hintsToggle');
+        if (toggle) {
+            let toggleCount = 0;
+
+            const enableMessages = [
+                "Couldn't figure it out on your own, huh?",
+                "Skill issue detected. Hints: ON.",
+                "Fine. I'll hold your hand through this.",
+                "Welcome to easy mode, champ.",
+                "Even the easter eggs feel sorry for you now.",
+                "Hint: you're bad at this. There, free hint.",
+                "Training wheels: engaged.",
+                "Imagine needing help on a personal website.",
+                "The easter eggs were hiding FROM you.",
+                "Assistance mode activated. Dignity mode deactivated.",
+            ];
+
+            const reEnableMessages = [
+                "Back already? That was embarrassing.",
+                "Loser mode: re-engaged.",
+                "Ah, the quitter returns.",
+                "Couldn't last 10 seconds without help. Noted.",
+                "You had one job: not need hints. You failed.",
+                "The hints missed you too. (They didn't.)",
+                "Round 2 of giving up. Impressive consistency.",
+                "Welcome back to the kiddie pool.",
+                "Even the toggle is judging you right now.",
+                "Speedrun: giving up any% WR.",
+            ];
+
+            const disableMessages = [
+                "Respect. Going in blind.",
+                "Brave. Stupid, but brave.",
+                "Challenge accepted? Bold of you.",
+                "Fine, do it the hard way. I believe in you. (I don't.)",
+                "Hints off. Good luck, you'll need it.",
+                "Hardcore mode. This won't end well.",
+                "Plot twist: you'll be back in 30 seconds.",
+                "The easter eggs just got harder. (Not really.)",
+                "Going commando. I respect the energy.",
+                "Timer starts now. Let's see how long you last.",
+            ];
+
+            function showRemark(msg) {
+                const existing = document.querySelector('.hints-remark');
+                if (existing) existing.remove();
+                const el = document.createElement('div');
+                el.className = 'hints-remark';
+                el.textContent = msg;
+                el.style.cssText = 'position:fixed;bottom:70px;left:24px;background:var(--graphite);border:1px solid var(--steel);border-radius:6px;padding:8px 14px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--amber);z-index:4600;opacity:0;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s;max-width:280px;pointer-events:none;';
+                document.body.appendChild(el);
+                requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; });
+                setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; setTimeout(() => el.remove(), 300); }, 2500);
+            }
+
+            if (localStorage.getItem('chaos-hints') === 'on') {
+                document.body.classList.add('hints-active');
+                toggle.classList.add('active');
+            }
+            toggle.addEventListener('click', () => {
+                const active = document.body.classList.toggle('hints-active');
+                toggle.classList.toggle('active', active);
+                localStorage.setItem('chaos-hints', active ? 'on' : 'off');
+                toggleCount++;
+                if (active) {
+                    const pool = toggleCount > 1 ? reEnableMessages : enableMessages;
+                    showRemark(pool[Math.floor(Math.random() * pool.length)]);
+                } else {
+                    showRemark(disableMessages[Math.floor(Math.random() * disableMessages.length)]);
+                }
+            });
+        }
+
+        // ====== DOT BUTTON ACTIONS ======
+        const redRemarks = [
+            "Career: terminated. Resume: shredded. Employers: relieved.",
+            "File closed. Your future called — it hung up.",
+            "You just deleted your employability. Bold move.",
+            "cv.pdf has left the chat. So has your career.",
+            "Congratulations, you're now unemployable by choice.",
+            "The recruiter saw this and closed your tab too.",
+            "rm -rf /career executed successfully.",
+        ];
+        const yellowRemarks = [
+            "Minimized to the taskbar. Oh wait, there is no taskbar.",
+            "Your CV is now the size of your attention span.",
+            "Shrunk smaller than your font size on a one-page resume.",
+            "It's in the shadow realm now. With your motivation.",
+            "Minimized. Just like your chances after this.",
+            "Gone. Reduced to atoms. (Snap.)",
+            "If only minimizing your problems was this easy.",
+        ];
+        const greenRemarks = [
+            "Best I can do is upside down. Try reading your CV in Australia mode.",
+            "Recruiter POV: this is how they read your resume anyway.",
+            "Flipped. Like your career after clicking random buttons.",
+            "Welcome to the southern hemisphere. Your CV lives here now.",
+            "Pro tip: upside-down text is still more readable than most cover letters.",
+            "Gravity is just a suggestion on this page.",
+            "Plot twist: it was always upside down. You just didn't notice.",
+        ];
+
+        // Red dot — "Close" the PDF viewer (fake crash / file corrupted)
+        document.querySelector('.dot.r')?.addEventListener('click', () => {
+            if (dotActionInProgress) return;
+            dotActionInProgress = true;
+            const viewer = document.querySelector('.viewer-container');
+            const iframe = document.querySelector('.pdf-viewer');
+            iframe.style.transition = 'filter 0.5s, opacity 0.5s';
+            iframe.style.filter = 'blur(8px) saturate(0)';
+            iframe.style.opacity = '0.3';
+            const remark = redRemarks[Math.floor(Math.random() * redRemarks.length)];
+            setTimeout(() => {
+                iframe.remove();
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px;text-align:center;';
+                errorDiv.innerHTML = `
+                    <div style="font-size:48px;">💀</div>
+                    <div style="font-size:14px;color:var(--red);font-weight:bold;">ERROR: FILE_NOT_FOUND</div>
+                    <div style="font-size:11px;color:var(--muted);max-width:360px;line-height:1.6;">
+                        The file "cv.pdf" has been permanently deleted.<br>
+                        Just kidding. You closed it. What did you expect?<br>
+                        <span style="color:var(--grey);margin-top:8px;display:block;">${remark}</span>
+                    </div>
+                    <button onclick="location.reload()" style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;border:1px solid var(--steel);border-radius:4px;background:none;color:var(--teal);cursor:pointer;">Ctrl+Z my life choices</button>
+                `;
+                viewer.insertBefore(errorDiv, document.querySelector('.status-bar'));
+                document.querySelector('.status-bar span:first-child').textContent = 'ERR';
+                document.querySelector('.status-bar span:nth-child(3)').textContent = '/dev/null';
+            }, 600);
+        });
+
+        // Yellow dot — "Minimize" (shrink the viewer smoothly with ghost shadow)
+        document.querySelector('.dot.y')?.addEventListener('click', () => {
+            if (dotActionInProgress) return;
+            dotActionInProgress = true;
+            const viewer = document.querySelector('.viewer-container');
+            // Leave a ghost shadow behind
+            const ghost = document.createElement('div');
+            const rect = viewer.getBoundingClientRect();
+            ghost.style.cssText = `position:fixed;top:${rect.top}px;left:${rect.left}px;width:${rect.width}px;height:${rect.height}px;border:1px solid var(--steel);border-radius:10px;background:transparent;box-shadow:inset 0 0 40px rgba(0,168,150,0.05);opacity:0.4;pointer-events:none;transition:opacity 2s ease;z-index:1;`;
+            document.body.appendChild(ghost);
+            setTimeout(() => ghost.style.opacity = '0', 2000);
+            setTimeout(() => ghost.remove(), 4000);
+            // Shrink viewer
+            viewer.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease';
+            viewer.style.transform = 'scale(0.05) translateY(80vh)';
+            viewer.style.opacity = '0';
+            const remark = yellowRemarks[Math.floor(Math.random() * yellowRemarks.length)];
+            const msg = document.createElement('div');
+            msg.style.cssText = 'position:fixed;bottom:30px;right:30px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);background:var(--graphite);border:1px solid var(--steel);padding:10px 16px;border-radius:6px;z-index:9999;opacity:0;transition:opacity 0.4s,transform 0.4s;transform:translateY(10px);max-width:340px;';
+            msg.innerHTML = `${remark} <span style="color:var(--teal);cursor:pointer;" id="restoreCV">Restore</span>`;
+            document.body.appendChild(msg);
+            setTimeout(() => { msg.style.opacity = '1'; msg.style.transform = 'translateY(0)'; }, 600);
+            document.getElementById('restoreCV')?.addEventListener('click', () => {
+                viewer.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
+                viewer.style.transform = 'scale(1) translateY(0)';
+                viewer.style.opacity = '1';
+                msg.style.opacity = '0';
+                setTimeout(() => { msg.remove(); dotActionInProgress = false; }, 400);
+            });
+        });
+
+        // Green dot — "Maximize" (flip the viewer upside down, click again to flip back)
+        let isFlipped = false;
+        let greenToast = null;
+        document.querySelector('.dot.g')?.addEventListener('click', () => {
+            const viewer = document.querySelector('.viewer-container');
+            if (isFlipped) {
+                // Dismiss toast immediately if still visible
+                if (greenToast) { greenToast.remove(); greenToast = null; }
+                // Flip back
+                viewer.style.transition = 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
+                viewer.style.transform = 'scaleY(1)';
+                isFlipped = false;
+                dotActionInProgress = false;
+                return;
+            }
+            if (dotActionInProgress) return;
+            dotActionInProgress = true;
+            isFlipped = true;
+            viewer.style.transition = 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
+            viewer.style.transform = 'scaleY(-1)';
+            const remark = greenRemarks[Math.floor(Math.random() * greenRemarks.length)];
+            greenToast = document.createElement('div');
+            greenToast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--teal);background:var(--graphite);border:1px solid var(--teal);padding:14px 24px;border-radius:8px;z-index:99999;text-align:center;opacity:0;transition:opacity 0.3s;max-width:380px;';
+            greenToast.innerHTML = `You wanted fullscreen?<br><span style="font-size:10px;color:var(--muted);">${remark}</span>`;
+            document.body.appendChild(greenToast);
+            setTimeout(() => { if (greenToast) greenToast.style.opacity = '1'; }, 300);
+            setTimeout(() => {
+                if (greenToast) {
+                    greenToast.style.opacity = '0';
+                    setTimeout(() => { if (greenToast) { greenToast.remove(); greenToast = null; } }, 300);
+                }
+            }, 5000);
+        });
+
+        // ====== DOWNLOAD MEME POPUP ======
+        const downloadBtn = document.getElementById('downloadBtn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => {
+                // Let the download proceed naturally, just show popup
+                const remarks = [
+                    "You better reach out with opportunities after this.",
+                    "This PDF costs exactly one LinkedIn message. Pay up.",
+                    "Downloading my CV without a job offer? Suspicious.",
+                    "You now owe me one interview. Terms non-negotiable.",
+                    "Every download without a callback makes this dog sadder.",
+                    "That's my life's work in 2 pages. Handle with care.",
+                    "Receipt saved. I'll know if you ghost me.",
+                    "Cool. Now go convince your hiring manager.",
+                    "This file is being tracked. No pressure.",
+                    "You just downloaded commitment. Act accordingly.",
+                    "Plot twist: the real CV was the recruiter you ghosted along the way.",
+                    "If this ends up in a 'maybe later' folder, we have a problem.",
+                ];
+                const remark = remarks[Math.floor(Math.random() * remarks.length)];
+                const overlay = document.createElement('div');
+                overlay.className = 'meme-popup-overlay';
+                overlay.innerHTML = `
+                    <div class="meme-popup">
+                        <img src="resources/meme.png" alt="suspicious dog">
+                        <div class="meme-remark">${remark}</div>
+                        <div class="meme-dismiss">[ noted, moving on ]</div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                requestAnimationFrame(() => overlay.style.opacity = '1');
+                const dismiss = () => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.remove(), 400);
+                };
+                overlay.querySelector('.meme-dismiss').addEventListener('click', dismiss);
+                overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+                // Auto-dismiss after 4 seconds
+                setTimeout(dismiss, 4000);
+            });
+        }
+
+        // ====== QUICK EXIT POPUP ======
+        const cdHomeBtn = document.getElementById('cdHomeBtn');
+        if (cdHomeBtn) {
+            cdHomeBtn.addEventListener('click', (e) => {
+                const elapsed = Date.now() - pageLoadTime;
+                if (elapsed < 10000) {
+                    e.preventDefault();
+                    const overlay = document.createElement('div');
+                    overlay.className = 'exit-popup-overlay';
+                    overlay.innerHTML = `
+                        <div class="exit-popup">
+                            <h3>Did you even read it?</h3>
+                            <p>You spent ${Math.floor(elapsed / 1000)} second${Math.floor(elapsed / 1000) !== 1 ? 's' : ''} on this page.<br>My CV took longer to write than your attention span lasted.</p>
+                            <div class="exit-popup-btns">
+                                <button class="stay-btn">Fine, I'll read it</button>
+                                <button class="leave-btn">I don't care, take me home</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(overlay);
+                    requestAnimationFrame(() => overlay.style.opacity = '1');
+
+                    overlay.querySelector('.stay-btn').addEventListener('click', () => {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.remove(), 300);
+                    });
+                    overlay.querySelector('.leave-btn').addEventListener('click', () => {
+                        window.location.href = 'index.html';
+                    });
+                }
+            });
+        }
+    })();
+    </script>
 </body>
 </html>
