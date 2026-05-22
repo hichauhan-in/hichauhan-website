@@ -216,12 +216,64 @@
             letter-spacing: 2px;
             color: var(--muted);
             margin-bottom: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .expertise-label:hover {
+            color: var(--red);
         }
 
         .expertise-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
+        }
+
+        .expertise-list li.deleting {
+            text-decoration: line-through;
+            color: var(--red) !important;
+            transition: all 0.2s;
+        }
+
+        .expertise-list li.deleted {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s;
+        }
+
+        .expertise-card.corrupted .expertise-title {
+            color: var(--red);
+        }
+
+        .expertise-card.corrupted {
+            border-color: var(--red) !important;
+            animation: corruptShake 0.1s infinite;
+        }
+
+        @keyframes corruptShake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, 1px); }
+            50% { transform: translate(2px, -1px); }
+            75% { transform: translate(-1px, -1px); }
+            100% { transform: translate(1px, 1px); }
+        }
+
+        .rm-terminal {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--red);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .rm-terminal.show {
+            opacity: 1;
         }
 
         .expertise-card {
@@ -261,6 +313,77 @@
             border-color: rgba(0, 168, 150, 0.3);
             transform: translateY(-3px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .expertise-card .card-edit-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1px solid var(--steel);
+            background: var(--charcoal);
+            color: var(--teal);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+
+        .expertise-card .card-edit-btn:hover {
+            border-color: var(--teal);
+            background: rgba(0, 168, 150, 0.1);
+        }
+
+        .expertise-card .card-edit-btn.is-save {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .expertise-card .card-notepad {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: var(--void);
+            border-radius: 10px;
+            flex-direction: column;
+            z-index: 4;
+        }
+
+        .expertise-card.editing .card-notepad {
+            display: flex;
+        }
+
+        .expertise-card.editing .expertise-title,
+        .expertise-card.editing .expertise-list {
+            visibility: hidden;
+        }
+
+        .expertise-card .notepad-bar {
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--steel);
+        }
+
+        .expertise-card .notepad-textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            resize: none;
+            padding: 12px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--grey);
+            line-height: 1.6;
+            outline: none;
         }
 
         .expertise-title {
@@ -466,17 +589,17 @@
     </style>
 </head>
 <body>
-    <header class="page-header" style="position:relative;">
+    <header class="page-header">
         <h1 class="page-title">Skills</h1>
-        <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">click title for chaos. try dragging the chart.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
-    <section class="chart-section">
+    <section class="chart-section" style="position:relative;">
+        <span class="chaos-hint" style="position:absolute; top:-18px; left:32px;">Click the Title. Try dragging the chart.</span>
         <div class="chart-container">
             <div class="skills-chart" id="skillsChart"></div>
             <div class="chart-footer">
-                <span class="chart-hint">drag the nodes to adjust</span>
+                
                 <button class="save-btn" id="saveBtn">save changes</button>
             </div>
         </div>
@@ -500,8 +623,8 @@
         </div>
     </div>
 
-    <section class="expertise-section">
-        <div class="expertise-label">Areas of Expertise</div>
+    <section class="expertise-section" style="position:relative;">
+        <div class="expertise-label" id="expertiseLabel">Areas of Expertise</div>
         <div class="expertise-grid">
             <div class="expertise-card">
                 <h3 class="expertise-title">Windows Debugging</h3>
@@ -511,6 +634,11 @@
                     <li>IRQL investigations</li>
                     <li>Platform-level failure root cause analysis</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — windows_debugging.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
             <div class="expertise-card">
                 <h3 class="expertise-title">Enterprise Networking</h3>
@@ -521,6 +649,11 @@
                     <li>Windows Filesystems (SMB, DFS-N, CSC, Branch Cache)</li>
                     <li>VLANs, Trunking, Routing (OSPF, EIGRP, RIP, Static)</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — networking.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
             <div class="expertise-card">
                 <h3 class="expertise-title">Active Directory & Security</h3>
@@ -531,6 +664,11 @@
                     <li>Certificates & PKI, TLS/SSL, Encryption</li>
                     <li>MFA, RADIUS/NPS, EAP</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — ad_security.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
             <div class="expertise-card">
                 <h3 class="expertise-title">Infrastructure & Virtualization</h3>
@@ -541,6 +679,11 @@
                     <li>Hyper-V & Host Networking (HNV, SET, LBFO, LACP)</li>
                     <li>Software Defined Networks with Network Controller</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — infra_virt.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
             <div class="expertise-card">
                 <h3 class="expertise-title">Diagnostics & Engineering Tools</h3>
@@ -551,6 +694,11 @@
                     <li>Code reading/writing in C</li>
                     <li>Python and R Programming</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — diagnostics.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
             <div class="expertise-card">
                 <h3 class="expertise-title">Professional Strengths</h3>
@@ -560,9 +708,16 @@
                     <li>Clear technical communication</li>
                     <li>Self-starter, initiative-driven execution</li>
                 </ul>
+                <button class="card-edit-btn" title="Edit">/</button>
+                <div class="card-notepad">
+                    <div class="notepad-bar">editing — soft_skills.txt</div>
+                    <textarea class="notepad-textarea"></textarea>
+                </div>
             </div>
         </div>
     </section>
+
+    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 
     <script>
         // Radar Chart - Interactive
@@ -1107,6 +1262,225 @@
             busy = false;
         });
 
+        // ====== EDIT BUTTON — EXPERTISE CARDS ======
+        const skillEditRemarks = [
+            "You think adding 'blockchain' will impress anyone? It won't.",
+            "Editing your skills won't give you new ones. That's not how this works.",
+            "Pull request rejected. Your skills are in a read-only branch.",
+            "Nice edits. Too bad reality doesn't have a textarea.",
+            "chmod 444 /skills/* — no write permissions for you.",
+            "Your changes have been logged and will be used against you in code review.",
+            "Skill inflation detected. Rolling back to last known honest commit.",
+            "You can't just type 'expert' next to everything and expect it to compile.",
+            "Ah yes, 'proficient in everything.' LinkedIn recruiters love fiction.",
+            "Your resume already lies enough without your help.",
+            "Error: skill buffer overflow. You're not that talented.",
+            "Rejected. The imposter syndrome was right all along.",
+            "git revert --hard. Your edits violated the honesty policy.",
+            "Access denied. Only people with 10+ YOE can edit fundamentals.",
+            "Saving this would crash the credibility engine.",
+            "You just tried to give yourself a promotion. HR has been notified.",
+        ];
+
+        function showSkillEditPopup(card, btn) {
+            const remark = skillEditRemarks[Math.floor(Math.random() * skillEditRemarks.length)];
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;backdrop-filter:blur(3px);';
+            const popup = document.createElement('div');
+            popup.style.cssText = 'background:var(--graphite);border:1px solid var(--steel);border-radius:12px;padding:32px 36px;max-width:420px;text-align:center;font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--amber);box-shadow:0 16px 48px rgba(0,0,0,0.6);transform:scale(0.85);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);';
+            const msg = document.createElement('p');
+            msg.style.cssText = 'margin:0 0 24px 0;line-height:1.6;';
+            msg.textContent = remark;
+            const dismissBtn = document.createElement('button');
+            dismissBtn.textContent = 'OK';
+            dismissBtn.style.cssText = 'background:var(--steel);border:1px solid var(--muted);color:var(--grey);font-family:"JetBrains Mono",monospace;font-size:12px;padding:8px 20px;border-radius:6px;cursor:pointer;transition:background 0.2s,color 0.2s;';
+            dismissBtn.onmouseenter = () => { dismissBtn.style.background = 'var(--teal)'; dismissBtn.style.color = 'var(--void)'; };
+            dismissBtn.onmouseleave = () => { dismissBtn.style.background = 'var(--steel)'; dismissBtn.style.color = 'var(--grey)'; };
+            popup.appendChild(msg);
+            popup.appendChild(dismissBtn);
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; popup.style.transform = 'scale(1)'; });
+
+            function dismiss() {
+                overlay.style.opacity = '0';
+                popup.style.transform = 'scale(0.85)';
+                setTimeout(() => overlay.remove(), 300);
+                card.classList.remove('editing');
+                btn.textContent = '/';
+                btn.classList.remove('is-save');
+            }
+
+            dismissBtn.addEventListener('click', dismiss);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+        }
+
+        document.querySelectorAll('.expertise-card .card-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = btn.closest('.expertise-card');
+
+                if (card.classList.contains('editing')) {
+                    const textarea = card.querySelector('.notepad-textarea');
+                    if (textarea.value === textarea.dataset.original) {
+                        // No changes — exit silently
+                        card.classList.remove('editing');
+                        btn.textContent = '/';
+                        btn.classList.remove('is-save');
+                    } else {
+                        // Changes made — show popup
+                        showSkillEditPopup(card, btn);
+                    }
+                    return;
+                }
+
+                // Enter edit mode
+                const items = [...card.querySelectorAll('.expertise-list li')].map(li => '• ' + li.textContent.trim()).join('\n');
+                const textarea = card.querySelector('.notepad-textarea');
+                textarea.value = items;
+                textarea.dataset.original = items;
+                card.classList.add('editing');
+                btn.textContent = '✓';
+                btn.classList.add('is-save');
+                textarea.focus();
+            });
+        });
+
+        // ====== DOUBLE-CLICK REMARKS ON EXPERTISE CARDS ======
+        (function() {
+            const dblClickRemarks = [
+                "You can read without double-clicking. It's a website, not a desktop shortcut.",
+                "Double-click detected. This isn't Windows Explorer, relax.",
+                "What were you expecting? A secret skill to appear? You wish.",
+                "Congrats, you double-clicked a div. Your parents must be proud.",
+                "That's not how the internet works. Single click. ONE.",
+                "Double-click energy in a single-click world. Classic overachiever.",
+                "Nothing happens on double-click. This isn't 1998.",
+                "You just fired two click events. The DOM is judging you.",
+                "Pro tip: double-clicking doesn't make things more true.",
+                "Achievement unlocked: unnecessary interaction.",
+            ];
+
+            document.querySelectorAll('.expertise-card').forEach(card => {
+                card.addEventListener('dblclick', (e) => {
+                    if (e.target.closest('.card-edit-btn') || e.target.closest('.card-notepad')) return;
+                    const remark = dblClickRemarks[Math.floor(Math.random() * dblClickRemarks.length)];
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:24px;right:24px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--amber);background:var(--graphite);border:1px solid var(--steel);padding:14px 20px;border-radius:8px;z-index:9999;opacity:0;transition:opacity 0.3s,transform 0.3s;transform:translateY(-10px);max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+                    toast.textContent = remark;
+                    document.body.appendChild(toast);
+                    requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
+                    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+                });
+            });
+        })();
+
+        // ====== RM -RF EXPERTISE EASTER EGG ======
+        (function() {
+            const label = document.getElementById('expertiseLabel');
+            const grid = document.querySelector('.expertise-grid');
+            let isDeleting = false;
+            let isDestroyed = false;
+            let originalLabel = '';
+
+            const corruptChars = '█▓▒░▀▄▌▐!@#$%^&*<>{}[]|\\/~¬§';
+            function corrupt(text) {
+                return text.split('').map(c => c === ' ' ? ' ' : corruptChars[Math.floor(Math.random() * corruptChars.length)]).join('');
+            }
+
+            label.addEventListener('click', () => {
+                // If destroyed, click to restore
+                if (isDestroyed) {
+                    rebuild();
+                    return;
+                }
+                if (isDeleting) return;
+                isDeleting = true;
+
+                // Disable edit buttons
+                grid.querySelectorAll('.card-edit-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.3'; b.style.pointerEvents = 'none'; });
+
+                // Change label to rm command
+                originalLabel = label.textContent;
+                label.textContent = '$ sudo rm -rf /skills/*';
+                label.style.color = 'var(--red)';
+
+                // Get all list items across all cards
+                const cards = [...grid.querySelectorAll('.expertise-card')];
+                const allItems = [...grid.querySelectorAll('.expertise-list li')];
+                let idx = 0;
+
+                // Phase 1: Delete items one by one rapidly
+                const deleteInterval = setInterval(() => {
+                    if (idx >= allItems.length) {
+                        clearInterval(deleteInterval);
+                        phase2();
+                        return;
+                    }
+                    allItems[idx].classList.add('deleting');
+                    if (idx > 0) allItems[idx - 1].classList.add('deleted');
+                    idx++;
+                }, 60);
+
+                // Phase 2: Corrupt card titles
+                function phase2() {
+                    allItems[allItems.length - 1]?.classList.add('deleted');
+
+                    cards.forEach((card, i) => {
+                        setTimeout(() => {
+                            card.classList.add('corrupted');
+                            const title = card.querySelector('.expertise-title');
+                            title.dataset.original = title.textContent;
+                            title.textContent = corrupt(title.textContent);
+                        }, i * 120);
+                    });
+
+                    // Phase 3: Stop shake after 1s, show final message
+                    setTimeout(() => {
+                        cards.forEach(card => card.style.animation = 'none');
+                        label.textContent = 'rm: cannot undo. skills permanently deleted.';
+                        isDeleting = false;
+                        isDestroyed = true;
+                    }, cards.length * 120 + 1000);
+                }
+            });
+
+            // Rebuild everything
+            function rebuild() {
+                const cards = [...grid.querySelectorAll('.expertise-card')];
+                const allItems = [...grid.querySelectorAll('.expertise-list li')];
+
+                label.textContent = '$ skills --restore --force';
+                label.style.color = 'var(--teal)';
+
+                // Uncorrupt cards staggered
+                cards.forEach((card, i) => {
+                    setTimeout(() => {
+                        card.classList.remove('corrupted');
+                        card.style.animation = '';
+                        const title = card.querySelector('.expertise-title');
+                        title.textContent = title.dataset.original;
+                    }, i * 100);
+                });
+
+                // Restore items staggered
+                allItems.forEach((item, i) => {
+                    setTimeout(() => {
+                        item.classList.remove('deleting', 'deleted');
+                    }, i * 30 + cards.length * 100);
+                });
+
+                // Reset label
+                setTimeout(() => {
+                    label.textContent = originalLabel;
+                    label.style.color = '';
+                    isDestroyed = false;
+                    // Re-enable edit buttons
+                    grid.querySelectorAll('.card-edit-btn').forEach(b => { b.disabled = false; b.style.opacity = ''; b.style.pointerEvents = ''; });
+                }, allItems.length * 30 + cards.length * 100 + 500);
+            }
+        })();
+
         // Hints system
         (function() {
             const toggle = document.getElementById('hintsToggle');
@@ -1182,6 +1556,5 @@
             });
         })();
     </script>
-    <div class="hints-toggle" id="hintsToggle"><div class="toggle-track"><div class="toggle-knob"></div></div><span class="toggle-label">hints</span></div>
 </body>
 </html>
