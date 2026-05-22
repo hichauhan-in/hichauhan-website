@@ -360,16 +360,14 @@ function startTerminalGame(gameName) {
     inputEl.placeholder = 'Ctrl+C to exit';
     inputEl.blur();
 
-    // Expand terminal for games
-    outputEl.style.height = 'auto';
-    outputEl.style.maxHeight = '340px';
+    // Keep terminal size fixed — no resizing for games
 
     const canvas = document.createElement('pre');
     canvas.style.cssText = 'margin:0;padding:0;line-height:1.15;font-size:13px;color:#00A896;white-space:pre;overflow:hidden;';
     outputEl.appendChild(canvas);
 
     const COLS = 56;
-    const ROWS = 14;
+    const ROWS = 12;
 
     activeGame = { canvas, gameName, interval: null, keyHandler: null, startTime: Date.now(), nudgeInterval: null };
 
@@ -400,9 +398,6 @@ function stopTerminalGame() {
 
     const outputEl = document.getElementById('terminalOutput');
     const inputEl = document.getElementById('terminalInput');
-    // Restore terminal size
-    outputEl.style.height = '';
-    outputEl.style.maxHeight = '';
     outputEl.innerHTML = '<div class="terminal-line">Game exited. Type \'help\' for commands.</div>';
     inputEl.placeholder = 'Type a command...';
     inputEl.focus();
