@@ -393,10 +393,11 @@
 </head>
 <body>
     <script src="mobile-splash.js"></script>
+    <script src="visit-tracker.js"></script>
     <header class="page-header" style="position:relative;">
         <h1 class="page-title">Education</h1>
         <span class="chaos-hint" style="position:absolute; top:-16px; left:0;">click the title. keep clicking.</span>
-        <span class="chaos-hint no-icon" style="position:absolute; bottom:-20px; left:0; font-size:9px;">type &quot;grades&quot; for classified records. triple-click a GPA.</span>
+        <span class="chaos-hint no-icon" style="position:absolute; bottom:-20px; left:0; font-size:9px;">type &quot;grades&quot; / &quot;marks&quot; / &quot;score&quot; / &quot;gpa&quot; for classified records. triple-click a GPA.</span>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
@@ -943,7 +944,7 @@
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
                 buffer += e.key.toLowerCase();
                 if (buffer.length > 20) buffer = buffer.slice(-20);
-                if (buffer.includes(secret)) {
+                if (buffer.includes(secret) || buffer.includes('marks') || buffer.includes('score') || buffer.includes('gpa')) {
                     buffer = '';
                     showTranscript();
                 }
