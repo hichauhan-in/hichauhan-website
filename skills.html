@@ -191,6 +191,44 @@
             border-radius: 10px;
             padding: 32px;
             transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-dots {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .chart-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .chart-dot:hover {
+            transform: scale(1.25);
+        }
+
+        .chart-dot.dot-close {
+            background: var(--red);
+            box-shadow: 0 0 6px rgba(255, 95, 86, 0.4);
+        }
+
+        .chart-dot.dot-minimize {
+            background: #FFBD2E;
+            box-shadow: 0 0 6px rgba(255, 189, 46, 0.4);
+        }
+
+        .chart-dot.dot-maximize {
+            background: #28C840;
+            box-shadow: 0 0 6px rgba(40, 200, 64, 0.4);
         }
 
         .chart-container:hover {
@@ -597,6 +635,11 @@
     <section class="chart-section" style="position:relative;">
         <span class="chaos-hint" style="position:absolute; top:-18px; left:32px;">Click the Title. Try dragging the chart.</span>
         <div class="chart-container">
+            <div class="chart-dots">
+                <button class="chart-dot dot-close" id="chartDotClose" title="Close"></button>
+                <button class="chart-dot dot-minimize" id="chartDotMinimize" title="Minimize"></button>
+                <button class="chart-dot dot-maximize" id="chartDotMaximize" title="Maximize"></button>
+            </div>
             <div class="skills-chart" id="skillsChart"></div>
             <div class="chart-footer">
                 
@@ -624,6 +667,7 @@
     </div>
 
     <section class="expertise-section" style="position:relative;">
+        <span class="chaos-hint" style="position:absolute; top:-18px; left:32px;">You can play around here.</span>
         <div class="expertise-label" id="expertiseLabel">Areas of Expertise</div>
         <div class="expertise-grid">
             <div class="expertise-card">
@@ -1479,6 +1523,72 @@
                     grid.querySelectorAll('.card-edit-btn').forEach(b => { b.disabled = false; b.style.opacity = ''; b.style.pointerEvents = ''; });
                 }, allItems.length * 30 + cards.length * 100 + 500);
             }
+        })();
+
+        // ====== CHART DOT BUTTONS — NUDGES ======
+        (function() {
+            const dotClose = document.getElementById('chartDotClose');
+            const dotMin = document.getElementById('chartDotMinimize');
+            const dotMax = document.getElementById('chartDotMaximize');
+
+            let closeClicks = 0, minClicks = 0, maxClicks = 0;
+
+            const closeRemarks = [
+                "Close what? Your only personality trait?",
+                "You can't close a skill chart. Where would the skills go?",
+                "Denied. This chart has a restraining order against your clicks.",
+                "Alt+F4 doesn't work here either. Nice try.",
+                "Stop trying to close this. It's not gonna do anything.",
+                "You've clicked close 5 times now. Seek help.",
+            ];
+
+            const minRemarks = [
+                "Minimize? Your skills are already at minimum.",
+                "Where would it minimize TO? Your taskbar doesn't exist here.",
+                "This isn't a window. It's a lifestyle.",
+                "You want to make it smaller? It's already your smallest achievement.",
+                "Still trying? It's decorative. Like your degree.",
+                "Minimizing won't hide your incompetence.",
+            ];
+
+            const maxRemarks = [
+                "Maximize? Bold of you to think this deserves more screen space.",
+                "Full screen skill chart? Nobody wants that. Not even you.",
+                "Your chart is already at its emotional maximum.",
+                "There's nothing to maximize here. Including your potential.",
+                "This button is purely aesthetic. Like your work ethic.",
+                "You keep clicking maximize but your career stays the same size.",
+            ];
+
+            function showDotNudge(text) {
+                const existing = document.querySelector('.dot-nudge');
+                if (existing) existing.remove();
+                const nudge = document.createElement('div');
+                nudge.className = 'dot-nudge';
+                nudge.textContent = text;
+                nudge.style.cssText = 'position:fixed;top:24px;right:24px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--amber);background:var(--graphite);border:1px solid var(--steel);padding:14px 20px;border-radius:8px;z-index:9999;opacity:0;transition:opacity 0.3s,transform 0.3s;transform:translateY(-10px);max-width:340px;line-height:1.5;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.4);';
+                document.body.appendChild(nudge);
+                requestAnimationFrame(() => { nudge.style.opacity = '1'; nudge.style.transform = 'translateY(0)'; });
+                setTimeout(() => { nudge.style.opacity = '0'; nudge.style.transform = 'translateY(-10px)'; setTimeout(() => nudge.remove(), 300); }, 2500);
+            }
+
+            dotClose.addEventListener('click', () => {
+                const remark = closeRemarks[Math.min(closeClicks, closeRemarks.length - 1)];
+                showDotNudge(remark);
+                closeClicks++;
+            });
+
+            dotMin.addEventListener('click', () => {
+                const remark = minRemarks[Math.min(minClicks, minRemarks.length - 1)];
+                showDotNudge(remark);
+                minClicks++;
+            });
+
+            dotMax.addEventListener('click', () => {
+                const remark = maxRemarks[Math.min(maxClicks, maxRemarks.length - 1)];
+                showDotNudge(remark);
+                maxClicks++;
+            });
         })();
 
         // Hints system
