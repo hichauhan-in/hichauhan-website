@@ -482,6 +482,7 @@
             font-size: 12px;
             color: var(--muted-grey);
             opacity: 0.7;
+            z-index: 100;
         }
 
         .command-hint kbd {
@@ -491,6 +492,13 @@
             border: 1px solid var(--steel-grey);
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .command-hint kbd:hover {
+            border-color: var(--teal);
+            box-shadow: 0 0 6px rgba(0, 168, 150, 0.25);
         }
 
         /* Light mode joke button */
@@ -1151,7 +1159,7 @@
         </div>
     </div>
 
-    <div class="command-hint">Press <kbd>Ctrl+K</kbd> for quick commands</div>
+    <div class="command-hint">Press <kbd id="ctrlKBtn">Ctrl+K</kbd> for quick commands</div>
 
     <!-- Hints toggle -->
     <div class="hints-toggle" id="hintsToggle" title="Toggle easter egg hints">
@@ -1256,6 +1264,9 @@
         // Close on overlay click
         commandOverlay.addEventListener('click', closePalette);
         commandPaletteClose.addEventListener('click', closePalette);
+
+        // Ctrl+K button click
+        document.getElementById('ctrlKBtn').addEventListener('click', openPalette);
 
         // Filter on input
         commandPaletteInput.addEventListener('input', (e) => {
