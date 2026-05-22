@@ -214,6 +214,16 @@
             color: var(--muted);
         }
 
+        .status-bar .status-text {
+            cursor: pointer;
+            transition: color 0.3s;
+            user-select: none;
+        }
+
+        .status-bar .status-text:hover {
+            color: var(--grey);
+        }
+
         .status-dot {
             width: 7px;
             height: 7px;
@@ -297,7 +307,7 @@
         }
 
         @media (max-width: 768px) {
-            body { padding: 24px 16px; }
+            body { padding: 24px 16px; justify-content: flex-start; padding-top: 48px; height: auto; min-height: 100vh; }
             .terminal { max-width: 100%; }
             .terminal-body { padding: 20px 16px; font-size: 12px; height: 320px; }
             .contact-buttons { flex-wrap: wrap; }
@@ -321,12 +331,13 @@
 </head>
 <body>
     <script src="mobile-splash.js"></script>
+    <script src="visit-tracker.js"></script>
     <header class="page-header" style="position:relative;">
         <h1 class="page-title">Contact</h1>
         <a href="index.html" class="page-nav">cd ~/</a>
     </header>
 
-    <span class="chaos-hint" style="position:relative; display:block; width:100%; max-width:800px; margin:0 auto; padding:0; top:-12px; margin-bottom:-8px; text-align:left;">click the title. also the dots. especially the dots.</span>
+    <span class="chaos-hint" style="position:relative; display:block; width:100%; max-width:800px; margin:0 auto; padding:0; top:-12px; margin-bottom:-8px; text-align:left;">click the title. also the dots. the status bar too. especially the dots.</span>
 
     <div class="minimized-dot" id="minDot" data-msg="click to respawn, genius"></div>
     <div class="terminal" id="terminal">
@@ -338,8 +349,8 @@
         </div>
         <div class="terminal-body" id="output"></div>
         <div class="status-bar">
-            <span class="status-dot"></span>
-            <span>ONLINE</span>
+            <span class="status-dot" id="statusDot"></span>
+            <span class="status-text" id="statusText">ONLINE</span>
             <span style="margin-left: auto;">Bangalore, India · IST (UTC+5:30)</span>
         </div>
     </div>
@@ -713,6 +724,60 @@
                 }
             }, 40);
         });
+
+        // ====== STATUS BAR EASTER EGG ======
+        (function() {
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            if (!statusText || !statusDot) return;
+
+            const statuses = [
+                { text: 'ONLINE', color: '#00A896' },
+                { text: 'AWAY — PRETENDING TO WORK', color: '#FFBD2E' },
+                { text: 'BUSY — IGNORING YOUR EMAIL', color: '#FF5F56' },
+                { text: 'DO NOT DISTURB — EXISTENTIAL CRISIS', color: '#FF5F56' },
+                { text: 'INVISIBLE — STILL READING THO', color: '#808080' },
+                { text: 'IN A MEETING (lying)', color: '#FFBD2E' },
+                { text: 'OFFLINE — JK, I NEVER LOG OFF', color: '#808080' },
+                { text: 'AFK — MAKING COFFEE #47', color: '#D4A574' },
+                { text: 'DEBUGGING — SEND HELP', color: '#FF5F56' },
+                { text: 'ONLINE-ISH — QUANTUM STATE', color: '#4A6FA5' },
+                { text: 'STATUS: YES', color: '#00A896' },
+                { text: 'VIBING — DO NOT INTERRUPT', color: '#27CA3F' },
+                { text: 'LURKING — WATCHING YOU READ THIS', color: '#808080' },
+                { text: 'COMPILING — COULD BE HOURS', color: '#FFBD2E' },
+                { text: 'ONLINE', color: '#00A896' },
+            ];
+
+            let idx = 0;
+
+            statusText.addEventListener('click', () => {
+                idx = (idx + 1) % statuses.length;
+                const s = statuses[idx];
+
+                // Glitch transition
+                statusText.style.opacity = '0';
+                statusText.style.transform = 'translateX(-4px)';
+                statusText.style.transition = 'opacity 0.15s, transform 0.15s';
+
+                setTimeout(() => {
+                    statusText.textContent = s.text;
+                    statusDot.style.background = s.color;
+                    statusText.style.color = s.color;
+                    statusText.style.transform = 'translateX(4px)';
+
+                    requestAnimationFrame(() => {
+                        statusText.style.opacity = '1';
+                        statusText.style.transform = 'translateX(0)';
+                    });
+                }, 150);
+
+                // Reset color after a moment
+                setTimeout(() => {
+                    statusText.style.color = '';
+                }, 1500);
+            });
+        })();
 
         // Hints system
         (function() {

@@ -625,6 +625,62 @@
             justify-content: center;
         }
 
+        .updates-panel-stats {
+            flex-shrink: 0;
+            border-top: 1px solid rgba(42, 42, 42, 0.6);
+            padding: 12px 18px;
+            background: rgba(10, 10, 10, 0.4);
+        }
+
+        .stats-section {
+            margin-bottom: 10px;
+        }
+
+        .stats-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .stats-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            color: var(--muted-grey);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            opacity: 0.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-teal);
+            font-weight: 600;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            color: #808080;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-section.global .stat-value {
+            color: var(--warning-amber);
+        }
+
         .updates-empty {
             text-align: center;
             color: #808080;
@@ -662,8 +718,6 @@
         @media (max-width: 768px) {
             .updates-btn {
                 right: 24px;
-                font-size: 10px;
-                padding: 4px 10px;
             }
             .lightmode-btn {
                 right: 95px;
@@ -1319,6 +1373,7 @@
 </head>
 <body>
     <script src="mobile-splash.js"></script>
+    <script src="visit-tracker.js"></script>
     <!-- Light Mode Button -->
     <button class="lightmode-btn" id="lightModeBtn">☀ light mode</button>
     <button class="updates-btn" id="updatesBtn">updates</button>
@@ -1334,6 +1389,42 @@
             <div class="updates-empty">
                 <div class="spider-web">🕸️</div>
                 <div class="empty-text">Nothing here yet.<br>Check back later for<br>announcements & projects.</div>
+            </div>
+        </div>
+        <div class="updates-panel-stats" id="updatesStats">
+            <div class="stats-section">
+                <div class="stats-title">Your Stats</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="statVisits">—</span>
+                        <span class="stat-label">visits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="statPages">—</span>
+                        <span class="stat-label">pages seen</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="statFirst">—</span>
+                        <span class="stat-label">first visit</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="statTime">—</span>
+                        <span class="stat-label">time spent</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-section global">
+                <div class="stats-title">Global</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="statGlobalVisits">—</span>
+                        <span class="stat-label">total visits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="statGlobalUnique">—</span>
+                        <span class="stat-label">unique visitors</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -3463,12 +3554,11 @@
             if (!btn) return;
 
             const mockMessages = [
-                "You want to DONATE? To a Microsoft employee? Read that again. Slowly.",
+                "You want to DONATE? On a portfolio site? Read that again. Slowly.",
                 "Sir, I have a salary. And health insurance. Save your money for therapy.",
                 "Bold of you to assume I need your ₹50. But I respect the audacity.",
                 "You clicked donate on a portfolio site. The internet has failed you.",
                 "I appreciate the thought, but my landlord doesn't accept 'exposure' or pity money.",
-                "Donate? My guy, I debug Windows kernel crashes for a living. I'm fine.",
                 "This button exists purely to judge people who click it. Congratulations.",
                 "Plot twist: the real donation was the time you wasted on my website.",
                 "You want to give ME money? What's the catch? Is this a phishing attempt?",
@@ -3483,11 +3573,11 @@
             const introLines = [
                 "You must be wondering why there's a donate button. Well... everyone needs money. Or is this also a trick? Yes. Yes it is.",
                 "Ah, the donate button. Is it real? Is it a joke? The answer is: yes.",
-                "You found the donate button. Congratulations. Now ask yourself — why does a salaried engineer have one?",
+                "You found the donate button. Congratulations. Now ask yourself — why does a portfolio site have one?",
                 "This button exists because I was curious how many people would actually click it. You did. Data collected.",
                 "Donate button on a portfolio site? Either I'm broke or I'm trolling. (I'm trolling. Mostly.)",
                 "Every website needs a donate button. It's like a fire alarm — there for emergencies and people who are bored.",
-                "You're about to give money to someone who already gets paid. That's called a donation. Or a scam. Fine line.",
+                "You're about to give money to a stranger on the internet. That's called a donation. Or a scam. Fine line.",
                 "The real question isn't 'should I donate' — it's 'why did I click this in the first place?'",
                 "I put this button here as a social experiment. You're the subject. Thank you for your service.",
                 "Welcome to the donation page. There's no GoFundMe. Just vibes, sarcasm, and mild guilt.",
@@ -3873,6 +3963,116 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
             });
+        })();
+
+        // ====== VISIT TRACKING & STATS ======
+        (function() {
+            const STORAGE_KEY = 'hc_site_stats';
+            const now = Date.now();
+            const currentPage = location.pathname.split('/').pop() || 'index.html';
+
+            // Load or init stats
+            let stats;
+            try {
+                stats = JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
+            } catch(e) { stats = null; }
+
+            if (!stats) {
+                stats = { visits: 0, firstVisit: now, lastVisit: now, pages: [], totalTime: 0, sessionStart: now };
+            }
+
+            // Increment visit count (once per session)
+            if (!sessionStorage.getItem('hc_counted')) {
+                stats.visits++;
+                sessionStorage.setItem('hc_counted', '1');
+            }
+
+            // Track page
+            if (!stats.pages.includes(currentPage)) {
+                stats.pages.push(currentPage);
+            }
+
+            // Update session timing
+            stats.sessionStart = now;
+            stats.lastVisit = now;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+
+            // Track time spent (update every 10s)
+            setInterval(() => {
+                try {
+                    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                    if (s) {
+                        s.totalTime += 10;
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+                    }
+                } catch(e) {}
+            }, 10000);
+
+            // Global stats via counter API
+            let globalVisits = null;
+            let globalUnique = null;
+
+            // Increment global counter (once per session)
+            if (!sessionStorage.getItem('hc_global_counted')) {
+                fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/visits/up')
+                    .then(r => r.json())
+                    .then(data => { globalVisits = data.count; sessionStorage.setItem('hc_global_counted', '1'); })
+                    .catch(() => {});
+            } else {
+                // Just read the count
+                fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/visits')
+                    .then(r => r.json())
+                    .then(data => { globalVisits = data.count; })
+                    .catch(() => {});
+            }
+
+            // Unique visitors counter (once per device ever)
+            if (!localStorage.getItem('hc_device_counted')) {
+                fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/unique/up')
+                    .then(r => r.json())
+                    .then(data => { globalUnique = data.count; localStorage.setItem('hc_device_counted', '1'); })
+                    .catch(() => {});
+            } else {
+                fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/unique')
+                    .then(r => r.json())
+                    .then(data => { globalUnique = data.count; })
+                    .catch(() => {});
+            }
+
+            // Render stats in panel
+            function renderStats() {
+                const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (!s) return;
+
+                const visitsEl = document.getElementById('statVisits');
+                const pagesEl = document.getElementById('statPages');
+                const firstEl = document.getElementById('statFirst');
+                const timeEl = document.getElementById('statTime');
+                const globalVisitsEl = document.getElementById('statGlobalVisits');
+                const globalUniqueEl = document.getElementById('statGlobalUnique');
+
+                if (visitsEl) visitsEl.textContent = s.visits;
+                if (pagesEl) pagesEl.textContent = s.pages.length + '/7';
+                if (firstEl) {
+                    const d = new Date(s.firstVisit);
+                    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                    firstEl.textContent = months[d.getMonth()] + ' ' + d.getDate();
+                }
+                if (timeEl) {
+                    const secs = s.totalTime;
+                    if (secs < 60) timeEl.textContent = secs + 's';
+                    else if (secs < 3600) timeEl.textContent = Math.floor(secs / 60) + 'm';
+                    else timeEl.textContent = Math.floor(secs / 3600) + 'h ' + Math.floor((secs % 3600) / 60) + 'm';
+                }
+
+                if (globalVisitsEl) globalVisitsEl.textContent = globalVisits !== null ? globalVisits.toLocaleString() : '—';
+                if (globalUniqueEl) globalUniqueEl.textContent = globalUnique !== null ? globalUnique.toLocaleString() : '—';
+            }
+
+            // Render on load and when panel opens
+            renderStats();
+            const updatesBtn = document.getElementById('updatesBtn');
+            if (updatesBtn) updatesBtn.addEventListener('click', renderStats);
         })();
 
         // Rapid click rage
