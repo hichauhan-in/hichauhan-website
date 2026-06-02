@@ -4018,20 +4018,31 @@
             }, 10000);
 
             // Global stats via counter API
-            let globalVisits = null;
-            let globalUnique = null;
+            const GLOBAL_CACHE_KEY = 'hc_global_stats';
+            let cachedGlobals = {};
+            try { cachedGlobals = JSON.parse(localStorage.getItem(GLOBAL_CACHE_KEY)) || {}; } catch(e) { cachedGlobals = {}; }
+
+            // Seed from cache so a slow/failed fetch still shows the last known number
+            let globalVisits = typeof cachedGlobals.visits === 'number' ? cachedGlobals.visits : null;
+            let globalUnique = typeof cachedGlobals.unique === 'number' ? cachedGlobals.unique : null;
+
+            function cacheGlobals() {
+                try {
+                    localStorage.setItem(GLOBAL_CACHE_KEY, JSON.stringify({ visits: globalVisits, unique: globalUnique }));
+                } catch(e) {}
+            }
 
             // Increment global counter (once per session)
             if (!sessionStorage.getItem('hc_global_counted')) {
                 fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/visits/up')
                     .then(r => r.json())
-                    .then(data => { globalVisits = data.count; sessionStorage.setItem('hc_global_counted', '1'); })
+                    .then(data => { globalVisits = data.count; sessionStorage.setItem('hc_global_counted', '1'); cacheGlobals(); renderStats(); })
                     .catch(() => {});
             } else {
                 // Just read the count
                 fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/visits')
                     .then(r => r.json())
-                    .then(data => { globalVisits = data.count; })
+                    .then(data => { globalVisits = data.count; cacheGlobals(); renderStats(); })
                     .catch(() => {});
             }
 
@@ -4039,12 +4050,12 @@
             if (!localStorage.getItem('hc_device_counted')) {
                 fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/unique/up')
                     .then(r => r.json())
-                    .then(data => { globalUnique = data.count; localStorage.setItem('hc_device_counted', '1'); })
+                    .then(data => { globalUnique = data.count; localStorage.setItem('hc_device_counted', '1'); cacheGlobals(); renderStats(); })
                     .catch(() => {});
             } else {
                 fetch('https://api.counterapi.dev/v1/hichauhan-portfolio/unique')
                     .then(r => r.json())
-                    .then(data => { globalUnique = data.count; })
+                    .then(data => { globalUnique = data.count; cacheGlobals(); renderStats(); })
                     .catch(() => {});
             }
 
