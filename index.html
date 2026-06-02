@@ -1031,6 +1031,54 @@
             color: #D4A574;
         }
 
+        .donate-popup .donate-qr-section {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px dashed #2A2A2A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .donate-popup .donate-qr-blurb {
+            font-size: 11px;
+            color: #00A896;
+            line-height: 1.7;
+            opacity: 0.9;
+        }
+
+        .donate-popup .donate-qr-link {
+            display: inline-block;
+            line-height: 0;
+            border: 1px solid #2A2A2A;
+            border-radius: 10px;
+            padding: 10px;
+            background: #0F0F0F;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .donate-popup .donate-qr-link:hover {
+            transform: scale(1.04) rotate(-1deg);
+            border-color: #00A896;
+            box-shadow: 0 0 24px rgba(0, 168, 150, 0.25);
+        }
+
+        .donate-popup .donate-qr-img {
+            width: 150px;
+            height: 150px;
+            display: block;
+            border-radius: 4px;
+            image-rendering: pixelated;
+        }
+
+        .donate-popup .donate-qr-caption {
+            font-size: 9px;
+            color: #808080;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         .gravity-body {
             position: fixed !important;
             margin: 0 !important;
@@ -3598,11 +3646,29 @@
 
             let clickCount = 0;
 
+            // Sarcastic blurbs for the "free QR" section
+            const qrBlurbs = [
+                "Because you clicked, here's your QR code. You earned it. Sort of.",
+                "You didn't donate, but here's a QR code anyway. Generosity flows one way here.",
+                "A wild QR code appears. It wants nothing from you. Suspicious, right?",
+                "You came for a payment screen, you're leaving with an existential crisis. Fair trade.",
+                "Scan it. Or click it. Or stare at it. We're not your boss.",
+                "Free QR code. No strings. No Wi-Fi. No regrets. Okay, maybe some regrets.",
+                "Point your camera at this. Pretend you're in a sci-fi movie. Live a little.",
+                "Most QR codes take your money. This one takes your dignity. Upgrade!",
+                "You clicked donate and got a QR code instead. The bait-and-switch you deserve.",
+            ];
+
             btn.addEventListener('click', () => {
                 clickCount++;
                 const intro = introLines[Math.floor(Math.random() * introLines.length)];
                 const msg = mockMessages[Math.floor(Math.random() * mockMessages.length)];
                 const serious = seriousLines[Math.floor(Math.random() * seriousLines.length)];
+                const qrBlurb = qrBlurbs[Math.floor(Math.random() * qrBlurbs.length)];
+
+                // Build an absolute URL to the QR page so the code is scannable on any device
+                const qrPageUrl = new URL('qr.html', window.location.href).href;
+                const qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&bgcolor=141414&color=00A896&data=' + encodeURIComponent(qrPageUrl);
 
                 let overlay = document.querySelector('.donate-popup-overlay');
                 if (overlay) overlay.remove();
@@ -3617,6 +3683,12 @@
                         <div style="display:flex;gap:10px;justify-content:center;">
                             <button class="donate-dismiss">[ ok I'll stop ]</button>
                             <a href="contact.html" class="donate-dismiss" style="text-decoration:none;display:inline-block;">[ contact page → ]</a>
+                        </div>
+                        <div class="donate-qr-section">
+                            <div class="donate-qr-blurb">${qrBlurb}</div>
+                            <a href="qr.html" class="donate-qr-link" title="Scan with your phone or click to open">
+                                <img class="donate-qr-img" src="${qrImgUrl}" alt="QR code to a page you didn't ask for" loading="lazy">
+                            </a>
                         </div>
                     </div>
                 `;
@@ -4167,7 +4239,7 @@
                 "Fun fact: every second you idle, a CSS variable cries.",
                 "I could be running on someone else's browser right now. Someone who CARES.",
                 "Are you reading this on your phone while watching TV? I can tell.",
-                "30 seconds of nothing. New record. I'm so proud.",
+                "30 more seconds of nothing. New record. I'm so proud.",
                 "The terminal misses you. Type something. Anything. Please.",
                 "I bet you have 47 other tabs open. I'm not special to you.",
                 "If you're AFK, just know I'm judging you in your absence.",
