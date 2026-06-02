@@ -1064,12 +1064,68 @@
             box-shadow: 0 0 24px rgba(0, 168, 150, 0.25);
         }
 
+        .donate-popup .donate-qr-frame {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .donate-popup .donate-qr-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .donate-popup .donate-qr-loader .spinner {
+            width: 26px;
+            height: 26px;
+            border: 2px solid #2A2A2A;
+            border-top-color: #00A896;
+            border-radius: 50%;
+            animation: qrSpin 0.7s linear infinite;
+        }
+
+        .donate-popup .donate-qr-loader .loading-text {
+            font-size: 8px;
+            color: #808080;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: qrPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes qrSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes qrPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
         .donate-popup .donate-qr-img {
+            position: absolute;
+            inset: 0;
             width: 150px;
             height: 150px;
             display: block;
             border-radius: 4px;
             image-rendering: pixelated;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .donate-popup .donate-qr-frame.loaded .donate-qr-img {
+            opacity: 1;
+        }
+
+        .donate-popup .donate-qr-frame.loaded .donate-qr-loader {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .donate-popup .donate-qr-caption {
@@ -3687,13 +3743,32 @@
                         <div class="donate-qr-section">
                             <div class="donate-qr-blurb">${qrBlurb}</div>
                             <a href="qr.html" class="donate-qr-link" title="Scan with your phone or click to open">
-                                <img class="donate-qr-img" src="${qrImgUrl}" alt="QR code to a page you didn't ask for" loading="lazy">
+                                <div class="donate-qr-frame">
+                                    <div class="donate-qr-loader">
+                                        <div class="spinner"></div>
+                                        <div class="loading-text">preparing qr...</div>
+                                    </div>
+                                    <img class="donate-qr-img" src="${qrImgUrl}" alt="QR code to a page you didn't ask for" loading="eager">
+                                </div>
                             </a>
                         </div>
                     </div>
                 `;
                 document.body.appendChild(overlay);
                 requestAnimationFrame(() => overlay.classList.add('visible'));
+
+                // Reveal the QR (and hide its spinner) once the image finishes loading
+                const qrFrame = overlay.querySelector('.donate-qr-frame');
+                const qrImg = overlay.querySelector('.donate-qr-img');
+                if (qrFrame && qrImg) {
+                    const reveal = () => qrFrame.classList.add('loaded');
+                    if (qrImg.complete && qrImg.naturalWidth > 0) {
+                        reveal();
+                    } else {
+                        qrImg.addEventListener('load', reveal);
+                        qrImg.addEventListener('error', reveal);
+                    }
+                }
 
                 const dismiss = () => {
                     overlay.classList.remove('visible');
