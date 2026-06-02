@@ -3672,6 +3672,10 @@
                 document.querySelector('.dp-ghost')?.remove();
                 document.body.classList.remove('site-greyed-out');
 
+                // If the updates sidebar is open, drop it too (and ditch its overlay)
+                const updatesPanelOpen = document.querySelector('.updates-panel.open');
+                document.querySelector('.updates-overlay.open, #updatesOverlay.open')?.classList.remove('open');
+
                 // Gather all elements to drop (including the toggle itself)
                 const selectors = [
                     '.dp-container',
@@ -3683,7 +3687,10 @@
                     '.hints-toggle',
                     '.gravity-toggle',
                     '.donate-btn',
+                    '.lightmode-btn',
+                    '.updates-btn',
                 ];
+                if (updatesPanelOpen) selectors.push('.updates-panel.open');
 
                 const bodies = [];
                 selectors.forEach(sel => {
@@ -3920,6 +3927,7 @@
             ];
             let remarkIndex = 0;
             btn.addEventListener('click', () => {
+                if (window.gravityEnabled) return;
                 const flash = document.createElement('div');
                 flash.className = 'lightmode-flash';
                 document.body.appendChild(flash);
@@ -3947,6 +3955,7 @@
             if (!btn || !panel) return;
 
             function openPanel() {
+                if (window.gravityEnabled) return;
                 panel.classList.add('open');
                 if (overlay) overlay.classList.add('open');
             }
