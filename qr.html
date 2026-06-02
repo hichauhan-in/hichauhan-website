@@ -667,6 +667,7 @@
                 flex-direction: column;
                 gap: 16px;
                 padding: 16px;
+                padding-bottom: 62px; /* clear the fixed taskbar */
                 flex: none;
             }
             .surface-hint { position: static; transform: none; order: 99; margin: 8px auto 24px; opacity: 0.6; }
@@ -681,7 +682,12 @@
             .win.shown { transform: none; }
             .win-bar { cursor: default; }
             .win-body { max-height: none; }
-            .taskbar { position: sticky; bottom: 0; }
+            /* taskbar is an always-visible bottom app bar, pinned to the screen */
+            .taskbar {
+                position: fixed;
+                left: 0; right: 0; bottom: 0;
+                height: 52px;
+            }
             .payload-card { padding: 28px 22px; }
             .payload-card h1 { font-size: 18px; }
             .rz { display: none !important; }
