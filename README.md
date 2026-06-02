@@ -1,7 +1,7 @@
 # himanshu-website-v2
 This is new website for hosting my CV online
 
->> There are buch of ester eggs - even i forgot what I have added
+>> There are bunch of ester eggs - even i forgot what I have added
 
 >> Will make a list someday - maybe!
 
