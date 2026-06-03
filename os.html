@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You Scanned The Thing - Himanshu Chauhan</title>
+    <title>HC//OS - Himanshu Chauhan</title>
     <link rel="icon" type="image/png" href="resources/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -804,8 +804,8 @@
 
         <!-- readme -->
         <div data-win="readme" data-title="readme.txt" data-w="460" data-h="300">
-            <h2 class="win-h">You really scanned it. <span class="teal-t">_</span></h2>
-            <p class="spaced">A QR code appeared on a fake donate popup, and your first instinct was to point a camera at it or click it. No hesitation. No questions. Beautiful.</p>
+            <h2 class="win-h">You actually ran it. <span class="teal-t">_</span></h2>
+            <p class="spaced">You found a fake terminal on a portfolio site and typed the one command that boots a fake OS. No hesitation. No questions. Beautiful.</p>
             <p class="spaced muted-t">This page has zero practical value. It won't pay rent, fix your sleep schedule, or text your situationship back. What it <span class="amber-t">will</span> do is make you reflect on your life choices for no reason whatsoever.</p>
             <p class="spaced muted-t">Welcome to HC//OS — a desktop that exists only to waste a delightful amount of your time. Drag stuff around. Close things. Pretend you're working.</p>
         </div>
@@ -842,7 +842,7 @@
         <!-- receipt -->
         <div data-win="receipt" data-title="receipt_of_poor_decisions.txt" data-w="420" data-h="290">
             <div class="receipt">
-                <div class="line"><span>QR scan</span><span>1 x $0.00</span></div>
+                <div class="line"><span>os command</span><span>1 x $0.00</span></div>
                 <div class="line"><span>Curiosity tax</span><span>your time</span></div>
                 <div class="line"><span>Dignity</span><span>-1</span></div>
                 <div class="line"><span>Expectations</span><span>refunded</span></div>
@@ -877,7 +877,7 @@
         <div data-win="terminal" data-title="zsh — ~/regrets" data-w="520" data-h="300">
             <div class="term" id="termOut">
                 <div><span class="teal-t">guest@hcos</span>:<span class="amber-t">~/regrets</span>$ whoami</div>
-                <div class="muted-t">a person who scanned a QR code expecting answers. bold.</div>
+                <div class="muted-t">a person who ran a secret command expecting answers. bold.</div>
                 <div><span class="teal-t">guest@hcos</span>:<span class="amber-t">~/regrets</span>$ <span class="term-cursor">_</span></div>
             </div>
             <div class="btn-row">
@@ -915,9 +915,9 @@
     <!-- ============ PAYLOAD MODAL ============ -->
     <div class="payload-overlay" id="payloadOverlay">
         <div class="payload-card">
-            <div class="payload-eyebrow">QR PAYLOAD DELIVERED</div>
-            <h1 id="payloadTitle">You really scanned it.<span class="blink">_</span></h1>
-            <p id="payloadBody">A QR code appeared on a fake donate popup, and your first instinct was to point a camera at it. No hesitation. Beautiful.</p>
+            <div class="payload-eyebrow">ROOT ACCESS GRANTED</div>
+            <h1 id="payloadTitle">You actually ran it.<span class="blink">_</span></h1>
+            <p id="payloadBody">You typed a command into a fake terminal on a portfolio site and it booted an entire fake operating system. No hesitation. Beautiful.</p>
             <p class="muted">Behind this window sits an entire fake operating system built to waste your time productively. Drag windows. Close them. Maximize your regrets.</p>
             <button class="payload-ok" id="payloadOk">[ OK ]</button>
             <div class="payload-sub" id="payloadSub">warning: no actual productivity beyond this point</div>
@@ -938,11 +938,11 @@
 
         // ===================== PAYLOAD MODAL =====================
         const payloadIntros = [
-            { t: "You really scanned it.", b: "A QR code appeared on a fake donate popup, and your first instinct was to point a camera at it. No hesitation. Beautiful." },
-            { t: "Welcome, curious creature.", b: "You scanned a code that promised nothing and delivered exactly that. Right on brand for both of us." },
-            { t: "Payload acquired.", b: "Most people ignore QR codes. You hunted one down on a joke popup. Respect. Concern. Mostly concern." },
-            { t: "Camera: deployed. Dignity: optional.", b: "You aimed a lens at a square of noise hoping for treasure. You got introspection. The audacity of hope." },
-            { t: "It worked. Now what?", b: "The QR resolved, the page loaded, and somewhere a productivity coach felt a cold shiver. Let's proceed." },
+            { t: "You actually ran it.", b: "You typed a command into a fake terminal and it booted a fake OS. No hesitation. Beautiful." },
+            { t: "Welcome, curious creature.", b: "You ran a command that promised nothing and delivered exactly that. Right on brand for both of us." },
+            { t: "Root access acquired.", b: "Most people leave the terminal alone. You typed the secret command instead. Respect. Concern. Mostly concern." },
+            { t: "Command: executed. Dignity: optional.", b: "You ran an undocumented command hoping for treasure. You got introspection. The audacity of hope." },
+            { t: "It booted. Now what?", b: "The command resolved, the OS loaded, and somewhere a productivity coach felt a cold shiver. Let's proceed." },
         ];
         const payloadSubs = [
             "warning: no actual productivity beyond this point",
@@ -1485,25 +1485,25 @@
         function wireContent() {
             // --- introspection ---
             const prompts = [
-                "If a QR code falls in a popup and someone scans it, were they ever truly busy?",
-                "You scanned a code with no destination. Is that hope or just boredom?",
+                "If a command runs in a fake terminal and someone executes it, were they ever truly busy?",
+                "You ran a command with no documentation. Is that hope or just boredom?",
                 "When was the last time you did something for the first time? Besides this. This counts, technically.",
                 "What if the real donation was the curiosity we triggered along the way?",
-                "You point cameras at squares now. Evolution is wild, isn't it?",
-                "Are you scanning codes to find meaning, or to avoid making any?",
+                "You type secret commands into strangers' websites now. Evolution is wild, isn't it?",
+                "Are you running commands to find meaning, or to avoid making any?",
                 "Somewhere your screen-time report is taking notes. Smile.",
                 "If your search history could talk, would it apologize first or would you?",
                 "You opened a page that admits it's useless. Self-awareness or self-sabotage?",
                 "Be honest: how many tabs are open right now, and which one is judging you?",
-                "You have unlimited access to human knowledge and you scanned a joke QR. No notes.",
-                "What would past-you think of present-you scanning random squares for fun?",
+                "You have unlimited access to human knowledge and you ran a joke command. No notes.",
+                "What would past-you think of present-you typing random commands for fun?",
                 "Is this productivity? No. Is it a choice? Also no. It's just vibes.",
                 "You came here looking for something. Spoiler: it was never here. It's never here.",
-                "The QR worked. The page loaded. And yet, the void remains. Relatable.",
+                "The command worked. The OS loaded. And yet, the void remains. Relatable.",
                 "If curiosity killed the cat, you'd have used up about nine lives by now.",
                 "Quick: name one thing you were supposed to be doing instead of this.",
-                "You scanned a code that leads to a page mocking you for scanning it. Bold loop.",
-                "Your phone trusts you with a camera and this is what you do with it.",
+                "You ran a command that boots a page mocking you for running it. Bold loop.",
+                "Your shell trusts you with root and this is what you do with it.",
                 "Plot twist: the introspection was ironic, but here you are, actually reflecting.",
             ];
             const subs = [
@@ -1526,7 +1526,7 @@
                 "Going deep: when did 'busy' become your personality and 'fine' become your answer?",
                 "Deeper: you remember everyone's birthday but forget what you actually want.",
                 "Too deep: the version of you that started this year — proud or just confused?",
-                "Deepest: you scanned a joke to feel something. Did it work? Be honest.",
+                "Deepest: you ran a joke command to feel something. Did it work? Be honest.",
             ];
             const introLine = document.getElementById('introLine');
             const introSub = document.getElementById('introSub');

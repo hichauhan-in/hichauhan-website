@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Scanned It</title>
+    <link rel="icon" type="image/png" href="resources/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --void: #0A0A0A;
+            --charcoal: #141414;
+            --graphite: #1E1E1E;
+            --steel: #2A2A2A;
+            --teal: #00A896;
+            --blue: #4A6FA5;
+            --amber: #D4A574;
+            --white: #FFFFFF;
+            --grey: #B0B0B0;
+            --muted: #808080;
+            --red: #FF5F56;
+        }
+
+        html, body { height: 100%; }
+
+        body {
+            background: var(--void);
+            color: var(--white);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* faint scanline / CRT vibe */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.015) 0px,
+                rgba(255, 255, 255, 0.015) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            z-index: 1;
+        }
+
+        /* faint dot grid, desktop ambience */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(0,168,150,0.05) 1px, transparent 1px);
+            background-size: 26px 26px;
+            opacity: 0;
+            transition: opacity 0.6s;
+            z-index: 0;
+        }
+
+        /* ============ SHELL ============ */
+        .shell {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 22px 18px 0;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* head bar */
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--steel);
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+            flex-shrink: 0;
+        }
+        .head .logo {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--teal);
+        }
+        .head .status {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+        .head .status .dot {
+            display: inline-block;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            margin-right: 6px;
+            vertical-align: middle;
+            animation: blink 1.4s steps(1) infinite;
+        }
+        @keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0.25; } }
+
+        .intro { flex-shrink: 0; }
+        .eyebrow {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--amber);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-size: 19px;
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+        h1 .cursor { color: var(--teal); animation: caret 1s steps(1) infinite; }
+        @keyframes caret { 50% { opacity: 0; } }
+        .sub {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        /* ============ DIAGNOSTIC METERS (desktop flavour) ============ */
+        .meters { display: none; }
+        .meter-row { margin-bottom: 13px; }
+        .meter-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--grey);
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        .meter-top .val { color: var(--amber); }
+        .meter-track {
+            height: 5px;
+            border-radius: 3px;
+            background: var(--graphite);
+            overflow: hidden;
+        }
+        .meter-track span {
+            display: block;
+            height: 100%;
+            width: 0;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--teal), var(--blue));
+            animation: fill 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .meter-row.amber .meter-track span { background: linear-gradient(90deg, var(--amber), #b07d4a); }
+        .meter-row.red .meter-track span { background: linear-gradient(90deg, var(--red), #b03a33); }
+        @keyframes fill { to { width: var(--w, 50%); } }
+
+        /* ============ CHAT PANEL ============ */
+        .chat-bar { display: none; }
+
+        .stream {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            padding-bottom: 16px;
+        }
+
+        .bubble {
+            background: var(--graphite);
+            border: 1px solid var(--steel);
+            border-left: 2px solid var(--teal);
+            border-radius: 4px 12px 12px 12px;
+            padding: 13px 16px;
+            font-size: 13px;
+            line-height: 1.65;
+            color: var(--grey);
+            max-width: 92%;
+            opacity: 0;
+            transform: translateY(12px) scale(0.98);
+            animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .bubble .who {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .bubble.amber { border-left-color: var(--amber); }
+        .bubble.red { border-left-color: var(--red); }
+        .bubble.blue { border-left-color: var(--blue); }
+        @keyframes pop { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .typing { display: inline-flex; gap: 4px; align-items: center; }
+        .typing span {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--muted);
+            animation: typedot 1s infinite ease-in-out;
+        }
+        .typing span:nth-child(2) { animation-delay: 0.15s; }
+        .typing span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typedot {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        /* ============ CONTROLS ============ */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: sticky;
+            bottom: 0;
+            background: linear-gradient(to top, var(--void) 62%, transparent);
+            padding: 12px 0 18px;
+            flex-shrink: 0;
+        }
+        .btn-row { display: flex; gap: 10px; }
+
+        .more-btn {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--teal);
+            color: var(--teal);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .more-btn:hover, .more-btn:active { background: var(--teal); color: var(--void); }
+
+        .home-btn {
+            padding: 14px 18px;
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+        }
+        .home-btn:hover, .home-btn:active { background: var(--red); color: var(--void); }
+
+        .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: var(--muted);
+        }
+        .count { color: var(--amber); }
+
+        /* ============ DESKTOP: two-pane layout ============ */
+        @media (min-width: 860px) {
+            body::after { opacity: 1; }
+            .shell {
+                max-width: 1040px;
+                height: 100vh;
+                padding: 26px 30px 26px;
+                display: grid;
+                grid-template-columns: 340px 1fr;
+                grid-template-rows: auto 1fr;
+                grid-template-areas:
+                    "head head"
+                    "id   chat";
+                column-gap: 26px;
+                row-gap: 18px;
+            }
+            .head { grid-area: head; margin-bottom: 0; }
+            .panel-id {
+                grid-area: id;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+            .intro { margin-bottom: 4px; }
+            h1 { font-size: 23px; }
+            .sub { font-size: 11.5px; margin-bottom: 22px; }
+            .meters { display: block; margin-bottom: auto; }
+
+            .panel-chat {
+                grid-area: chat;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                border: 1px solid var(--steel);
+                border-radius: 10px;
+                background: rgba(20,20,20,0.4);
+                overflow: hidden;
+            }
+            .chat-bar {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 11px 14px;
+                border-bottom: 1px solid var(--steel);
+                background: var(--charcoal);
+                flex-shrink: 0;
+            }
+            .chat-bar .tdot { width: 11px; height: 11px; border-radius: 50%; }
+            .chat-bar .tdot.r { background: var(--red); }
+            .chat-bar .tdot.y { background: #FFBD2E; }
+            .chat-bar .tdot.g { background: #27CA3F; }
+            .chat-bar .ttitle {
+                margin-left: 8px;
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.5px;
+            }
+            .stream {
+                overflow-y: auto;
+                padding: 18px;
+                scrollbar-width: thin;
+                scrollbar-color: var(--steel) transparent;
+            }
+            .stream::-webkit-scrollbar { width: 6px; }
+            .stream::-webkit-scrollbar-thumb { background: var(--steel); border-radius: 3px; }
+            .bubble { max-width: 78%; }
+
+            .controls {
+                position: static;
+                background: none;
+                padding: 0;
+                margin-top: 16px;
+            }
+            .btn-row { flex-direction: column; }
+            .more-btn, .home-btn { width: 100%; justify-content: center; }
+        }
+
+        /* ============ PHONE polish ============ */
+        @media (max-width: 600px) {
+            /* lock the shell to the viewport so the top stays put and the feed scrolls */
+            .shell {
+                height: 100vh;
+                height: 100dvh;
+                display: flex;
+                flex-direction: column;
+                padding: 18px 14px 0;
+            }
+            .panel-id { flex-shrink: 0; }
+            /* buttons live in the fixed top block now — drop the sticky behaviour */
+            .controls {
+                position: static;
+                background: none;
+                padding: 12px 0 12px;
+            }
+            /* the comment feed becomes the only scrollable region */
+            .panel-chat {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            .stream {
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 16px;
+            }
+            h1 { font-size: 17px; }
+            .sub { font-size: 10.5px; }
+            .bubble { font-size: 12.5px; max-width: 97%; padding: 12px 14px; }
+            .btn-row { flex-direction: column; }
+            .more-btn, .home-btn { width: 100%; justify-content: center; font-size: 12.5px; }
+            .home-btn { padding: 13px; }
+        }
+
+        @media (max-width: 380px) {
+            h1 { font-size: 15.5px; }
+            .bubble { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="head">
+            <span class="logo">HC//OS</span>
+            <span class="status"><span class="dot"></span>JUDGING YOU</span>
+        </div>
+
+        <!-- identity / diagnostics panel (full-width on phone, left column on desktop) -->
+        <div class="panel-id">
+            <div class="intro">
+                <div class="eyebrow">QR Payload // resolved</div>
+                <h1 id="title">You scanned it.<span class="cursor">_</span></h1>
+                <p class="sub" id="sub">A square of noise on a fake donate popup, and you aimed a camera at it like it owed you something. No payment screen here. Just commentary. Lots of it.</p>
+            </div>
+
+            <div class="meters" aria-hidden="true">
+                <div class="meter-row">
+                    <div class="meter-top"><span>Curiosity</span><span class="val">94%</span></div>
+                    <div class="meter-track"><span style="--w:94%; animation-delay:0.1s;"></span></div>
+                </div>
+                <div class="meter-row amber">
+                    <div class="meter-top"><span>Productivity (right now)</span><span class="val">3%</span></div>
+                    <div class="meter-track"><span style="--w:3%; animation-delay:0.25s;"></span></div>
+                </div>
+                <div class="meter-row red">
+                    <div class="meter-top"><span>Regret incoming</span><span class="val">67%</span></div>
+                    <div class="meter-track"><span style="--w:67%; animation-delay:0.4s;"></span></div>
+                </div>
+                <div class="meter-row">
+                    <div class="meter-top"><span>Reasons you're here</span><span class="val">0%</span></div>
+                    <div class="meter-track"><span style="--w:6%; animation-delay:0.55s;"></span></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="btn-row">
+                    <button class="more-btn" id="moreBtn">→ Hit me with another one</button>
+                    <a class="home-btn" href="index.html">← Back to home</a>
+                </div>
+                <div class="meta">
+                    <span>comments delivered: <span class="count" id="count">0</span></span>
+                    <span>uptime: wasted</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- chat panel (terminal-style window on desktop) -->
+        <div class="panel-chat">
+            <div class="chat-bar">
+                <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+                <span class="ttitle">judgement_feed.log — guest@hcos</span>
+            </div>
+            <div class="stream" id="stream"></div>
+        </div>
+    </div>
+
+    <script>
+        const titles = [
+            { t: "You scanned it.", s: "A square of noise on a fake donate popup, and you aimed a camera at it like it owed you something. No payment screen here. Just commentary. Lots of it." },
+            { t: "Camera deployed.", s: "You pointed a lens at a random square hoping for treasure. You got a page whose entire job is to gently roast you. Welcome." },
+            { t: "It resolved. Now what?", s: "The QR worked, the page loaded, and there's nothing to buy. Just a steady drip of observations about the kind of person who scans these." },
+            { t: "Bold move, scanning that.", s: "Most people ignore mystery QR codes. You hunted one down on a joke popup. We respect the chaos. We will also comment on it." },
+            { t: "Ah, a fellow button-presser.", s: "You saw a square, you saw a camera, and physics took over. No thoughts, just scan. Honestly? Iconic behaviour." },
+            { t: "Target acquired. Nothing found.", s: "Your camera locked on, the code decoded, and the prize was... this. A page that exists purely to acknowledge your boredom." },
+            { t: "Scanned. Logged. Judged.", s: "That QR didn't lead to a wallet, a deal, or a secret. It led here, where your curiosity gets quietly itemized and mocked." },
+            { t: "You really thought there'd be a discount.", s: "Be honest, part of you expected a coupon. Instead you unlocked a monologue about why you scan things you don't trust." },
+            { t: "Welcome, professional scanner.", s: "Menus, posters, mystery stickers, fake donate popups — you scan them all. This one scanned you back. Fair's fair." },
+            { t: "The QR worked. You didn't.", s: "Technically a success: the code resolved flawlessly. Strategically a disaster: you're now reading a page designed to roast you." },
+            { t: "Curiosity: 1. Productivity: 0.", s: "You had a whole to-do list and yet here you are, holding a phone up to a joke. The scoreboard isn't flattering." },
+            { t: "No refunds on attention.", s: "You spent real seconds getting here, and there's no checkout, no reward, no closure. Just a page that won't stop talking." },
+        ];
+
+        const comments = [
+            { who: "first impression", t: "You scanned a code that promised nothing and delivered exactly that. Consistency is a virtue, I guess.", c: "" },
+            { who: "observation", t: "There was no payment here. There was never going to be. And yet you came. The optimism is almost touching.", c: "blue" },
+            { who: "gentle roast", t: "Somewhere your screen-time report just added another tally. Smile for the data.", c: "amber" },
+            { who: "the math", t: "You spent real seconds of a finite life to get to a page that mocks you for getting here. Bold investment strategy.", c: "" },
+            { who: "concern", t: "Your phone trusts you with a camera and THIS is what you do with it. We need to talk about your hobbies.", c: "red" },
+            { who: "fun fact", t: "Statistically, you have something more important to do right now. Statistically, you will not do it.", c: "amber" },
+            { who: "diagnosis", t: "Symptoms: idle curiosity, mild boredom, a thumb that scans before the brain votes. Prognosis: you're fine. Mostly.", c: "blue" },
+            { who: "honest question", t: "Were you hoping for answers? On a QR code? From a fake donate button? The audacity of hope is real.", c: "" },
+            { who: "compliment (rare)", t: "Okay, genuinely — curiosity like this is underrated. You poke at things. That's a good trait. Don't let it go to your head.", c: "" },
+            { who: "the loop", t: "You scanned a code that leads to a page about how you scanned a code. We're both stuck in this bit now.", c: "amber" },
+            { who: "receipt", t: "Curiosity tax: paid. Dignity: -1. Expectations: refunded. Thank you for shopping at HC//OS.", c: "red" },
+            { who: "reminder", t: "This page has zero practical value. It won't pay rent or text your situationship back. It will, however, keep talking.", c: "blue" },
+            { who: "real talk", t: "There's an actual person behind this site who finds it funny that you're here. That person says hi. Sort of.", c: "" },
+            { who: "the pitch", t: "If you've read this far, you clearly enjoy mild self-inflicted judgement. There's a whole portfolio that does the same thing.", c: "amber" },
+            { who: "closing thought", t: "You came looking for something. Spoiler: it was never on the QR code. It's never on the QR code.", c: "blue" },
+            { who: "petty", t: "You could close this tab anytime. You haven't. I noticed. We both noticed.", c: "red" },
+            { who: "wholesome-ish", t: "For what it's worth — thanks for the curiosity. It's the most honest currency on the internet. Worth more than the donation, frankly.", c: "" },
+        ];
+
+        const stream = document.getElementById('stream');
+        const moreBtn = document.getElementById('moreBtn');
+        const countEl = document.getElementById('count');
+        let pool = [];
+        let count = 0;
+        let busy = false;
+
+        // randomize the headline
+        (function () {
+            const pick = titles[Math.floor(Math.random() * titles.length)];
+            document.getElementById('title').innerHTML = pick.t + '<span class="cursor">_</span>';
+            document.getElementById('sub').textContent = pick.s;
+        })();
+
+        function refillPool() {
+            pool = comments.slice().sort(() => Math.random() - 0.5);
+        }
+        refillPool();
+
+        function addTyping() {
+            const el = document.createElement('div');
+            el.className = 'bubble';
+            el.id = 'typing-indicator';
+            el.innerHTML = '<span class="who">HC//OS is typing</span><span class="typing"><span></span><span></span><span></span></span>';
+            stream.appendChild(el);
+            scrollDown();
+            return el;
+        }
+
+        function addComment() {
+            if (busy) return;
+            busy = true;
+            moreBtn.disabled = true;
+            moreBtn.style.opacity = '0.5';
+
+            if (pool.length === 0) refillPool();
+            const item = pool.pop();
+
+            const typing = addTyping();
+            const delay = 500 + Math.random() * 700;
+
+            setTimeout(() => {
+                typing.remove();
+                const el = document.createElement('div');
+                el.className = 'bubble' + (item.c ? ' ' + item.c : '');
+                el.innerHTML = '<span class="who">' + item.who + '</span>' + item.t;
+                stream.appendChild(el);
+                count++;
+                countEl.textContent = count;
+                scrollDown();
+                busy = false;
+                moreBtn.disabled = false;
+                moreBtn.style.opacity = '1';
+                if (count >= 4) moreBtn.textContent = '→ go on then, another';
+                if (count >= 9) moreBtn.textContent = '→ you really won\u2019t stop, huh';
+            }, delay);
+        }
+
+        function scrollDown() {
+            requestAnimationFrame(() => {
+                // on desktop the stream itself scrolls; on phone the page scrolls
+                if (stream.scrollHeight > stream.clientHeight + 4) {
+                    stream.scrollTo({ top: stream.scrollHeight, behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }
+            });
+        }
+
+        moreBtn.addEventListener('click', addComment);
+
+        // kick it off with one automatically
+        setTimeout(addComment, 450);
+    </script>
+</body>
+</html>

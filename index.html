@@ -1555,6 +1555,12 @@
                 </div>
             </div>
             <div class="command-palette-section">
+                <div class="command-palette-section-title">System</div>
+                <div class="command-palette-items">
+                    <div class="command-palette-item" data-cmd="os">os <span class="shortcut">boot hc//os</span></div>
+                </div>
+            </div>
+            <div class="command-palette-section">
                 <div class="command-palette-section-title">Info</div>
                 <div class="command-palette-items">
                     <div class="command-palette-item" data-cmd="cv">cv</div>
@@ -2131,6 +2137,12 @@
             const origProcess = processCommand;
             window.processCommand = async function(input) {
                 const cmd = input.trim().toLowerCase();
+                if (cmd === 'os' || cmd === 'boot' || cmd === 'hcos' || cmd === 'hc//os') {
+                    commandHistory.push(cmd);
+                    historyIndex = -1;
+                    bootIntoOS();
+                    return;
+                }
                 if (navMap[cmd]) {
                     commandHistory.push(cmd);
                     historyIndex = -1;
@@ -2139,6 +2151,105 @@
                 }
                 return origProcess(input);
             };
+        }
+
+        // ====== HC//OS BOOT TRANSITION ======
+        function bootIntoOS() {
+            if (document.getElementById('osBootOverlay')) return;
+            closePalette();
+            window.terminalDisabled = true;
+
+            const ov = document.createElement('div');
+            ov.id = 'osBootOverlay';
+            ov.innerHTML = `
+                <div class="osboot-crt"></div>
+                <div class="osboot-inner">
+                    <div class="osboot-logo">HC//OS</div>
+                    <div class="osboot-log" id="osBootLog"></div>
+                    <div class="osboot-bar"><span id="osBootBarFill"></span></div>
+                </div>`;
+            document.body.appendChild(ov);
+
+            const style = document.createElement('style');
+            style.textContent = `
+                #osBootOverlay {
+                    position: fixed; inset: 0; z-index: 999999;
+                    background: #050505; color: #B0B0B0;
+                    font-family: 'JetBrains Mono', monospace;
+                    display: flex; align-items: center; justify-content: center;
+                    opacity: 0; animation: osbootIn 0.18s ease forwards;
+                }
+                @keyframes osbootIn { to { opacity: 1; } }
+                #osBootOverlay.osboot-power .osboot-inner,
+                #osBootOverlay.osboot-power .osboot-crt {
+                    animation: osbootPower 0.5s ease forwards;
+                }
+                @keyframes osbootPower {
+                    0% { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+                    55% { opacity: 1; transform: scaleY(0.006) scaleX(1.04); filter: brightness(6); }
+                    100% { opacity: 0; transform: scaleY(0.0015) scaleX(0); filter: brightness(12); }
+                }
+                #osBootOverlay .osboot-crt {
+                    position: absolute; inset: 0; pointer-events: none;
+                    background: repeating-linear-gradient(to bottom,
+                        rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px,
+                        transparent 1px, transparent 3px);
+                }
+                #osBootOverlay .osboot-inner {
+                    width: min(440px, 86vw); text-align: left;
+                }
+                #osBootOverlay .osboot-logo {
+                    font-size: 30px; font-weight: 700; letter-spacing: 6px;
+                    color: #00A896; margin-bottom: 20px; text-align: center;
+                    text-shadow: 0 0 18px rgba(0,168,150,0.5);
+                }
+                #osBootOverlay .osboot-log {
+                    font-size: 12px; line-height: 1.85; min-height: 110px;
+                    white-space: pre-wrap;
+                }
+                #osBootOverlay .osboot-log .ok { color: #00A896; }
+                #osBootOverlay .osboot-bar {
+                    margin-top: 18px; height: 4px; border-radius: 3px;
+                    background: #1E1E1E; overflow: hidden;
+                }
+                #osBootOverlay .osboot-bar span {
+                    display: block; height: 100%; width: 0%;
+                    background: linear-gradient(90deg, #00A896, #4A6FA5);
+                    transition: width 0.25s ease;
+                }
+            `;
+            document.head.appendChild(style);
+
+            const logEl = document.getElementById('osBootLog');
+            const barFill = document.getElementById('osBootBarFill');
+            const lines = [
+                'initializing HC//OS kernel...',
+                'mounting /dev/regrets...',
+                'loading procrastination drivers...',
+                'allocating 0 bytes of productivity...',
+                'spawning sarcasm daemon... [ ok ]',
+                'compositing fake desktop...',
+            ];
+
+            let i = 0;
+            (function next() {
+                if (i < lines.length) {
+                    const div = document.createElement('div');
+                    const isOk = lines[i].includes('[ ok ]');
+                    div.innerHTML = '> ' + (isOk
+                        ? lines[i].replace('[ ok ]', '<span class="ok">[ ok ]</span>')
+                        : lines[i]);
+                    logEl.appendChild(div);
+                    barFill.style.width = Math.round(((i + 1) / lines.length) * 100) + '%';
+                    i++;
+                    setTimeout(next, 230 + Math.random() * 160);
+                } else {
+                    setTimeout(() => {
+                        ov.classList.add('osboot-power');
+                        setTimeout(() => { window.location.href = 'os.html'; }, 460);
+                    }, 280);
+                }
+            })();
         }
         // === SARCASTIC DOUBLE-CLICK SYSTEM ===
         let dotActionInProgress = false;
@@ -3724,7 +3835,7 @@
                 const qrBlurb = qrBlurbs[Math.floor(Math.random() * qrBlurbs.length)];
 
                 // Build an absolute URL to the QR page so the code is scannable on any device
-                const qrPageUrl = new URL('qr.html', window.location.href).href;
+                const qrPageUrl = new URL('scanned.html', window.location.href).href;
                 const qrImgUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=8&bgcolor=141414&color=00A896&data=' + encodeURIComponent(qrPageUrl);
 
                 let overlay = document.querySelector('.donate-popup-overlay');
@@ -3738,7 +3849,7 @@
                         <div class="donate-msg">${msg}</div>
                         <div class="donate-qr-section">
                             <div class="donate-qr-blurb">${qrBlurb}</div>
-                            <a href="qr.html" class="donate-qr-link" title="Scan with your phone or click to open">
+                            <a href="scanned.html" class="donate-qr-link" title="Scan with your phone or click to open">
                                 <div class="donate-qr-frame">
                                     <div class="donate-qr-loader">
                                         <div class="spinner"></div>
