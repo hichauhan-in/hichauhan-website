@@ -1,4 +1,4 @@
-# himanshu-website-v2
+# https://www.hichauhan.in/index.html
 This is new website for hosting my CV online
 
 >> There are bunch of ester eggs - even i forgot what I have added
