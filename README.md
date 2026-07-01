@@ -1,4 +1,4 @@
-# https://www.hichauhan.in/index.html
+# https://www.hichauhan.in
 This is new website for hosting my CV online
 
 >> There are bunch of ester eggs - even i forgot what I have added
