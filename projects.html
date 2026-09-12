@@ -166,7 +166,9 @@
         }
 
         .filter-buttons {
-            display: inline-flex;
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
             gap: 12px;
             background: var(--graphite);
             border: 1px solid var(--steel);
@@ -185,6 +187,8 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
             transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
         }
 
         .filter-btn:hover {
@@ -194,6 +198,15 @@
         .filter-btn.active {
             background: var(--teal);
             color: var(--void);
+        }
+
+        .filter-btn.github-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-inline-start: 1px solid var(--steel);
+            border-radius: 0;
         }
 
         /* Projects Grid */
@@ -260,8 +273,8 @@
         }
 
         .project-status {
-            background: rgba(0, 168, 150, 0.15);
-            color: var(--teal);
+            background: rgba(255, 95, 86, 0.15);
+            color: var(--red);
             padding: 3px 10px;
             border-radius: 12px;
             font-size: 0.7rem;
@@ -270,8 +283,8 @@
         }
 
         .project-status.completed {
-            background: rgba(212, 165, 116, 0.15);
-            color: var(--amber);
+            background: rgba(39, 202, 63, 0.15);
+            color: #27CA3F;
         }
 
         .project-description {
@@ -319,6 +332,10 @@
             font-weight: 700;
             color: var(--teal);
             display: block;
+        }
+
+        .metric-unit {
+            font-size: 0.65em;
         }
 
         .metric-label {
@@ -510,265 +527,263 @@
     <section class="filter-section">
         <div class="filter-buttons">
             <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="cpp">C/C++</button>
+            <button class="filter-btn" data-filter="windows-internals">Windows Internals</button>
+            <button class="filter-btn" data-filter="drivers">Drivers</button>
             <button class="filter-btn" data-filter="networking">Networking</button>
-            <button class="filter-btn" data-filter="automation">Automation</button>
-            <button class="filter-btn" data-filter="security">Security</button>
+            <button class="filter-btn" data-filter="ai-automation">AI &amp; Automation</button>
             <button class="filter-btn" data-filter="cloud">Cloud</button>
+            <button class="filter-btn" data-filter="android-apps">Android Apps</button>
+            <a class="filter-btn github-link" href="https://github.com/hichauhan-in" target="_blank" rel="noopener noreferrer" title="Open GitHub profile in a new tab" aria-label="GitHub profile (opens in a new tab)">
+                GitHub <span aria-hidden="true">&#8599;</span>
+            </a>
         </div>
     </section>
 
     <!-- Projects Section -->
     <section class="projects-section">
         <div class="projects-grid">
-            <!-- CCNA Certification Journey -->
-            <div class="project-card" data-category="networking">
+            <!-- Windows Heap Manager -->
+            <div class="project-card" data-category="cpp windows-internals">
                 <div class="project-header">
-                    <h2 class="project-title">CCNA Certification Journey</h2>
-                    <span class="project-status completed">Completed</span>
+                    <h2 class="project-title">Windows Heap Manager</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Comprehensive study and hands-on practice for Cisco Certified Network Associate certification, 
-                    covering routing, switching, and network fundamentals.
+                    Custom C allocator built on Windows virtual memory, with first-fit allocation,
+                    split/coalesce logic, and LFH-style small-block caching. Includes validated,
+                    recorded heap snapshots for exploring allocation and reuse.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">Cisco IOS</span>
-                    <span class="tech-tag">Routing Protocols</span>
-                    <span class="tech-tag">VLANs</span>
-                    <span class="tech-tag">Subnetting</span>
+                    <span class="tech-tag">C</span>
+                    <span class="tech-tag">VirtualAlloc</span>
+                    <span class="tech-tag">Free Lists</span>
+                    <span class="tech-tag">LFH-style Caching</span>
                 </div>
                 <div class="project-metrics">
                     <div class="metric">
-                        <span class="metric-value">2</span>
-                        <span class="metric-label">Courses</span>
+                        <span class="metric-value">51</span>
+                        <span class="metric-label">Size Buckets</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">6</span>
-                        <span class="metric-label">Months</span>
+                    <div class="metric" title="Largest cached size class, including block metadata. Larger allocations use the general free list.">
+                        <span class="metric-value">16<span class="metric-unit">&nbsp;KiB</span></span>
+                        <span class="metric-label">Max Class Size</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">95%</span>
-                        <span class="metric-label">Score</span>
+                    <div class="metric" title="Initial commitment per heap. More memory is committed within the reserved region as needed.">
+                        <span class="metric-value">64<span class="metric-unit">&nbsp;KiB</span></span>
+                        <span class="metric-label">Initial Commit</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn primary" onclick="openProjectModal('ccna')">View Details</button>
-                    <button class="project-btn">📋 Certificate</button>
+                    <a class="project-btn primary" href="https://hichauhan-in.github.io/windows-heapmanager/">View Details</a>
+                    <a class="project-btn" href="https://github.com/hichauhan-in/windows-heapmanager" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
 
-            <!-- DNS Troubleshooting Automation -->
-            <div class="project-card" data-category="automation networking">
+            <!-- Thread Pool with Priority Queue -->
+            <div class="project-card" data-category="cpp windows-internals">
                 <div class="project-header">
-                    <h2 class="project-title">DNS Troubleshooting Automation</h2>
-                    <span class="project-status">In Progress</span>
+                    <h2 class="project-title">Thread Pool with Priority Queue</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Development of automated diagnostic tools for DNS resolution issues, incorporating PowerShell scripts 
-                    and Python modules for rapid problem identification.
+                    Windows thread pool written in C, with three FIFO priority levels, semaphore-based dispatch,
+                    and bounded worker growth. Includes shutdown regression tests, an educational
+                    scheduler model, and measured native benchmarks.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">PowerShell</span>
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">DNS</span>
-                    <span class="tech-tag">Wireshark</span>
+                    <span class="tech-tag">C</span>
+                    <span class="tech-tag">Win32 Threads</span>
+                    <span class="tech-tag">Priority Queue</span>
+                    <span class="tech-tag">Semaphores</span>
                 </div>
                 <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">200+</span>
-                        <span class="metric-label">Issues</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">75%</span>
-                        <span class="metric-label">Time Saved</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">15</span>
-                        <span class="metric-label">Scripts</span>
-                    </div>
-                </div>
-                <div class="project-actions">
-                    <button class="project-btn primary" onclick="openProjectModal('dns')">View Details</button>
-                    <button class="project-btn">📊 Metrics</button>
-                </div>
-            </div>
-
-            <!-- Network Performance Analysis -->
-            <div class="project-card" data-category="networking">
-                <div class="project-header">
-                    <h2 class="project-title">Network Performance Analysis</h2>
-                    <span class="project-status completed">Completed</span>
-                </div>
-                <p class="project-description">
-                    Comprehensive analysis of enterprise network performance using advanced monitoring tools and 
-                    statistical methods to identify bottlenecks and optimization opportunities.
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Wireshark</span>
-                    <span class="tech-tag">Perfmon</span>
-                    <span class="tech-tag">SysInternals</span>
-                    <span class="tech-tag">R</span>
-                </div>
-                <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">40%</span>
-                        <span class="metric-label">Improvement</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">50+</span>
-                        <span class="metric-label">Metrics</span>
-                    </div>
                     <div class="metric">
                         <span class="metric-value">3</span>
-                        <span class="metric-label">Sites</span>
+                        <span class="metric-label">Priority Levels</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">16</span>
+                        <span class="metric-label">Max Workers</span>
+                    </div>
+                    <div class="metric" title="Tested with 16 producer threads submitting work concurrently to 8 worker threads in the published native stress test.">
+                        <span class="metric-value">16</span>
+                        <span class="metric-label">Test Producers</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn primary" onclick="openProjectModal('performance')">View Details</button>
-                    <button class="project-btn">📈 Report</button>
+                    <a class="project-btn primary" href="https://hichauhan-in.github.io/windows-threadpool/">View Details</a>
+                    <a class="project-btn" href="https://github.com/hichauhan-in/windows-threadpool" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
 
-            <!-- Azure Infrastructure Setup -->
-            <div class="project-card" data-category="cloud security">
+            <!-- Driver Project -->
+            <div class="project-card" data-category="drivers">
                 <div class="project-header">
-                    <h2 class="project-title">Azure Infrastructure Setup</h2>
-                    <span class="project-status">In Progress</span>
-                </div>
-                <p class="project-description">
-                    Design and implementation of secure Azure infrastructure for hybrid cloud deployments, focusing on 
-                    networking, security, and automation components.
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Azure</span>
-                    <span class="tech-tag">ARM Templates</span>
-                    <span class="tech-tag">PowerShell</span>
-                    <span class="tech-tag">Azure AD</span>
-                </div>
-                <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">5</span>
-                        <span class="metric-label">Environments</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">99.9%</span>
-                        <span class="metric-label">Uptime</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">12</span>
-                        <span class="metric-label">Services</span>
-                    </div>
-                </div>
-                <div class="project-actions">
-                    <button class="project-btn primary" onclick="openProjectModal('azure')">View Details</button>
-                    <button class="project-btn">☁️ Architecture</button>
-                </div>
-            </div>
-
-            <!-- Project Alpha -->
-            <div class="project-card" data-category="automation">
-                <div class="project-header">
-                    <h2 class="project-title">Project Alpha</h2>
+                    <h2 class="project-title">Driver Project</h2>
                     <span class="project-status">Template</span>
                 </div>
                 <p class="project-description">
-                    Infrastructure automation project template for future expansion. This placeholder represents 
-                    upcoming work in automated deployment and configuration management.
+                    Placeholder for a Windows driver project. Implementation details, debugging notes,
+                    and repository links will be added here.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">Ansible</span>
-                    <span class="tech-tag">Terraform</span>
-                    <span class="tech-tag">Docker</span>
-                    <span class="tech-tag">Kubernetes</span>
+                    <span class="tech-tag">Windows</span>
+                    <span class="tech-tag">Drivers</span>
+                    <span class="tech-tag">Debugging</span>
                 </div>
                 <div class="project-metrics">
                     <div class="metric">
                         <span class="metric-value">TBD</span>
-                        <span class="metric-label">Status</span>
+                        <span class="metric-label">Scope</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">2025</span>
-                        <span class="metric-label">Target</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">Auto</span>
-                        <span class="metric-label">Type</span>
-                    </div>
-                </div>
-                <div class="project-actions">
-                    <button class="project-btn" disabled>Coming Soon</button>
-                    <button class="project-btn">📋 Spec</button>
-                </div>
-            </div>
-
-            <!-- Security Enhancement -->
-            <div class="project-card" data-category="security">
-                <div class="project-header">
-                    <h2 class="project-title">Security Enhancement</h2>
-                    <span class="project-status">Template</span>
-                </div>
-                <p class="project-description">
-                    Zero-trust security implementation template for enterprise networks. Future project focused on 
-                    modern security frameworks and threat detection automation.
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Zero Trust</span>
-                    <span class="tech-tag">SIEM</span>
-                    <span class="tech-tag">Threat Detection</span>
-                    <span class="tech-tag">PKI</span>
-                </div>
-                <div class="project-metrics">
                     <div class="metric">
                         <span class="metric-value">TBD</span>
-                        <span class="metric-label">Status</span>
+                        <span class="metric-label">Stack</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value">2025</span>
-                        <span class="metric-label">Target</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">Sec</span>
-                        <span class="metric-label">Type</span>
+                        <span class="metric-value">Soon</span>
+                        <span class="metric-label">Details</span>
                     </div>
                 </div>
                 <div class="project-actions">
                     <button class="project-btn" disabled>Coming Soon</button>
-                    <button class="project-btn">🔒 Plan</button>
                 </div>
             </div>
 
-            <!-- Network Upgrade -->
+            <!-- Networking Project -->
             <div class="project-card" data-category="networking">
                 <div class="project-header">
-                    <h2 class="project-title">Network Upgrade</h2>
+                    <h2 class="project-title">Networking Project</h2>
                     <span class="project-status">Template</span>
                 </div>
                 <p class="project-description">
-                    Enterprise network modernization template. Placeholder for infrastructure upgrade projects 
-                    involving SDN implementation and next-generation networking technologies.
+                    Placeholder for a networking project. Protocols, diagnostics, and any overlap with
+                    driver work will be documented when the project is added.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">SDN</span>
-                    <span class="tech-tag">5G</span>
-                    <span class="tech-tag">IoT</span>
-                    <span class="tech-tag">Edge Computing</span>
+                    <span class="tech-tag">Networking</span>
+                    <span class="tech-tag">Protocols</span>
+                    <span class="tech-tag">Diagnostics</span>
                 </div>
                 <div class="project-metrics">
                     <div class="metric">
                         <span class="metric-value">TBD</span>
-                        <span class="metric-label">Status</span>
+                        <span class="metric-label">Scope</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value">2025</span>
-                        <span class="metric-label">Target</span>
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Stack</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value">Net</span>
-                        <span class="metric-label">Type</span>
+                        <span class="metric-value">Soon</span>
+                        <span class="metric-label">Details</span>
                     </div>
                 </div>
                 <div class="project-actions">
                     <button class="project-btn" disabled>Coming Soon</button>
-                    <button class="project-btn">🌐 Design</button>
+                </div>
+            </div>
+
+            <!-- AI & Automation Project -->
+            <div class="project-card" data-category="ai-automation">
+                <div class="project-header">
+                    <h2 class="project-title">AI &amp; Automation Project</h2>
+                    <span class="project-status">Template</span>
+                </div>
+                <p class="project-description">
+                    Placeholder for an AI or automation project. The use case, implementation,
+                    and project links will be added here.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">AI</span>
+                    <span class="tech-tag">Automation</span>
+                    <span class="tech-tag">Tooling</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Scope</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Stack</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Soon</span>
+                        <span class="metric-label">Details</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button class="project-btn" disabled>Coming Soon</button>
+                </div>
+            </div>
+
+            <!-- Cloud Project -->
+            <div class="project-card" data-category="cloud">
+                <div class="project-header">
+                    <h2 class="project-title">Cloud Project</h2>
+                    <span class="project-status">Template</span>
+                </div>
+                <p class="project-description">
+                    Placeholder for a cloud project. Infrastructure, services, and deployment details
+                    will be added with the project.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Cloud</span>
+                    <span class="tech-tag">Infrastructure</span>
+                    <span class="tech-tag">Services</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Scope</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Stack</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Soon</span>
+                        <span class="metric-label">Details</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button class="project-btn" disabled>Coming Soon</button>
+                </div>
+            </div>
+
+            <!-- Android App -->
+            <div class="project-card" data-category="android-apps">
+                <div class="project-header">
+                    <h2 class="project-title">Android App</h2>
+                    <span class="project-status">Template</span>
+                </div>
+                <p class="project-description">
+                    Placeholder for an Android app. Features, implementation details, and source links
+                    will be added here.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Android</span>
+                    <span class="tech-tag">Mobile</span>
+                    <span class="tech-tag">Apps</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Scope</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">TBD</span>
+                        <span class="metric-label">Stack</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Soon</span>
+                        <span class="metric-label">Details</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <button class="project-btn" disabled>Coming Soon</button>
                 </div>
             </div>
         </div>
@@ -871,7 +886,7 @@
         wrapChars();
 
         // Filter functionality
-        const filterBtns = document.querySelectorAll('.filter-btn');
+        const filterBtns = document.querySelectorAll('.filter-btn[data-filter]');
         const projectCards = document.querySelectorAll('.project-card');
 
         filterBtns.forEach(btn => {
@@ -881,7 +896,7 @@
                 const filter = btn.dataset.filter;
 
                 projectCards.forEach(card => {
-                    if (filter === 'all' || card.dataset.category.includes(filter)) {
+                    if (filter === 'all' || card.dataset.category.split(/\s+/).includes(filter)) {
                         card.classList.remove('hidden');
                     } else {
                         card.classList.add('hidden');
