@@ -224,6 +224,7 @@ async function processCommand(input) {
         const sudoResponses = [
             "Nice try. You don't have root on my portfolio.",
             "Permission denied. This isn't your Linux box.",
+            "Your confidence is impressive. Your permissions remain unchanged.",
             "sudo? I barely know you.",
             "Access level: guest. Permanently.",
             "You think sudo works here? Adorable.",
@@ -838,6 +839,7 @@ const nudgeMessages = {
         "The snake isn't gonna feed itself. Oh wait, it is. So why are you here?",
         "You're growing a snake on someone's resume page. Think about that.",
         "Nokia called. They want their 2002 distraction back.",
+        "The job description said Python. This is not what they meant.",
         "Your snake is longer than your attention span for my actual work.",
         "Every pixel that snake eats is a pixel of my dignity dying.",
         "I spent hours on my portfolio. You're playing Snake. We are not the same.",

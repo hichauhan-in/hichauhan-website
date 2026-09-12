@@ -10,6 +10,7 @@
         { heading: 'Tiny Screen Detected', body: 'This portfolio was designed for screens that don\'t fit in your pocket. The animations, the secrets, the chaos — all better on desktop.', sub: 'But hey, your phone, your rules.' },
         { heading: 'You\'re on Mobile', body: 'Look, it\'ll work. But it\'s like watching a movie on airplane WiFi — technically possible, spiritually wrong.', sub: 'Desktop gives you the full unhinged experience.' },
         { heading: 'Phone Mode: Detected', body: 'The easter eggs on this site require clicking, typing, and patience. Two of those are hard on mobile.', sub: 'Consider a bigger screen. Or just scroll through and judge my career.' },
+        { heading: 'Pocket-Sized Confidence', body: 'A whole portfolio, one small screen, and the confidence to press every button anyway.', sub: 'Your thumbs have enthusiasm. The desktop version has witnesses.' },
         { heading: 'Screen Too Small', body: 'This site has hidden features that were designed for desktop humans with keyboards and too much free time.', sub: 'Mobile works, but you\'ll miss 80% of the chaos.' },
         { heading: 'Desktop > Mobile', body: 'Hot take: some websites deserve a 15" screen. This is one of them. (Self-aware? Maybe. Wrong? No.)', sub: 'If you can switch to a laptop, future you will thank present you.' },
     ];
