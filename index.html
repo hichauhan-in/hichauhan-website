@@ -1643,9 +1643,9 @@
         <!-- Side buttons -->
         <div class="side-buttons">
             <a href="cv.html" data-href="cv.html" data-cmd="resume" class="side-btn">.\CV</a>
-            <a href="#" data-href="experience.html" class="side-btn">.\Experience</a>
             <a href="#" data-href="skills.html" class="side-btn">.\Skills</a>
             <a href="projects.html" data-href="projects.html" class="side-btn">.\Projects</a>
+            <a href="#" data-href="experience.html" class="side-btn">.\Experience</a>
             <a href="#" data-href="education.html" class="side-btn">.\Education</a>
             <a href="#" data-href="https://www.linkedin.com/in/hichauhan-in/" data-external="true" class="side-btn">.\LinkedIn</a>
             <a href="#" data-href="contact.html" class="side-btn">.\Contact</a>
@@ -2018,22 +2018,12 @@
             ]];
             const allLines = messageSets[Math.floor(Math.random() * messageSets.length)];
 
-            // Randomly decide how many lines to show (2 to allLines.length)
-            const minLines = 2;
-            const maxLines = allLines.length;
-            const lineCount = Math.floor(Math.random() * (maxLines - minLines + 1)) + minLines;
-
-            // Always include the last line (redirect message), pick random others
+            const lineCount = Math.random() < 0.9 ? 1 : 2;
             const lastLine = allLines[allLines.length - 1];
-            const pool = allLines.slice(0, -1);
-            // Shuffle and pick (lineCount - 1) from pool
-            const shuffled = pool.sort(() => Math.random() - 0.5);
-            const selectedLines = shuffled.slice(0, lineCount - 1);
-            // Optionally inject a random filler line
-            if (Math.random() > 0.5 && lineCount < maxLines) {
-                const filler = fillerLines[Math.floor(Math.random() * fillerLines.length)];
-                const insertAt = Math.floor(Math.random() * selectedLines.length);
-                selectedLines.splice(insertAt, 0, filler);
+            const selectedLines = [];
+            if (lineCount === 2) {
+                const pool = Math.random() < 0.5 ? allLines.slice(0, -1) : fillerLines;
+                selectedLines.push(pool[Math.floor(Math.random() * pool.length)]);
             }
             selectedLines.push(lastLine);
 
@@ -2057,41 +2047,31 @@
             sep.textContent = '─'.repeat(40);
             output.appendChild(sep);
 
-            let i = 0;
-            let animationTimeout = null;
+            let lineIndex = 0;
 
             function showNextLine() {
-                if (i < selectedLines.length) {
+                if (lineIndex < selectedLines.length) {
                     const line = document.createElement('div');
                     line.className = 'terminal-line';
-                    line.style.color = i === selectedLines.length - 1 ? '#00A896' : '#B0B0B0';
-                    line.textContent = selectedLines[i];
+                    line.style.color = lineIndex === selectedLines.length - 1 ? '#00A896' : '#B0B0B0';
+                    line.textContent = selectedLines[lineIndex];
                     output.appendChild(line);
                     output.scrollTop = output.scrollHeight;
-                    i++;
-                    // Random delay between 200ms and 800ms for each line
-                    const delay = Math.floor(Math.random() * 601) + 200;
-                    animationTimeout = setTimeout(showNextLine, delay);
+                    lineIndex++;
+                    const animationTimeout = setTimeout(showNextLine, 350);
                     activeAnimation = { interval: null, timeout: animationTimeout };
                 } else {
-                    // Random final wait before redirect (300ms to 800ms)
-                    const redirectDelay = Math.floor(Math.random() * 501) + 300;
-                    const redirectTimeout = setTimeout(() => {
-                        activeAnimation = null;
-                        if (url === '#') return;
-                        if (isExternal) {
-                            window.open(url, '_blank');
-                        } else {
-                            window.location.href = url;
-                        }
-                    }, redirectDelay);
-                    activeAnimation = { interval: null, timeout: redirectTimeout };
+                    activeAnimation = null;
+                    if (url === '#') return;
+                    if (isExternal) {
+                        window.open(url, '_blank');
+                    } else {
+                        window.location.href = url;
+                    }
                 }
             }
 
-            // Start with a small initial delay
-            animationTimeout = setTimeout(showNextLine, Math.floor(Math.random() * 401) + 200);
-            activeAnimation = { interval: null, timeout: animationTimeout };
+            showNextLine();
         }
 
         // Ctrl+C cancellation
