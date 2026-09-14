@@ -382,6 +382,11 @@
             color: var(--teal);
         }
 
+        .project-btn.google-play:disabled {
+            filter: blur(1px);
+            cursor: not-allowed;
+        }
+
         /* Project Modal */
         .project-modal {
             position: fixed;
@@ -617,105 +622,183 @@
                 </div>
             </div>
 
-            <!-- Driver Project -->
+            <!-- Driver Projects -->
             <div class="project-card" data-category="drivers">
                 <div class="project-header">
-                    <h2 class="project-title">Driver Project</h2>
-                    <span class="project-status">Template</span>
+                    <h2 class="project-title">Registry Filter Driver</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Placeholder for a Windows driver project. Implementation details, debugging notes,
-                    and repository links will be added here.
+                    C WDM driver that monitors a dedicated registry subtree and selectively blocks
+                    operations. A secured command-line controller configures policy and reads events.
+                    Monitor-only by default; kernel VM validation is pending.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">Windows</span>
-                    <span class="tech-tag">Drivers</span>
-                    <span class="tech-tag">Debugging</span>
+                    <span class="tech-tag">C17</span>
+                    <span class="tech-tag">WDM</span>
+                    <span class="tech-tag">Registry Callbacks</span>
+                    <span class="tech-tag">IOCTLs</span>
                 </div>
                 <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Scope</span>
+                    <div class="metric" title="Handles 10 pre-operation registry notification types. Events report filter decisions, not final operation results.">
+                        <span class="metric-value">10</span>
+                        <span class="metric-label">Event Types</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Stack</span>
+                    <div class="metric" title="Independent controls for queries, enumeration, setting values, creating or opening keys, deleting values, deleting keys, and renaming keys.">
+                        <span class="metric-value">7</span>
+                        <span class="metric-label">Block Options</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">Soon</span>
-                        <span class="metric-label">Details</span>
+                    <div class="metric" title="The in-memory event ring holds 128 records and overwrites the oldest when full. This is not a persistent audit log.">
+                        <span class="metric-value">128</span>
+                        <span class="metric-label">Event Slots</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn" disabled>Coming Soon</button>
+                    <a class="project-btn primary" href="https://hichauhan-in.github.io/windows-registry-filter-driver/">View Details</a>
+                    <a class="project-btn" href="https://github.com/hichauhan-in/windows-registry-filter-driver" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
 
-            <!-- Networking Project -->
-            <div class="project-card" data-category="networking">
+            <div class="project-card" data-category="drivers">
                 <div class="project-header">
-                    <h2 class="project-title">Networking Project</h2>
-                    <span class="project-status">Template</span>
+                    <h2 class="project-title">File-System Filter Driver</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Placeholder for a networking project. Protocols, diagnostics, and any overlap with
-                    driver work will be documented when the project is added.
+                    C minifilter using Filter Manager callbacks to observe file activity, inspect a
+                    bounded write prefix, and optionally block writes or delete requests on watched
+                    paths. Monitor-only by default; kernel VM validation is pending.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">Networking</span>
-                    <span class="tech-tag">Protocols</span>
-                    <span class="tech-tag">Diagnostics</span>
+                    <span class="tech-tag">C</span>
+                    <span class="tech-tag">Minifilter</span>
+                    <span class="tech-tag">Filter Manager</span>
+                    <span class="tech-tag">WinDbg</span>
                 </div>
                 <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Scope</span>
+                    <div class="metric" title="WinDbg flags control write inspection, write blocking, and delete-request blocking. All three are off by default.">
+                        <span class="metric-value">3</span>
+                        <span class="metric-label">Debug Toggles</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Stack</span>
+                        <span class="metric-value">2</span>
+                        <span class="metric-label">Block Options</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">Soon</span>
-                        <span class="metric-label">Details</span>
+                    <div class="metric" title="Optional inspection reads at most 64 bytes from an eligible write buffer and may stop at a null byte. It is disabled by default.">
+                        <span class="metric-value">64<span class="metric-unit">&nbsp;B</span></span>
+                        <span class="metric-label">Write Preview</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn" disabled>Coming Soon</button>
+                    <a class="project-btn primary" href="https://hichauhan-in.github.io/windows-filesystem-filter-driver/">View Details</a>
+                    <a class="project-btn" href="https://github.com/hichauhan-in/windows-filesystem-filter-driver" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
 
-            <!-- AI & Automation Project -->
+            <div class="project-card" data-category="drivers networking">
+                <div class="project-header">
+                    <h2 class="project-title">Packet Filter Driver</h2>
+                    <span class="project-status completed">Implemented</span>
+                </div>
+                <p class="project-description">
+                    C WFP callout driver that monitors IPv4 TCP/UDP connection attempts and blocks
+                    selected endpoints through a secured controller. Filters connection authorizations,
+                    not packet payloads; kernel VM validation is pending.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">C11</span>
+                    <span class="tech-tag">WFP</span>
+                    <span class="tech-tag">TCP/UDP</span>
+                    <span class="tech-tag">IOCTLs</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric" title="IPv4 inbound receive/accept and outbound connect authorization through two WFP ALE callouts.">
+                        <span class="metric-value">2</span>
+                        <span class="metric-label">Directions</span>
+                    </div>
+                    <div class="metric" title="One configurable rule matches direction, protocol, remote IPv4 address, and service port. Reloading restores monitor-only mode.">
+                        <span class="metric-value">1</span>
+                        <span class="metric-label">Block Rule</span>
+                    </div>
+                    <div class="metric" title="A 128-record ring stores endpoint metadata and filter decisions, not payloads. The oldest event is overwritten when full.">
+                        <span class="metric-value">128</span>
+                        <span class="metric-label">Event Slots</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <a class="project-btn primary" href="https://hichauhan-in.github.io/windows-packet-filter-driver/">View Details</a>
+                    <a class="project-btn" href="https://github.com/hichauhan-in/windows-packet-filter-driver" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <!-- AI & Automation Projects -->
             <div class="project-card" data-category="ai-automation">
                 <div class="project-header">
-                    <h2 class="project-title">AI &amp; Automation Project</h2>
-                    <span class="project-status">Template</span>
+                    <h2 class="project-title">JobLookup</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Placeholder for an AI or automation project. The use case, implementation,
-                    and project links will be added here.
+                    Local-first job-search workspace with explainable matches, application tracking,
+                    and optional AI resume reviews and tailoring. Searches public feeds and employer
+                    boards, deduplicates postings, and ranks them locally without AI calls.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">AI</span>
-                    <span class="tech-tag">Automation</span>
-                    <span class="tech-tag">Tooling</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">TypeScript</span>
+                    <span class="tech-tag">FastAPI</span>
                 </div>
                 <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Scope</span>
+                    <div class="metric" title="Employer-board connectors for Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Workday, and Personio. Availability depends on the source.">
+                        <span class="metric-value">8</span>
+                        <span class="metric-label">Board Types</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Stack</span>
+                    <div class="metric" title="Local text extraction from PDF, DOCX, TXT, and Markdown resumes. Scanned images are not parsed by the local extractor.">
+                        <span class="metric-value">4</span>
+                        <span class="metric-label">Resume Formats</span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-value">Soon</span>
-                        <span class="metric-label">Details</span>
+                    <div class="metric" title="Search and local ranking make no model calls. Optional AI analysis, reviews, and tailoring send relevant text to the selected provider and use its quota.">
+                        <span class="metric-value">0</span>
+                        <span class="metric-label">AI Search Calls</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn" disabled>Coming Soon</button>
+                    <a class="project-btn primary" href="https://github.com/hichauhan-in/JobLookup" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <div class="project-card" data-category="ai-automation">
+                <div class="project-header">
+                    <h2 class="project-title">ClipDesk</h2>
+                    <span class="project-status completed">Implemented</span>
+                </div>
+                <p class="project-description">
+                    AI content studio for recording analysis, study notes, articles, clips, and narrated
+                    videos from written briefs. Transcription and rendering run locally; model-assisted
+                    tasks send text to the selected provider.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">FastAPI</span>
+                    <span class="tech-tag">FFmpeg</span>
+                    <span class="tech-tag">Whisper</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric" title="12 editable starter recipes for document creation, video editing, branding, and delivery.">
+                        <span class="metric-value">12</span>
+                        <span class="metric-label">Flow Recipes</span>
+                    </div>
+                    <div class="metric" title="A reusable Flow supports up to 20 sequential steps, with dependency checks and a review before manual execution.">
+                        <span class="metric-value">20</span>
+                        <span class="metric-label">Max Flow Steps</span>
+                    </div>
+                    <div class="metric" title="Media export to MP4, WebM, MOV, GIF, MP3, M4A, and WAV. Document and transcript exports are separate.">
+                        <span class="metric-value">7</span>
+                        <span class="metric-label">Media Formats</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <a class="project-btn primary" href="https://github.com/hichauhan-in/ClipDesk" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </div>
 
@@ -753,37 +836,76 @@
                 </div>
             </div>
 
-            <!-- Android App -->
+            <!-- Android Apps -->
             <div class="project-card" data-category="android-apps">
                 <div class="project-header">
-                    <h2 class="project-title">Android App</h2>
-                    <span class="project-status">Template</span>
+                    <h2 class="project-title">Nudge!</h2>
+                    <span class="project-status completed">Implemented</span>
                 </div>
                 <p class="project-description">
-                    Placeholder for an Android app. Features, implementation details, and source links
-                    will be added here.
+                    Mindful app-use reminders with per-app timers, daily budgets, scheduled profiles,
+                    and optional sarcastic prompts to interrupt habitual scrolling. Monitoring and
+                    usage history stay on-device, with no account required.
                 </p>
                 <div class="project-tech">
-                    <span class="tech-tag">Android</span>
-                    <span class="tech-tag">Mobile</span>
-                    <span class="tech-tag">Apps</span>
+                    <span class="tech-tag">Kotlin</span>
+                    <span class="tech-tag">Jetpack Compose</span>
+                    <span class="tech-tag">Room</span>
+                    <span class="tech-tag">Accessibility</span>
                 </div>
                 <div class="project-metrics">
-                    <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Scope</span>
+                    <div class="metric" title="Custom session timers range from 1 to 60 minutes. Daily foreground-usage budgets are configured separately.">
+                        <span class="metric-value">1-60</span>
+                        <span class="metric-label">Timer Minutes</span>
+                    </div>
+                    <div class="metric" title="Clear-on-lock and persistent timer modes. Android permissions and background restrictions can affect reminders.">
+                        <span class="metric-value">2</span>
+                        <span class="metric-label">Timer Modes</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-value">TBD</span>
-                        <span class="metric-label">Stack</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-value">Soon</span>
-                        <span class="metric-label">Details</span>
+                        <span class="metric-value">0</span>
+                        <span class="metric-label">Ads</span>
                     </div>
                 </div>
                 <div class="project-actions">
-                    <button class="project-btn" disabled>Coming Soon</button>
+                    <a class="project-btn primary" href="https://github.com/hichauhan-in/Nudge" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <button class="project-btn google-play" disabled title="Awaiting Google Play approval">Google Play</button>
+                </div>
+            </div>
+
+            <div class="project-card" data-category="android-apps">
+                <div class="project-header">
+                    <h2 class="project-title">MyNotes+</h2>
+                    <span class="project-status completed">Implemented</span>
+                </div>
+                <p class="project-description">
+                    Offline-first notes with encrypted text and saved attachments, checklists,
+                    drawing boards, reminders, and on-device OCR. Optional encrypted Google Drive
+                    sync for note content; core note-taking needs no sign-in.
+                </p>
+                <div class="project-tech">
+                    <span class="tech-tag">Kotlin</span>
+                    <span class="tech-tag">Jetpack Compose</span>
+                    <span class="tech-tag">Room</span>
+                    <span class="tech-tag">AES-256-GCM</span>
+                </div>
+                <div class="project-metrics">
+                    <div class="metric" title="Text notes, checklists, drawing boards, and expense trackers.">
+                        <span class="metric-value">4</span>
+                        <span class="metric-label">Note Types</span>
+                    </div>
+                    <div class="metric" title="Plain text, Markdown, HTML, and PDF. Exports containing media can be packaged with their attachments in a ZIP.">
+                        <span class="metric-value">4</span>
+                        <span class="metric-label">Export Formats</span>
+                    </div>
+                    <div class="metric" title="AES-256-GCM encrypts note titles, bodies, and saved attachments at rest, with keys protected by Android Keystore. Some metadata and temporary files are not encrypted.">
+                        <span class="metric-value">AES</span>
+                        <span class="metric-label">256-bit GCM</span>
+                    </div>
+                </div>
+                <div class="project-actions">
+                    <a class="project-btn primary" href="https://github.com/hichauhan-in/MyNotesPlus" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <button class="project-btn google-play" disabled title="Awaiting Google Play approval">Google Play</button>
                 </div>
             </div>
         </div>
